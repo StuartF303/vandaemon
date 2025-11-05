@@ -6,99 +6,78 @@
 
 <PageTitle>Dashboard - VanDaemon</PageTitle>
 
-<MudGrid Class="full-height-grid">
-    <MudItem xs="12" md="9">
-        <MudPaper Elevation="2" Class="pa-4" Style="min-height: calc(100vh - 200px); position: relative;">
-            <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
-                <MudToggleIconButton @bind-Toggled="@isEditMode"
-                                     Icon="@Icons.Material.Filled.Lock"
-                                     ToggledIcon="@Icons.Material.Filled.Edit"
-                                     Title="Toggle Edit Mode"
-                                     ToggledTitle="Exit Edit Mode" />
-            </div>
+<MudPaper Elevation="2" Class="pa-4" Style="min-height: calc(100vh - 150px); display: flex; flex-direction: column; position: relative;">
+    <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+        <MudToggleIconButton @bind-Toggled="@isEditMode"
+                             Icon="@Icons.Material.Filled.Lock"
+                             ToggledIcon="@Icons.Material.Filled.Edit"
+                             Title="Toggle Edit Mode"
+                             ToggledTitle="Exit Edit Mode" />
+    </div>
 
-            <!-- Van Diagram Container -->
-            <div class="van-diagram-container" style="position: relative; width: 100%; height: 100%; min-height: 600px;">
-                @if (!string.IsNullOrEmpty(backgroundImage))
-                {
-                    <img src="@backgroundImage" alt="Van Diagram" style="width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;" />
-                }
-                else
-                {
-                    <div style="text-align: center; padding: 50px; background: #f5f5f5; border-radius: 8px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                        <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Size="Size.Large" Style="font-size: 120px; color: #ccc;" />
-                        <MudText Typo="Typo.h6" Class="mt-4">No background image configured</MudText>
-                        <MudText Typo="Typo.body2">Go to Settings to upload a van diagram</MudText>
-                    </div>
-                }
+    <!-- Van Diagram Container -->
+    <div style="flex: 1; position: relative; width: 100%; min-height: 500px;">
+        <div class="van-diagram-container" style="position: relative; width: 100%; height: 100%;">
+            @if (!string.IsNullOrEmpty(backgroundImage))
+            {
+                <img src="@backgroundImage" alt="Van Diagram" style="width: 100%; height: 100%; object-fit: contain;" />
+            }
+            else
+            {
+                <div style="text-align: center; padding: 50px; background: #f5f5f5; border-radius: 8px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Size="Size.Large" Style="font-size: 120px; color: #ccc;" />
+                    <MudText Typo="Typo.h6" Class="mt-4">No background image configured</MudText>
+                    <MudText Typo="Typo.body2">Go to Settings to upload a van diagram</MudText>
+                </div>
+            }
 
-                <!-- Overlays for tanks and controls -->
-                @foreach (var overlay in overlays)
-                {
-                    <div class="overlay-item @(isEditMode ? "edit-mode" : "")"
-                         style="position: absolute; left: @(overlay.X)%; top: @(overlay.Y)%; transform: translate(-50%, -50%); cursor: @(isEditMode ? "move" : "pointer");"
-                         @onclick="() => OnOverlayClick(overlay)"
-                         @ondragstart="() => OnDragStart(overlay)"
-                         @ondragend="() => OnDragEnd(overlay)"
-                         draggable="@isEditMode">
+            <!-- Overlays for tanks and controls -->
+            @foreach (var overlay in overlays)
+            {
+                <div class="overlay-item @(isEditMode ? "edit-mode" : "")"
+                     style="position: absolute; left: @(overlay.X)%; top: @(overlay.Y)%; transform: translate(-50%, -50%); cursor: @(isEditMode ? "move" : "pointer");"
+                     @onclick="() => OnOverlayClick(overlay)"
+                     @ondragstart="() => OnDragStart(overlay)"
+                     @ondragend="() => OnDragEnd(overlay)"
+                     draggable="@isEditMode">
 
-                        @if (overlay.Type == OverlayType.Tank)
-                        {
-                            <MudTooltip Text="@overlay.Name">
-                                <div class="overlay-content">
-                                    <MudIcon Icon="@overlay.Icon" Size="Size.Large" Color="@GetOverlayColor(overlay)" />
-                                    <MudText Typo="Typo.caption">@overlay.Value%</MudText>
-                                </div>
-                            </MudTooltip>
-                        }
-                        else if (overlay.Type == OverlayType.Control)
-                        {
-                            <MudTooltip Text="@overlay.Name">
+                    @if (overlay.Type == OverlayType.Tank)
+                    {
+                        <MudTooltip Text="@overlay.Name">
+                            <div class="overlay-content" style="text-align: center; background: rgba(255, 255, 255, 0.9); padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <MudIcon Icon="@overlay.Icon" Size="Size.Large" Color="@GetOverlayColor(overlay)" />
+                                <MudText Typo="Typo.caption" Style="display: block; font-weight: bold;">@overlay.Value.ToString("F1")%</MudText>
+                            </div>
+                        </MudTooltip>
+                    }
+                    else if (overlay.Type == OverlayType.Control)
+                    {
+                        <MudTooltip Text="@overlay.Name">
+                            <div style="background: rgba(255, 255, 255, 0.9); padding: 4px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                                 <MudSwitch Value="@overlay.IsOn"
                                           Color="Color.Primary"
                                           Disabled="@isEditMode"
                                           ValueChanged="@((bool val) => OnControlToggle(overlay, val))" />
-                            </MudTooltip>
-                        }
-                    </div>
-                }
-            </div>
-        </MudPaper>
-    </MudItem>
-
-    <MudItem xs="12" md="3">
-        <MudPaper Elevation="2" Class="pa-4" Style="min-height: calc(100vh - 200px); display: flex; flex-direction: column;">
-            <!-- Quick Status (takes up most space) -->
-            <div style="flex: 1; overflow-y: auto;">
-                @if (tanks == null)
-                {
-                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-                }
-                else
-                {
-                    @foreach (var tank in tanks)
-                    {
-                        <div class="mb-3">
-                            <MudText Typo="Typo.body2">@tank.Name</MudText>
-                            <MudProgressLinear Color="@GetTankColor(tank)" Value="@tank.CurrentLevel" Class="my-1" />
-                            <MudText Typo="Typo.caption">@tank.CurrentLevel.ToString("F1")%</MudText>
-                        </div>
+                            </div>
+                        </MudTooltip>
                     }
-                }
-            </div>
+                </div>
+            }
+        </div>
+    </div>
 
-            <!-- System Status Footer -->
-            <MudDivider Class="my-3" />
-            <div>
-                <MudChip Size="Size.Small" Color="@(Telemetry.IsConnected ? Color.Success : Color.Warning)"
-                        Icon="@(Telemetry.IsConnected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.CloudOff)">
-                    @(Telemetry.IsConnected ? "Connected" : "Connecting...")
-                </MudChip>
-                <MudText Typo="Typo.caption" Class="mt-2">Last update: @lastUpdateTime</MudText>
-            </div>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+    <!-- Connection Status Footer -->
+    <MudDivider Class="my-3" />
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <MudChip Size="Size.Small" Color="@(Telemetry.IsConnected ? Color.Success : Color.Warning)"
+                    Icon="@(Telemetry.IsConnected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.CloudOff)">
+                @(Telemetry.IsConnected ? "Connected" : "Connecting...")
+            </MudChip>
+        </div>
+        <MudText Typo="Typo.caption">Last update: @lastUpdateTime</MudText>
+    </div>
+</MudPaper>
 
 @code {
     private List<TankDto>? tanks;
@@ -141,11 +120,14 @@
         try
         {
             // TODO: Load from settings API
-            backgroundImage = "/van-diagram.png"; // Default placeholder
+            // For now, use the default Mercedes Sprinter LWB image
+            backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading settings: {ex.Message}");
+            // Fallback to default image on error
+            backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
         }
     }
 
