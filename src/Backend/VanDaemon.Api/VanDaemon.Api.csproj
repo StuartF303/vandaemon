@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VanDaemon.Core\VanDaemon.Core.csproj" />
+    <ProjectReference Include="..\VanDaemon.Application\VanDaemon.Application.csproj" />
+    <ProjectReference Include="..\VanDaemon.Infrastructure\VanDaemon.Infrastructure.csproj" />
+    <ProjectReference Include="..\VanDaemon.Plugins\VanDaemon.Plugins.Abstractions\VanDaemon.Plugins.Abstractions.csproj" />
+    <ProjectReference Include="..\VanDaemon.Plugins\VanDaemon.Plugins.Simulated\VanDaemon.Plugins.Simulated.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+</Project>

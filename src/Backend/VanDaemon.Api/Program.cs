@@ -1,0 +1,75 @@
+using Serilog;
+using VanDaemon.Application.Interfaces;
+using VanDaemon.Application.Services;
+using VanDaemon.Plugins.Abstractions;
+using VanDaemon.Plugins.Simulated;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/vandaemon-.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Add SignalR for real-time communication
+builder.Services.AddSignalR();
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+// Register plugins
+builder.Services.AddSingleton<ISensorPlugin, SimulatedSensorPlugin>();
+builder.Services.AddSingleton<IControlPlugin, SimulatedControlPlugin>();
+
+// Register application services
+builder.Services.AddSingleton<ITankService, TankService>();
+
+// Initialize plugins
+var app = builder.Build();
+
+// Initialize sensor plugins
+var sensorPlugins = app.Services.GetServices<ISensorPlugin>();
+foreach (var plugin in sensorPlugins)
+{
+    await plugin.InitializeAsync(new Dictionary<string, object>());
+}
+
+// Initialize control plugins
+var controlPlugins = app.Services.GetServices<IControlPlugin>();
+foreach (var plugin in controlPlugins)
+{
+    await plugin.InitializeAsync(new Dictionary<string, object>());
+}
+
+// Configure the HTTP request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseCors("AllowAll");
+app.UseAuthorization();
+app.MapControllers();
+
+// Map SignalR hubs
+// app.MapHub<TelemetryHub>("/hubs/telemetry");
+
+Log.Information("VanDaemon API starting up...");
+app.Run();
