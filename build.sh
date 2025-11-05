@@ -67,6 +67,6 @@ fi
 print_status "Build completed successfully!"
 echo ""
 echo "To run the application:"
-echo "  1. Using Docker: cd docker && docker-compose up"
+echo "  1. Using Docker: cd docker && docker compose up"
 echo "  2. Using dotnet: cd src/Backend/VanDaemon.Api && dotnet run"
 echo ""

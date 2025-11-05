@@ -36,7 +36,7 @@ cd vandaemon
 2. Start the services:
 ```bash
 cd docker
-docker-compose up -d
+docker compose up -d
 ```
 
 3. Access the web interface:
@@ -139,12 +139,9 @@ Customize the van diagram to match your vehicle:
 # Update system
 sudo apt update && sudo apt upgrade -y
 
-# Install Docker
+# Install Docker (includes Docker Compose V2)
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
-
-# Install Docker Compose
-sudo apt install docker-compose -y
 
 # Add user to docker group
 sudo usermod -aG docker $USER
@@ -155,7 +152,7 @@ sudo usermod -aG docker $USER
 ```bash
 git clone https://github.com/yourusername/vandaemon.git
 cd vandaemon/docker
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Step 3: Configure Hardware Access
@@ -189,8 +186,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/home/pi/vandaemon/docker
-ExecStart=/usr/bin/docker-compose up -d
-ExecStop=/usr/bin/docker-compose down
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
 
 [Install]
 WantedBy=multi-user.target
@@ -254,7 +251,7 @@ See [PROJECT_PLAN.md](PROJECT_PLAN.md) for the detailed development roadmap.
 - Check browser console for errors
 
 **Issue**: Docker containers won't start
-- Run `docker-compose logs` to check logs
+- Run `docker compose logs` to check logs
 - Ensure ports 5000 and 8080 are not in use
 - Verify Docker daemon is running
 
