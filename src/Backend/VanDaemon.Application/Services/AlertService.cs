@@ -27,7 +27,7 @@ public class AlertService : IAlertService
             ? _alerts.AsEnumerable()
             : _alerts.Where(a => !a.Acknowledged);
 
-        return Task.FromResult(alerts.OrderByDescending(a => a.Timestamp));
+        return Task.FromResult<IEnumerable<Alert>>(alerts.OrderByDescending(a => a.Timestamp));
     }
 
     public Task<Alert?> GetAlertByIdAsync(Guid id, CancellationToken cancellationToken = default)

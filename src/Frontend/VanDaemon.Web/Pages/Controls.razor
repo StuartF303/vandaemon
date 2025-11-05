@@ -26,7 +26,7 @@ else
 
                         @if (control.Type == "Toggle")
                         {
-                            <MudSwitch @bind-Checked="@GetToggleState(control)"
+                            <MudSwitch Checked="@GetToggleState(control)"
                                       Color="Color.Success"
                                       Label="@(GetToggleState(control) ? "On" : "Off")"
                                       T="bool"
@@ -34,7 +34,7 @@ else
                         }
                         else if (control.Type == "Dimmer")
                         {
-                            <MudSlider @bind-Value="@GetDimmerValue(control)"
+                            <MudSlider Value="@GetDimmerValue(control)"
                                       Color="Color.Primary"
                                       Min="0"
                                       Max="100"
