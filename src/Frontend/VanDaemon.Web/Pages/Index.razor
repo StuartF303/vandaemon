@@ -1,58 +1,101 @@
 @page "/"
 @inject HttpClient Http
 @inject TelemetryService Telemetry
+@inject ISnackbar Snackbar
 @implements IAsyncDisposable
 
 <PageTitle>Dashboard - VanDaemon</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Dashboard</MudText>
-<MudText Class="mb-8">Welcome to the VanDaemon Camper Van Control System</MudText>
+<MudGrid Class="full-height-grid">
+    <MudItem xs="12" md="9">
+        <MudPaper Elevation="2" Class="pa-4" Style="min-height: calc(100vh - 200px); position: relative;">
+            <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+                <MudToggleIconButton @bind-Toggled="@isEditMode"
+                                     Icon="@Icons.Material.Filled.Lock"
+                                     ToggledIcon="@Icons.Material.Filled.Edit"
+                                     Title="Toggle Edit Mode"
+                                     ToggledTitle="Exit Edit Mode" />
+            </div>
 
-<MudGrid>
-    <MudItem xs="12" md="8">
-        <MudPaper Elevation="2" Class="pa-4" Style="min-height: 400px;">
-            <MudText Typo="Typo.h5" GutterBottom="true">Van Diagram</MudText>
-            <MudText Typo="Typo.body2" Class="mb-4">Interactive van control interface coming soon...</MudText>
+            <!-- Van Diagram Container -->
+            <div class="van-diagram-container" style="position: relative; width: 100%; height: 100%; min-height: 600px;">
+                @if (!string.IsNullOrEmpty(backgroundImage))
+                {
+                    <img src="@backgroundImage" alt="Van Diagram" style="width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;" />
+                }
+                else
+                {
+                    <div style="text-align: center; padding: 50px; background: #f5f5f5; border-radius: 8px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Size="Size.Large" Style="font-size: 120px; color: #ccc;" />
+                        <MudText Typo="Typo.h6" Class="mt-4">No background image configured</MudText>
+                        <MudText Typo="Typo.body2">Go to Settings to upload a van diagram</MudText>
+                    </div>
+                }
 
-            <!-- Placeholder for van diagram -->
-            <div style="text-align: center; padding: 50px; background: #f5f5f5; border-radius: 8px;">
-                <MudIcon Icon="@Icons.Material.Filled.DirectionsCar" Size="Size.Large" Style="font-size: 120px; color: #ccc;" />
-                <MudText Typo="Typo.h6" Class="mt-4">Mercedes Sprinter LWB</MudText>
+                <!-- Overlays for tanks and controls -->
+                @foreach (var overlay in overlays)
+                {
+                    <div class="overlay-item @(isEditMode ? "edit-mode" : "")"
+                         style="position: absolute; left: @(overlay.X)%; top: @(overlay.Y)%; transform: translate(-50%, -50%); cursor: @(isEditMode ? "move" : "pointer");"
+                         @onclick="() => OnOverlayClick(overlay)"
+                         @ondragstart="() => OnDragStart(overlay)"
+                         @ondragend="() => OnDragEnd(overlay)"
+                         draggable="@isEditMode">
+
+                        @if (overlay.Type == OverlayType.Tank)
+                        {
+                            <MudTooltip Text="@overlay.Name">
+                                <div class="overlay-content">
+                                    <MudIcon Icon="@overlay.Icon" Size="Size.Large" Color="@GetOverlayColor(overlay)" />
+                                    <MudText Typo="Typo.caption">@overlay.Value%</MudText>
+                                </div>
+                            </MudTooltip>
+                        }
+                        else if (overlay.Type == OverlayType.Control)
+                        {
+                            <MudTooltip Text="@overlay.Name">
+                                <MudSwitch Value="@overlay.IsOn"
+                                          Color="Color.Primary"
+                                          Disabled="@isEditMode"
+                                          ValueChanged="@((bool val) => OnControlToggle(overlay, val))" />
+                            </MudTooltip>
+                        }
+                    </div>
+                }
             </div>
         </MudPaper>
     </MudItem>
 
-    <MudItem xs="12" md="4">
-        <MudPaper Elevation="2" Class="pa-4 mb-4">
-            <MudText Typo="Typo.h6" GutterBottom="true">Quick Status</MudText>
-            @if (tanks == null)
-            {
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-            }
-            else
-            {
-                @foreach (var tank in tanks)
+    <MudItem xs="12" md="3">
+        <MudPaper Elevation="2" Class="pa-4" Style="min-height: calc(100vh - 200px); display: flex; flex-direction: column;">
+            <!-- Quick Status (takes up most space) -->
+            <div style="flex: 1; overflow-y: auto;">
+                @if (tanks == null)
                 {
-                    <div class="mb-3">
-                        <MudText Typo="Typo.body2">@tank.Name</MudText>
-                        <MudProgressLinear Color="@GetTankColor(tank)" Value="@tank.CurrentLevel" Class="my-1" />
-                        <MudText Typo="Typo.caption">@tank.CurrentLevel.ToString("F1")%</MudText>
-                    </div>
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
                 }
-            }
-        </MudPaper>
+                else
+                {
+                    @foreach (var tank in tanks)
+                    {
+                        <div class="mb-3">
+                            <MudText Typo="Typo.body2">@tank.Name</MudText>
+                            <MudProgressLinear Color="@GetTankColor(tank)" Value="@tank.CurrentLevel" Class="my-1" />
+                            <MudText Typo="Typo.caption">@tank.CurrentLevel.ToString("F1")%</MudText>
+                        </div>
+                    }
+                }
+            </div>
 
-        <MudPaper Elevation="2" Class="pa-4">
-            <MudText Typo="Typo.h6" GutterBottom="true">System Status</MudText>
-            <MudChip Color="@(Telemetry.IsConnected ? Color.Success : Color.Warning)"
-                    Icon="@(Telemetry.IsConnected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.CloudOff)">
-                @(Telemetry.IsConnected ? "Connected" : "Connecting...")
-            </MudChip>
-            <MudText Typo="Typo.caption" Class="mt-2">Last update: @lastUpdateTime</MudText>
-            @if (Telemetry.IsConnected)
-            {
-                <MudText Typo="Typo.caption" Color="Color.Success">Real-time updates active</MudText>
-            }
+            <!-- System Status Footer -->
+            <MudDivider Class="my-3" />
+            <div>
+                <MudChip Size="Size.Small" Color="@(Telemetry.IsConnected ? Color.Success : Color.Warning)"
+                        Icon="@(Telemetry.IsConnected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.CloudOff)">
+                    @(Telemetry.IsConnected ? "Connected" : "Connecting...")
+                </MudChip>
+                <MudText Typo="Typo.caption" Class="mt-2">Last update: @lastUpdateTime</MudText>
+            </div>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -60,23 +103,138 @@
 @code {
     private List<TankDto>? tanks;
     private string lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
+    private string backgroundImage = "";
+    private bool isEditMode = false;
+    private List<OverlayItem> overlays = new();
+    private OverlayItem? draggedOverlay;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadTanks();
+        await LoadSettings();
+        CreateOverlaysFromTanks();
 
         // Subscribe to SignalR events
         Telemetry.TankLevelUpdated += OnTankLevelUpdated;
+        Telemetry.ControlStateChanged += OnControlStateChanged;
 
         // Start SignalR connection
         await Telemetry.StartAsync();
+    }
+
+    private void OnControlStateChanged(Guid controlId, object state, string name)
+    {
+        // Update overlay if it exists
+        var overlay = overlays.FirstOrDefault(o => o.Id == controlId);
+        if (overlay != null)
+        {
+            overlay.IsOn = Convert.ToBoolean(state);
+            InvokeAsync(StateHasChanged);
+        }
+
+        // Show toast notification
+        Snackbar.Add($"{name} turned {(Convert.ToBoolean(state) ? "ON" : "OFF")}", Severity.Info);
+    }
+
+    private async Task LoadSettings()
+    {
+        try
+        {
+            // TODO: Load from settings API
+            backgroundImage = "/van-diagram.png"; // Default placeholder
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading settings: {ex.Message}");
+        }
+    }
+
+    private void CreateOverlaysFromTanks()
+    {
+        if (tanks == null) return;
+
+        overlays.Clear();
+        int index = 0;
+        foreach (var tank in tanks)
+        {
+            overlays.Add(new OverlayItem
+            {
+                Id = tank.Id,
+                Name = tank.Name,
+                Type = OverlayType.Tank,
+                Icon = GetTankIcon(tank.Type),
+                Value = tank.CurrentLevel,
+                X = 20 + (index * 15), // Spread horizontally
+                Y = 30 + (index % 2) * 20 // Alternate vertically
+            });
+            index++;
+        }
+    }
+
+    private string GetTankIcon(TankType type)
+    {
+        return type switch
+        {
+            TankType.FreshWater => Icons.Material.Filled.WaterDrop,
+            TankType.WasteWater => Icons.Material.Filled.Delete,
+            TankType.LPG => Icons.Material.Filled.Propane,
+            TankType.Fuel => Icons.Material.Filled.LocalGasStation,
+            TankType.Battery => Icons.Material.Filled.BatteryFull,
+            _ => Icons.Material.Filled.Opacity
+        };
+    }
+
+    private void OnOverlayClick(OverlayItem overlay)
+    {
+        if (!isEditMode)
+        {
+            // Show details in a dialog or snackbar
+            Snackbar.Add($"{overlay.Name}: {overlay.Value}%", Severity.Info);
+        }
+    }
+
+    private void OnDragStart(OverlayItem overlay)
+    {
+        draggedOverlay = overlay;
+    }
+
+    private void OnDragEnd(OverlayItem overlay)
+    {
+        // TODO: Save position to backend
+        draggedOverlay = null;
+    }
+
+    private async Task OnControlToggle(OverlayItem overlay, bool value)
+    {
+        overlay.IsOn = value;
+
+        // TODO: Call API to invoke configured action
+        Snackbar.Add($"{overlay.Name} turned {(value ? "ON" : "OFF")}", Severity.Success);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private Color GetOverlayColor(OverlayItem overlay)
+    {
+        if (overlay.Type == OverlayType.Tank)
+        {
+            if (overlay.Value < 20) return Color.Error;
+            if (overlay.Value < 50) return Color.Warning;
+            return Color.Success;
+        }
+        return overlay.IsOn ? Color.Success : Color.Default;
     }
 
     private async Task LoadTanks()
     {
         try
         {
-            tanks = await Http.GetFromJsonAsync<List<TankDto>>("api/tanks");
+            var jsonOptions = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
+            };
+            tanks = await Http.GetFromJsonAsync<List<TankDto>>("api/tanks", jsonOptions);
             lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
         }
         catch (Exception ex)
@@ -101,7 +259,7 @@
 
     private Color GetTankColor(TankDto tank)
     {
-        if (tank.Type == "WasteWater")
+        if (tank.Type == TankType.WasteWater)
         {
             return tank.CurrentLevel > tank.HighLevelThreshold ? Color.Error : Color.Info;
         }
@@ -112,17 +270,46 @@
     public async ValueTask DisposeAsync()
     {
         Telemetry.TankLevelUpdated -= OnTankLevelUpdated;
+        Telemetry.ControlStateChanged -= OnControlStateChanged;
         await Telemetry.StopAsync();
+    }
+
+    public enum TankType
+    {
+        FreshWater,
+        WasteWater,
+        LPG,
+        Fuel,
+        Battery
+    }
+
+    public enum OverlayType
+    {
+        Tank,
+        Control
     }
 
     public class TankDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Type { get; set; } = string.Empty;
+        public TankType Type { get; set; }
         public double CurrentLevel { get; set; }
         public double Capacity { get; set; }
         public double LowLevelThreshold { get; set; }
         public double HighLevelThreshold { get; set; }
+    }
+
+    public class OverlayItem
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public OverlayType Type { get; set; }
+        public string Icon { get; set; } = string.Empty;
+        public double Value { get; set; }
+        public bool IsOn { get; set; }
+        public double X { get; set; } // Position as percentage
+        public double Y { get; set; } // Position as percentage
+        public string? ConfiguredAction { get; set; } // For controls
     }
 }
