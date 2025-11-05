@@ -71,14 +71,13 @@ docker --version
 docker run hello-world
 ```
 
-### 4. Install Docker Compose
+### 4. Verify Docker Compose
+
+Docker Compose V2 is included with the Docker installation from get.docker.com.
 
 ```bash
-# Install Docker Compose
-sudo apt install docker-compose -y
-
-# Verify installation
-docker-compose --version
+# Verify Docker Compose is available
+docker compose version
 ```
 
 ## VanDaemon Installation
@@ -113,19 +112,19 @@ Configuration options:
 
 ```bash
 cd docker
-docker-compose up -d
+docker compose up -d
 ```
 
 ### 4. Verify Installation
 
 Check that containers are running:
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 Check logs:
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 Access the web interface:
@@ -156,8 +155,8 @@ Type=oneshot
 RemainAfterExit=yes
 User=pi
 WorkingDirectory=/home/pi/vandaemon/docker
-ExecStart=/usr/bin/docker-compose up -d
-ExecStop=/usr/bin/docker-compose down
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
 TimeoutStartSec=300
 
 [Install]
@@ -186,7 +185,7 @@ sudo systemctl status vandaemon
 crontab -e
 
 # Add this line:
-@reboot sleep 30 && cd /home/pi/vandaemon/docker && /usr/bin/docker-compose up -d
+@reboot sleep 30 && cd /home/pi/vandaemon/docker && /usr/bin/docker compose up -d
 ```
 
 ## Hardware Configuration
@@ -326,7 +325,7 @@ htop
 
 # Check Docker logs
 cd ~/vandaemon/docker
-docker-compose logs --tail=100 -f
+docker compose logs --tail=100 -f
 ```
 
 ### Regular Maintenance
@@ -338,7 +337,7 @@ sudo apt update && sudo apt upgrade -y
 
 # Restart VanDaemon (if needed)
 cd ~/vandaemon/docker
-docker-compose restart
+docker compose restart
 ```
 
 Monthly tasks:
@@ -356,7 +355,7 @@ cp -r ~/vandaemon/docker /backup/location/
 
 ```bash
 # Check logs
-docker-compose logs
+docker compose logs
 
 # Check disk space
 df -h
@@ -369,7 +368,7 @@ systemctl status docker
 
 ```bash
 # Check if containers are running
-docker-compose ps
+docker compose ps
 
 # Check firewall (if enabled)
 sudo ufw status
