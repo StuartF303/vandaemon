@@ -1,11 +1,45 @@
 @page "/settings"
+@using Microsoft.AspNetCore.Components.Forms
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
 <PageTitle>Settings - VanDaemon</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Settings</MudText>
-<MudText Class="mb-8">Configure your VanDaemon system</MudText>
+<style>
+    .settings-header {
+        margin-bottom: 24px;
+    }
+
+    .settings-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .settings-button {
+        min-height: 48px;
+    }
+
+    @@media (max-width: 600px) {
+        .settings-header h3 {
+            font-size: 1.75rem;
+        }
+
+        .settings-actions {
+            flex-direction: column;
+        }
+
+        .settings-button {
+            width: 100%;
+            min-height: 56px;
+        }
+    }
+</style>
+
+<div class="settings-header">
+    <MudText Typo="Typo.h3" GutterBottom="true">Settings</MudText>
+    <MudText Class="mb-8">Configure your VanDaemon system</MudText>
+</div>
 
 @if (configuration == null)
 {
@@ -23,7 +57,7 @@ else
                              Variant="Variant.Outlined"
                              Class="mb-3" />
 
-                <MudSelect @bind-Value="configuration.VanModel"
+                <MudSelect @bind-Value="configuration.VanDiagramPath"
                           Label="Select Van Diagram"
                           Variant="Variant.Outlined"
                           Class="mb-3">
@@ -35,6 +69,44 @@ else
                         }
                     }
                 </MudSelect>
+
+                <MudSelect @bind-Value="configuration.ToolbarPosition"
+                          Label="Toolbar Position"
+                          Variant="Variant.Outlined"
+                          Class="mb-3"
+                          HelperText="Set based on left/right-hand drive or phone layout">
+                    <MudSelectItem Value="@("Left")">Left (Right-hand drive)</MudSelectItem>
+                    <MudSelectItem Value="@("Right")">Right (Left-hand drive)</MudSelectItem>
+                    <MudSelectItem Value="@("Bottom")">Bottom (Phone/Tablet)</MudSelectItem>
+                </MudSelect>
+
+                <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">Upload Custom Van Diagram</MudText>
+                <MudFileUpload T="IBrowserFile"
+                              FilesChanged="OnFileSelected"
+                              Accept=".png,.jpg,.jpeg,.svg">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label"
+                                  Variant="Variant.Filled"
+                                  Color="Color.Primary"
+                                  StartIcon="@Icons.Material.Filled.CloudUpload"
+                                  for="@context">
+                            Upload Image
+                        </MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+
+                @if (!string.IsNullOrEmpty(uploadedFileName))
+                {
+                    <MudText Typo="Typo.body2" Class="mt-2">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                        Uploaded: @uploadedFileName
+                    </MudText>
+                }
+
+                @if (!string.IsNullOrEmpty(configuration.VanDiagramPath))
+                {
+                    <MudText Typo="Typo.caption" Class="mt-2">Current: @configuration.VanDiagramPath</MudText>
+                }
             </MudPaper>
         </MudItem>
 
@@ -95,22 +167,25 @@ else
         </MudItem>
 
         <MudItem xs="12">
-            <MudButton Variant="Variant.Filled"
-                      Color="Color.Primary"
-                      Size="Size.Large"
-                      StartIcon="@Icons.Material.Filled.Save"
-                      OnClick="SaveSettings">
-                Save Settings
-            </MudButton>
+            <div class="settings-actions">
+                <MudButton Variant="Variant.Filled"
+                          Color="Color.Primary"
+                          Size="Size.Large"
+                          StartIcon="@Icons.Material.Filled.Save"
+                          OnClick="SaveSettings"
+                          Class="settings-button">
+                    Save Settings
+                </MudButton>
 
-            <MudButton Variant="Variant.Outlined"
-                      Color="Color.Default"
-                      Size="Size.Large"
-                      StartIcon="@Icons.Material.Filled.Refresh"
-                      OnClick="LoadSettings"
-                      Class="ml-2">
-                Reload
-            </MudButton>
+                <MudButton Variant="Variant.Outlined"
+                          Color="Color.Default"
+                          Size="Size.Large"
+                          StartIcon="@Icons.Material.Filled.Refresh"
+                          OnClick="LoadSettings"
+                          Class="settings-button">
+                    Reload
+                </MudButton>
+            </div>
         </MudItem>
     </MudGrid>
 }
@@ -118,11 +193,52 @@ else
 @code {
     private SystemConfigurationDto? configuration;
     private List<string>? availableDiagrams;
+    private string uploadedFileName = "";
 
     protected override async Task OnInitializedAsync()
     {
         await LoadSettings();
         await LoadAvailableDiagrams();
+    }
+
+    private async Task OnFileSelected(IBrowserFile file)
+    {
+        if (file == null) return;
+
+        try
+        {
+            // Max file size: 5MB
+            var maxFileSize = 5 * 1024 * 1024;
+
+            using var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+            content.Add(fileContent, "file", file.Name);
+
+            var response = await Http.PostAsync("api/settings/upload-diagram", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var uploadedPath = await response.Content.ReadAsStringAsync();
+                uploadedFileName = file.Name;
+
+                if (configuration != null)
+                {
+                    configuration.VanDiagramPath = uploadedPath.Trim('"');
+                }
+
+                Snackbar.Add("Diagram uploaded successfully", Severity.Success);
+                await LoadAvailableDiagrams();
+            }
+            else
+            {
+                Snackbar.Add("Failed to upload diagram", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error uploading file: {ex.Message}");
+            Snackbar.Add($"Upload failed: {ex.Message}", Severity.Error);
+        }
     }
 
     private async Task LoadSettings()
@@ -179,6 +295,7 @@ else
         public Guid Id { get; set; }
         public string VanModel { get; set; } = string.Empty;
         public string VanDiagramPath { get; set; } = string.Empty;
+        public string ToolbarPosition { get; set; } = "Left";
         public AlertSettingsDto AlertSettings { get; set; } = new();
         public DateTime LastUpdated { get; set; }
     }

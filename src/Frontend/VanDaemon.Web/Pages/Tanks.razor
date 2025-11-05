@@ -4,16 +4,41 @@
 
 <PageTitle>Tanks - VanDaemon</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Tank Monitoring</MudText>
-<MudText Class="mb-4">Monitor water, waste, LPG, and fuel levels</MudText>
+<style>
+    .tanks-header {
+        margin-bottom: 24px;
+    }
 
-<MudButton Variant="Variant.Filled"
-           Color="Color.Primary"
-           StartIcon="@Icons.Material.Filled.Refresh"
-           OnClick="RefreshAll"
-           Class="mb-4">
-    Refresh All Tanks
-</MudButton>
+    .refresh-button {
+        min-height: 48px;
+        font-size: 16px;
+    }
+
+    @@media (max-width: 600px) {
+        .tanks-header h3 {
+            font-size: 1.75rem;
+        }
+
+        .refresh-button {
+            width: 100%;
+            min-height: 56px;
+        }
+    }
+</style>
+
+<div class="tanks-header">
+    <MudText Typo="Typo.h3" GutterBottom="true">Tank Monitoring</MudText>
+    <MudText Class="mb-4">Monitor water, waste, LPG, and fuel levels</MudText>
+
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.Refresh"
+               OnClick="RefreshAll"
+               Class="mb-4 refresh-button"
+               Size="Size.Large">
+        Refresh All Tanks
+    </MudButton>
+</div>
 
 @if (tanks == null)
 {
@@ -81,7 +106,12 @@ else
     {
         try
         {
-            tanks = await Http.GetFromJsonAsync<List<TankDto>>("api/tanks");
+            var jsonOptions = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
+            };
+            tanks = await Http.GetFromJsonAsync<List<TankDto>>("api/tanks", jsonOptions);
         }
         catch (Exception ex)
         {
@@ -110,7 +140,7 @@ else
 
     private Color GetTankProgressColor(TankDto tank)
     {
-        if (tank.Type == "WasteWater")
+        if (tank.Type == TankType.WasteWater)
         {
             return tank.CurrentLevel > tank.HighLevelThreshold ? Color.Error : Color.Info;
         }
@@ -122,35 +152,35 @@ else
         return Color.Success;
     }
 
-    private Color GetTankTypeColor(string type)
+    private Color GetTankTypeColor(TankType type)
     {
         return type switch
         {
-            "FreshWater" => Color.Info,
-            "WasteWater" => Color.Warning,
-            "LPG" => Color.Secondary,
-            "Fuel" => Color.Dark,
-            "Battery" => Color.Success,
+            TankType.FreshWater => Color.Info,
+            TankType.WasteWater => Color.Warning,
+            TankType.LPG => Color.Secondary,
+            TankType.Fuel => Color.Dark,
+            TankType.Battery => Color.Success,
             _ => Color.Default
         };
     }
 
-    private string GetTankIcon(string type)
+    private string GetTankIcon(TankType type)
     {
         return type switch
         {
-            "FreshWater" => Icons.Material.Filled.WaterDrop,
-            "WasteWater" => Icons.Material.Filled.Delete,
-            "LPG" => Icons.Material.Filled.Propane,
-            "Fuel" => Icons.Material.Filled.LocalGasStation,
-            "Battery" => Icons.Material.Filled.BatteryFull,
+            TankType.FreshWater => Icons.Material.Filled.WaterDrop,
+            TankType.WasteWater => Icons.Material.Filled.Delete,
+            TankType.LPG => Icons.Material.Filled.Propane,
+            TankType.Fuel => Icons.Material.Filled.LocalGasStation,
+            TankType.Battery => Icons.Material.Filled.BatteryFull,
             _ => Icons.Material.Filled.Opacity
         };
     }
 
     private bool IsTankInWarningState(TankDto tank)
     {
-        if (tank.Type == "WasteWater")
+        if (tank.Type == TankType.WasteWater)
             return tank.CurrentLevel >= tank.HighLevelThreshold;
 
         return tank.CurrentLevel <= tank.LowLevelThreshold;
@@ -158,7 +188,7 @@ else
 
     private Severity GetAlertSeverity(TankDto tank)
     {
-        if (tank.Type == "WasteWater")
+        if (tank.Type == TankType.WasteWater)
             return tank.CurrentLevel >= 95 ? Severity.Error : Severity.Warning;
 
         return tank.CurrentLevel <= (tank.LowLevelThreshold / 2) ? Severity.Error : Severity.Warning;
@@ -166,17 +196,26 @@ else
 
     private string GetWarningMessage(TankDto tank)
     {
-        if (tank.Type == "WasteWater")
+        if (tank.Type == TankType.WasteWater)
             return tank.CurrentLevel >= 95 ? "Tank almost full!" : "Tank level high";
 
         return tank.CurrentLevel <= (tank.LowLevelThreshold / 2) ? "Tank critically low!" : "Tank level low";
+    }
+
+    public enum TankType
+    {
+        FreshWater,
+        WasteWater,
+        LPG,
+        Fuel,
+        Battery
     }
 
     public class TankDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Type { get; set; } = string.Empty;
+        public TankType Type { get; set; }
         public double CurrentLevel { get; set; }
         public double Capacity { get; set; }
         public double LowLevelThreshold { get; set; }
