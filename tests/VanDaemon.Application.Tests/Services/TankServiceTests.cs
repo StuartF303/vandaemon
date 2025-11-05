@@ -18,7 +18,7 @@ public class TankServiceTests
         _loggerMock = new Mock<ILogger<TankService>>();
         _sensorPluginMock = new Mock<ISensorPlugin>();
 
-        _sensorPluginMock.Setup(x => x.Name).Returns("Test Plugin");
+        _sensorPluginMock.Setup(x => x.Name).Returns("Simulated Sensor Plugin");
         _sensorPluginMock.Setup(x => x.Version).Returns("1.0.0");
 
         _tankService = new TankService(_loggerMock.Object, new[] { _sensorPluginMock.Object });
@@ -93,7 +93,7 @@ public class TankServiceTests
             Type = VanDaemon.Core.Enums.TankType.FreshWater,
             Capacity = 50,
             CurrentLevel = 0,
-            SensorPlugin = "Test Plugin"
+            SensorPlugin = "Simulated Sensor Plugin"
         };
 
         // Act
