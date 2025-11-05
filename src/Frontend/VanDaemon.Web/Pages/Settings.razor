@@ -1,0 +1,193 @@
+@page "/settings"
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<PageTitle>Settings - VanDaemon</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Settings</MudText>
+<MudText Class="mb-8">Configure your VanDaemon system</MudText>
+
+@if (configuration == null)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudPaper Elevation="2" Class="pa-4">
+                <MudText Typo="Typo.h6" GutterBottom="true">Van Configuration</MudText>
+
+                <MudTextField @bind-Value="configuration.VanModel"
+                             Label="Van Model"
+                             Variant="Variant.Outlined"
+                             Class="mb-3" />
+
+                <MudSelect @bind-Value="configuration.VanModel"
+                          Label="Select Van Diagram"
+                          Variant="Variant.Outlined"
+                          Class="mb-3">
+                    @if (availableDiagrams != null)
+                    {
+                        @foreach (var diagram in availableDiagrams)
+                        {
+                            <MudSelectItem Value="@diagram">@diagram</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <MudPaper Elevation="2" Class="pa-4">
+                <MudText Typo="Typo.h6" GutterBottom="true">Alert Settings</MudText>
+
+                <MudNumericField @bind-Value="configuration.AlertSettings.TankLowLevelThreshold"
+                               Label="Low Level Threshold (%)"
+                               Variant="Variant.Outlined"
+                               Min="0"
+                               Max="50"
+                               Class="mb-3" />
+
+                <MudNumericField @bind-Value="configuration.AlertSettings.TankHighLevelThreshold"
+                               Label="High Level Threshold (%)"
+                               Variant="Variant.Outlined"
+                               Min="50"
+                               Max="100"
+                               Class="mb-3" />
+
+                <MudSwitch @bind-Checked="configuration.AlertSettings.EnableAudioAlerts"
+                          Label="Enable Audio Alerts"
+                          Color="Color.Primary"
+                          Class="mb-2" />
+
+                <MudSwitch @bind-Checked="configuration.AlertSettings.EnablePushNotifications"
+                          Label="Enable Push Notifications"
+                          Color="Color.Primary" />
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudPaper Elevation="2" Class="pa-4">
+                <MudText Typo="Typo.h6" GutterBottom="true">System Information</MudText>
+
+                <MudSimpleTable Striped="true">
+                    <tbody>
+                        <tr>
+                            <td><strong>Van Model</strong></td>
+                            <td>@configuration.VanModel</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Configuration ID</strong></td>
+                            <td>@configuration.Id</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Last Updated</strong></td>
+                            <td>@configuration.LastUpdated.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        </tr>
+                        <tr>
+                            <td><strong>API Endpoint</strong></td>
+                            <td>@Http.BaseAddress</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Filled"
+                      Color="Color.Primary"
+                      Size="Size.Large"
+                      StartIcon="@Icons.Material.Filled.Save"
+                      OnClick="SaveSettings">
+                Save Settings
+            </MudButton>
+
+            <MudButton Variant="Variant.Outlined"
+                      Color="Color.Default"
+                      Size="Size.Large"
+                      StartIcon="@Icons.Material.Filled.Refresh"
+                      OnClick="LoadSettings"
+                      Class="ml-2">
+                Reload
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    private SystemConfigurationDto? configuration;
+    private List<string>? availableDiagrams;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSettings();
+        await LoadAvailableDiagrams();
+    }
+
+    private async Task LoadSettings()
+    {
+        try
+        {
+            configuration = await Http.GetFromJsonAsync<SystemConfigurationDto>("api/settings");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading settings: {ex.Message}");
+            Snackbar.Add("Failed to load settings", Severity.Error);
+        }
+    }
+
+    private async Task LoadAvailableDiagrams()
+    {
+        try
+        {
+            availableDiagrams = await Http.GetFromJsonAsync<List<string>>("api/settings/van-diagrams");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading diagrams: {ex.Message}");
+        }
+    }
+
+    private async Task SaveSettings()
+    {
+        if (configuration == null) return;
+
+        try
+        {
+            var response = await Http.PutAsJsonAsync("api/settings", configuration);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Settings saved successfully", Severity.Success);
+                await LoadSettings();
+            }
+            else
+            {
+                Snackbar.Add("Failed to save settings", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving settings: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    public class SystemConfigurationDto
+    {
+        public Guid Id { get; set; }
+        public string VanModel { get; set; } = string.Empty;
+        public string VanDiagramPath { get; set; } = string.Empty;
+        public AlertSettingsDto AlertSettings { get; set; } = new();
+        public DateTime LastUpdated { get; set; }
+    }
+
+    public class AlertSettingsDto
+    {
+        public double TankLowLevelThreshold { get; set; }
+        public double TankHighLevelThreshold { get; set; }
+        public bool EnableAudioAlerts { get; set; }
+        public bool EnablePushNotifications { get; set; }
+    }
+}

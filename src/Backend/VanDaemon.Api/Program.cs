@@ -1,4 +1,6 @@
 using Serilog;
+using VanDaemon.Api.Hubs;
+using VanDaemon.Api.Services;
 using VanDaemon.Application.Interfaces;
 using VanDaemon.Application.Services;
 using VanDaemon.Plugins.Abstractions;
@@ -22,14 +24,15 @@ builder.Services.AddSwaggerGen();
 // Add SignalR for real-time communication
 builder.Services.AddSignalR();
 
-// Add CORS
+// Add CORS (with credentials for SignalR)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:8080", "http://localhost:5001")
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
@@ -39,6 +42,12 @@ builder.Services.AddSingleton<IControlPlugin, SimulatedControlPlugin>();
 
 // Register application services
 builder.Services.AddSingleton<ITankService, TankService>();
+builder.Services.AddSingleton<IControlService, ControlService>();
+builder.Services.AddSingleton<IAlertService, AlertService>();
+builder.Services.AddSingleton<ISettingsService, SettingsService>();
+
+// Register background services
+builder.Services.AddHostedService<TelemetryBackgroundService>();
 
 // Initialize plugins
 var app = builder.Build();
@@ -69,7 +78,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Map SignalR hubs
-// app.MapHub<TelemetryHub>("/hubs/telemetry");
+app.MapHub<TelemetryHub>("/hubs/telemetry");
 
 Log.Information("VanDaemon API starting up...");
+Log.Information("SignalR hub available at /hubs/telemetry");
 app.Run();
