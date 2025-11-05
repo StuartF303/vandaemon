@@ -1,0 +1,154 @@
+@page "/controls"
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<PageTitle>Controls - VanDaemon</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Controls</MudText>
+<MudText Class="mb-8">Manage your van's lights, pumps, and heating systems</MudText>
+
+@if (controls == null)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudGrid>
+        @foreach (var control in controls)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudCard Elevation="2">
+                    <MudCardContent>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <MudIcon Icon="@GetControlIcon(control.IconName)" Size="Size.Large" Color="Color.Primary" />
+                            <MudText Typo="Typo.h6">@control.Name</MudText>
+                        </div>
+
+                        @if (control.Type == "Toggle")
+                        {
+                            <MudSwitch @bind-Checked="@GetToggleState(control)"
+                                      Color="Color.Success"
+                                      Label="@(GetToggleState(control) ? "On" : "Off")"
+                                      T="bool"
+                                      CheckedChanged="@((bool value) => OnToggleChanged(control, value))" />
+                        }
+                        else if (control.Type == "Dimmer")
+                        {
+                            <MudSlider @bind-Value="@GetDimmerValue(control)"
+                                      Color="Color.Primary"
+                                      Min="0"
+                                      Max="100"
+                                      Step="5"
+                                      ValueChanged="@((int value) => OnDimmerChanged(control, value))" />
+                            <MudText Typo="Typo.caption" Align="Align.Center">@GetDimmerValue(control)%</MudText>
+                        }
+
+                        <MudText Typo="Typo.caption" Class="mt-2">
+                            Last updated: @control.LastUpdated.ToLocalTime().ToString("HH:mm:ss")
+                        </MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+@code {
+    private List<ControlDto>? controls;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadControls();
+    }
+
+    private async Task LoadControls()
+    {
+        try
+        {
+            controls = await Http.GetFromJsonAsync<List<ControlDto>>("api/controls");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading controls: {ex.Message}");
+            Snackbar.Add("Failed to load controls", Severity.Error);
+        }
+    }
+
+    private bool GetToggleState(ControlDto control)
+    {
+        if (control.State is bool boolState)
+            return boolState;
+        if (control.State is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.True)
+            return true;
+        return false;
+    }
+
+    private int GetDimmerValue(ControlDto control)
+    {
+        if (control.State is int intState)
+            return intState;
+        if (control.State is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Number)
+            return jsonElement.GetInt32();
+        return 0;
+    }
+
+    private async Task OnToggleChanged(ControlDto control, bool value)
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"api/controls/{control.Id}/state", new { state = value });
+            if (response.IsSuccessStatusCode)
+            {
+                control.State = value;
+                Snackbar.Add($"{control.Name} turned {(value ? "on" : "off")}", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Failed to control {control.Name}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error controlling {control.Name}: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task OnDimmerChanged(ControlDto control, int value)
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"api/controls/{control.Id}/state", new { state = value });
+            if (response.IsSuccessStatusCode)
+            {
+                control.State = value;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error controlling {control.Name}: {ex.Message}");
+        }
+    }
+
+    private string GetControlIcon(string iconName)
+    {
+        return iconName switch
+        {
+            "lightbulb" => Icons.Material.Filled.Lightbulb,
+            "light_mode" => Icons.Material.Filled.LightMode,
+            "water_pump" => Icons.Material.Filled.WaterDrop,
+            "thermostat" => Icons.Material.Filled.Thermostat,
+            _ => Icons.Material.Filled.SettingsInputComponent
+        };
+    }
+
+    public class ControlDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public object State { get; set; } = false;
+        public string IconName { get; set; } = string.Empty;
+        public DateTime LastUpdated { get; set; }
+    }
+}

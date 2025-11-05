@@ -1,0 +1,186 @@
+@page "/tanks"
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<PageTitle>Tanks - VanDaemon</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Tank Monitoring</MudText>
+<MudText Class="mb-4">Monitor water, waste, LPG, and fuel levels</MudText>
+
+<MudButton Variant="Variant.Filled"
+           Color="Color.Primary"
+           StartIcon="@Icons.Material.Filled.Refresh"
+           OnClick="RefreshAll"
+           Class="mb-4">
+    Refresh All Tanks
+</MudButton>
+
+@if (tanks == null)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudGrid>
+        @foreach (var tank in tanks)
+        {
+            <MudItem xs="12" md="6" lg="4">
+                <MudCard Elevation="2">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">@tank.Name</MudText>
+                            <MudChip Size="Size.Small" Color="@GetTankTypeColor(tank.Type)">@tank.Type</MudChip>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@GetTankIcon(tank.Type)" Color="Color.Primary" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-2">
+                            @tank.CurrentLevel.ToString("F1")%
+                        </MudText>
+
+                        <MudProgressLinear Color="@GetTankProgressColor(tank)"
+                                         Value="@tank.CurrentLevel"
+                                         Size="Size.Large"
+                                         Class="my-2" />
+
+                        <MudText Typo="Typo.body2" Class="mt-3">
+                            <strong>Capacity:</strong> @tank.Capacity L
+                        </MudText>
+                        <MudText Typo="Typo.body2">
+                            <strong>Actual:</strong> @((tank.CurrentLevel / 100 * tank.Capacity).ToString("F1")) L
+                        </MudText>
+
+                        @if (IsTankInWarningState(tank))
+                        {
+                            <MudAlert Severity="@GetAlertSeverity(tank)" Dense="true" Class="mt-2">
+                                @GetWarningMessage(tank)
+                            </MudAlert>
+                        }
+
+                        <MudText Typo="Typo.caption" Class="mt-2">
+                            Last updated: @tank.LastUpdated.ToLocalTime().ToString("HH:mm:ss")
+                        </MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+@code {
+    private List<TankDto>? tanks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTanks();
+    }
+
+    private async Task LoadTanks()
+    {
+        try
+        {
+            tanks = await Http.GetFromJsonAsync<List<TankDto>>("api/tanks");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading tanks: {ex.Message}");
+            Snackbar.Add("Failed to load tanks", Severity.Error);
+        }
+    }
+
+    private async Task RefreshAll()
+    {
+        try
+        {
+            var response = await Http.PostAsync("api/tanks/refresh", null);
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadTanks();
+                Snackbar.Add("All tank levels refreshed", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error refreshing tanks: {ex.Message}");
+            Snackbar.Add("Failed to refresh tanks", Severity.Error);
+        }
+    }
+
+    private Color GetTankProgressColor(TankDto tank)
+    {
+        if (tank.Type == "WasteWater")
+        {
+            return tank.CurrentLevel > tank.HighLevelThreshold ? Color.Error : Color.Info;
+        }
+
+        if (tank.CurrentLevel < tank.LowLevelThreshold)
+            return Color.Error;
+        if (tank.CurrentLevel < tank.LowLevelThreshold * 2)
+            return Color.Warning;
+        return Color.Success;
+    }
+
+    private Color GetTankTypeColor(string type)
+    {
+        return type switch
+        {
+            "FreshWater" => Color.Info,
+            "WasteWater" => Color.Warning,
+            "LPG" => Color.Secondary,
+            "Fuel" => Color.Dark,
+            "Battery" => Color.Success,
+            _ => Color.Default
+        };
+    }
+
+    private string GetTankIcon(string type)
+    {
+        return type switch
+        {
+            "FreshWater" => Icons.Material.Filled.WaterDrop,
+            "WasteWater" => Icons.Material.Filled.Delete,
+            "LPG" => Icons.Material.Filled.Propane,
+            "Fuel" => Icons.Material.Filled.LocalGasStation,
+            "Battery" => Icons.Material.Filled.BatteryFull,
+            _ => Icons.Material.Filled.Opacity
+        };
+    }
+
+    private bool IsTankInWarningState(TankDto tank)
+    {
+        if (tank.Type == "WasteWater")
+            return tank.CurrentLevel >= tank.HighLevelThreshold;
+
+        return tank.CurrentLevel <= tank.LowLevelThreshold;
+    }
+
+    private Severity GetAlertSeverity(TankDto tank)
+    {
+        if (tank.Type == "WasteWater")
+            return tank.CurrentLevel >= 95 ? Severity.Error : Severity.Warning;
+
+        return tank.CurrentLevel <= (tank.LowLevelThreshold / 2) ? Severity.Error : Severity.Warning;
+    }
+
+    private string GetWarningMessage(TankDto tank)
+    {
+        if (tank.Type == "WasteWater")
+            return tank.CurrentLevel >= 95 ? "Tank almost full!" : "Tank level high";
+
+        return tank.CurrentLevel <= (tank.LowLevelThreshold / 2) ? "Tank critically low!" : "Tank level low";
+    }
+
+    public class TankDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public double CurrentLevel { get; set; }
+        public double Capacity { get; set; }
+        public double LowLevelThreshold { get; set; }
+        public double HighLevelThreshold { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
+}

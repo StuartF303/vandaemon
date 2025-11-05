@@ -1,5 +1,7 @@
 @page "/"
 @inject HttpClient Http
+@inject TelemetryService Telemetry
+@implements IAsyncDisposable
 
 <PageTitle>Dashboard - VanDaemon</PageTitle>
 
@@ -42,18 +44,32 @@
 
         <MudPaper Elevation="2" Class="pa-4">
             <MudText Typo="Typo.h6" GutterBottom="true">System Status</MudText>
-            <MudChip Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle">Connected</MudChip>
-            <MudText Typo="Typo.caption" Class="mt-2">Last update: @DateTime.Now.ToString("HH:mm:ss")</MudText>
+            <MudChip Color="@(Telemetry.IsConnected ? Color.Success : Color.Warning)"
+                    Icon="@(Telemetry.IsConnected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.CloudOff)">
+                @(Telemetry.IsConnected ? "Connected" : "Connecting...")
+            </MudChip>
+            <MudText Typo="Typo.caption" Class="mt-2">Last update: @lastUpdateTime</MudText>
+            @if (Telemetry.IsConnected)
+            {
+                <MudText Typo="Typo.caption" Color="Color.Success">Real-time updates active</MudText>
+            }
         </MudPaper>
     </MudItem>
 </MudGrid>
 
 @code {
     private List<TankDto>? tanks;
+    private string lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
 
     protected override async Task OnInitializedAsync()
     {
         await LoadTanks();
+
+        // Subscribe to SignalR events
+        Telemetry.TankLevelUpdated += OnTankLevelUpdated;
+
+        // Start SignalR connection
+        await Telemetry.StartAsync();
     }
 
     private async Task LoadTanks()
@@ -61,10 +77,25 @@
         try
         {
             tanks = await Http.GetFromJsonAsync<List<TankDto>>("api/tanks");
+            lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading tanks: {ex.Message}");
+        }
+    }
+
+    private void OnTankLevelUpdated(Guid tankId, double level, string name)
+    {
+        if (tanks != null)
+        {
+            var tank = tanks.FirstOrDefault(t => t.Id == tankId);
+            if (tank != null)
+            {
+                tank.CurrentLevel = level;
+                lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
+                InvokeAsync(StateHasChanged);
+            }
         }
     }
 
@@ -76,6 +107,12 @@
         }
 
         return tank.CurrentLevel < tank.LowLevelThreshold ? Color.Error : Color.Success;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        Telemetry.TankLevelUpdated -= OnTankLevelUpdated;
+        await Telemetry.StopAsync();
     }
 
     public class TankDto
