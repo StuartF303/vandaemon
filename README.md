@@ -137,7 +137,7 @@ VanDaemon supports multiple deployment options:
 
 ### Cloud Deployment (Fly.io)
 
-Deploy VanDaemon to the cloud for remote access:
+Deploy VanDaemon to the cloud for remote access as a single combined container:
 
 ```bash
 # Install Fly.io CLI
@@ -145,15 +145,15 @@ curl -L https://fly.io/install.sh | sh
 
 # Login and deploy
 flyctl auth login
-flyctl apps create vandaemon-api
-flyctl apps create vandaemon-web
-flyctl deploy --config fly.api.toml
-flyctl deploy --config fly.web.toml
+flyctl apps create vandaemon
+flyctl deploy
 ```
 
 Access your application at:
-- Web: https://vandaemon-web.fly.dev
-- API: https://vandaemon-api.fly.dev
+- **Single URL**: https://vandaemon.fly.dev
+  - Web Frontend: `/`
+  - API Backend: `/api`
+  - SignalR: `/hubs`
 
 For detailed instructions including GitHub Actions auto-deployment, see **[DEPLOYMENT.md](DEPLOYMENT.md)**
 

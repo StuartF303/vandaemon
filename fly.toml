@@ -1,12 +1,12 @@
-# fly.toml configuration for VanDaemon Web Frontend
-app = "vandaemon-web"
+# fly.toml configuration for VanDaemon Combined Deployment
+app = "vandaemon"
 primary_region = "iad"
 
 [build]
-  dockerfile = "docker/Dockerfile.web.prod"
+  dockerfile = "docker/Dockerfile.combined"
 
 [env]
-  API_URL = "https://vandaemon-api.fly.dev"
+  ASPNETCORE_ENVIRONMENT = "Production"
 
 [http_service]
   internal_port = 8080
@@ -21,10 +21,10 @@ primary_region = "iad"
     timeout = "5s"
     grace_period = "10s"
     method = "GET"
-    path = "/"
+    path = "/health"
     protocol = "http"
 
 [[vm]]
   cpu_kind = "shared"
   cpus = 1
-  memory_mb = 256
+  memory_mb = 1024

@@ -1,0 +1,66 @@
+# Stage 1: Build API
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-api
+WORKDIR /src
+
+# Copy solution and project files
+COPY ["VanDaemon.sln", "."]
+COPY ["src/Backend/VanDaemon.Api/VanDaemon.Api.csproj", "src/Backend/VanDaemon.Api/"]
+COPY ["src/Backend/VanDaemon.Core/VanDaemon.Core.csproj", "src/Backend/VanDaemon.Core/"]
+COPY ["src/Backend/VanDaemon.Application/VanDaemon.Application.csproj", "src/Backend/VanDaemon.Application/"]
+COPY ["src/Backend/VanDaemon.Infrastructure/VanDaemon.Infrastructure.csproj", "src/Backend/VanDaemon.Infrastructure/"]
+COPY ["src/Backend/VanDaemon.Plugins/VanDaemon.Plugins.Abstractions/VanDaemon.Plugins.Abstractions.csproj", "src/Backend/VanDaemon.Plugins/VanDaemon.Plugins.Abstractions/"]
+COPY ["src/Backend/VanDaemon.Plugins/VanDaemon.Plugins.Simulated/VanDaemon.Plugins.Simulated.csproj", "src/Backend/VanDaemon.Plugins/VanDaemon.Plugins.Simulated/"]
+
+# Restore dependencies
+RUN dotnet restore "src/Backend/VanDaemon.Api/VanDaemon.Api.csproj"
+
+# Copy everything else and build
+COPY . .
+WORKDIR "/src/src/Backend/VanDaemon.Api"
+RUN dotnet publish "VanDaemon.Api.csproj" -c Release -o /app/api /p:UseAppHost=false
+
+# Stage 2: Build Web Frontend
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-web
+WORKDIR /src
+
+# Copy project file
+COPY ["src/Frontend/VanDaemon.Web/VanDaemon.Web.csproj", "src/Frontend/VanDaemon.Web/"]
+
+# Restore dependencies
+RUN dotnet restore "src/Frontend/VanDaemon.Web/VanDaemon.Web.csproj"
+
+# Copy everything else and build
+COPY . .
+WORKDIR "/src/src/Frontend/VanDaemon.Web"
+RUN dotnet publish "VanDaemon.Web.csproj" -c Release -o /app/web /p:UseAppHost=false
+
+# Stage 3: Runtime - Combined API + Web
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+
+# Install nginx and supervisor
+RUN apt-get update && apt-get install -y \
+    nginx \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy API
+COPY --from=build-api /app/api ./api
+
+# Copy Web static files
+COPY --from=build-web /app/web/wwwroot /var/www/html
+
+# Copy nginx configuration
+COPY docker/nginx.combined.conf /etc/nginx/sites-available/default
+
+# Copy supervisor configuration
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Create startup script
+RUN echo '#!/bin/bash' > /app/start.sh && \
+    echo 'supervisord -c /etc/supervisor/conf.d/supervisord.conf' >> /app/start.sh && \
+    chmod +x /app/start.sh
+
+EXPOSE 8080
+
+ENTRYPOINT ["/app/start.sh"]
