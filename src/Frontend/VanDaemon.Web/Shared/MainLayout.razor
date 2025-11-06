@@ -128,7 +128,7 @@
         }
     }
 
-    /* Phone portrait mode (< 600px width) - force bottom toolbar */
+    /* Phone portrait mode (max 600px width) - force bottom toolbar */
     @@media (max-width: 600px) and (orientation: portrait) {
         .layout-container {
             grid-template-columns: 1fr !important;
@@ -162,7 +162,7 @@
         }
     }
 
-    /* Phone landscape mode (< 900px height) - use configured side toolbar with icons only */
+    /* Phone landscape mode (max 900px height) - use configured side toolbar with icons only */
     @@media (max-height: 900px) and (orientation: landscape) and (max-width: 1024px) {
         .toolbar-left .nav-area,
         .toolbar-right .nav-area {
