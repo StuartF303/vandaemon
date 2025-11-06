@@ -153,7 +153,21 @@ Access your application at:
 - **Single URL**: https://vandaemon.fly.dev
   - Web Frontend: `/`
   - API Backend: `/api`
-  - SignalR: `/hubs`
+  - SignalR WebSocket: `/hubs`
+  - Health Check: `/health`
+
+#### Architecture
+The Fly.io deployment uses a single container with:
+- **Nginx** (Port 8080) - Serves Blazor WASM static files and proxies API/WebSocket requests
+- **.NET API** (Port 5000 internal) - Handles REST API and SignalR connections
+- **Supervisor** - Manages both nginx and API processes
+
+#### Key Features
+- **Single Endpoint**: All services accessible from one URL
+- **WebSocket Support**: Nginx configured for long-lived SignalR connections
+- **Health Checks**: Automatic monitoring via `/health` endpoint
+- **Auto-Scaling**: Machines stop when idle to save costs
+- **GitHub Actions**: Automatic deployment on push to main branch
 
 For detailed instructions including GitHub Actions auto-deployment, see **[DEPLOYMENT.md](DEPLOYMENT.md)**
 
@@ -229,6 +243,7 @@ sudo systemctl start vandaemon
 
 The API is documented with OpenAPI/Swagger. Access the interactive documentation at:
 - http://localhost:5000/swagger (when running locally)
+- https://vandaemon.fly.dev/swagger (when deployed)
 
 ### Key Endpoints
 
@@ -236,6 +251,15 @@ The API is documented with OpenAPI/Swagger. Access the interactive documentation
 - `GET /api/tanks/{id}/level` - Get current tank level
 - `POST /api/tanks/refresh` - Refresh all tank levels
 - `PUT /api/tanks/{id}` - Update tank configuration
+- `GET /health` - Health check endpoint (returns status and timestamp)
+
+### Real-Time Updates
+
+SignalR hub for real-time telemetry updates:
+- **Local**: ws://localhost:5000/hubs/telemetry
+- **Cloud**: wss://vandaemon.fly.dev/hubs/telemetry
+
+The hub broadcasts tank levels, control states, and alerts to all connected clients.
 
 ## Development
 
@@ -275,6 +299,7 @@ See [PROJECT_PLAN.md](PROJECT_PLAN.md) for the detailed development roadmap.
 - Check that API is running on http://localhost:5000
 - Verify CORS settings in `appsettings.json`
 - Check browser console for errors
+- The frontend automatically uses the current host URL (no configuration needed)
 
 **Issue**: Docker containers won't start
 - Run `docker compose logs` to check logs
@@ -285,6 +310,22 @@ See [PROJECT_PLAN.md](PROJECT_PLAN.md) for the detailed development roadmap.
 - Check plugin configuration in Settings
 - Verify hardware connections
 - Check API logs for errors
+
+**Issue**: SignalR WebSocket connections failing
+- Verify health endpoint is accessible: `curl https://your-app.fly.dev/health`
+- Check nginx logs for WebSocket upgrade errors
+- Ensure nginx is configured with proper WebSocket headers
+- Check for firewall blocking WebSocket connections (port 443 for wss://)
+
+**Issue**: Fly.io deployment health checks failing
+- Verify the `/health` endpoint returns 200 OK
+- Check logs: `flyctl logs --app vandaemon`
+- Ensure nginx and API are both running: `flyctl ssh console -C "supervisorctl status"`
+
+**Issue**: Frontend making requests to localhost in production
+- This is now fixed automatically - the frontend uses `builder.HostEnvironment.BaseAddress`
+- In production, it will use the deployed URL (e.g., https://vandaemon.fly.dev)
+- In development, it will use http://localhost:8080
 
 ## License
 
