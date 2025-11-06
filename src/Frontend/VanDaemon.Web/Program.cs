@@ -10,7 +10,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5000";
+// Use the current host as API base URL (nginx proxies /api to backend)
+// In production (Fly.io), this will be https://vandaemon.fly.dev
+// In local development, this will be http://localhost:8080 or wherever the app is hosted
+var apiBaseUrl = builder.HostEnvironment.BaseAddress.TrimEnd('/');
 
 // Configure JSON options for enum string conversion
 var jsonOptions = new JsonSerializerOptions
