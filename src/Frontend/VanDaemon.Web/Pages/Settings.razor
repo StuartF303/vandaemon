@@ -74,10 +74,10 @@ else
                           Label="Toolbar Position"
                           Variant="Variant.Outlined"
                           Class="mb-3"
-                          HelperText="Set based on left/right-hand drive or phone layout">
-                    <MudSelectItem Value="@("Left")">Left (Right-hand drive)</MudSelectItem>
-                    <MudSelectItem Value="@("Right")">Right (Left-hand drive)</MudSelectItem>
-                    <MudSelectItem Value="@("Bottom")">Bottom (Phone/Tablet)</MudSelectItem>
+                          HelperText="For tablets & landscape phones. Portrait phones always use bottom toolbar.">
+                    <MudSelectItem Value="@("Left")">Left Sidebar (Right-hand drive)</MudSelectItem>
+                    <MudSelectItem Value="@("Right")">Right Sidebar (Left-hand drive)</MudSelectItem>
+                    <MudSelectItem Value="@("Bottom")">Bottom Bar (Tablet/Desktop)</MudSelectItem>
                 </MudSelect>
 
                 <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">Upload Custom Van Diagram</MudText>

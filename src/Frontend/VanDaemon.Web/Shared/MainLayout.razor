@@ -104,8 +104,8 @@
         font-size: 12px;
     }
 
-    /* Mobile optimizations */
-    @@media (max-width: 960px) {
+    /* Tablet optimizations (600-960px) - icon-only side navigation */
+    @@media (min-width: 601px) and (max-width: 960px) {
         .toolbar-left .nav-area,
         .toolbar-right .nav-area {
             width: 80px;
@@ -128,8 +128,8 @@
         }
     }
 
-    @@media (max-width: 600px) {
-        /* Force bottom toolbar on small screens */
+    /* Phone portrait mode (< 600px width) - force bottom toolbar */
+    @@media (max-width: 600px) and (orientation: portrait) {
         .layout-container {
             grid-template-columns: 1fr !important;
             grid-template-rows: 1fr auto !important;
@@ -155,6 +155,50 @@
         .nav-item-text {
             display: block !important;
             font-size: 11px !important;
+        }
+
+        .main-area {
+            padding: 8px;
+        }
+    }
+
+    /* Phone landscape mode (< 900px height) - use configured side toolbar with icons only */
+    @@media (max-height: 900px) and (orientation: landscape) and (max-width: 1024px) {
+        .toolbar-left .nav-area,
+        .toolbar-right .nav-area {
+            width: 70px !important;
+            padding: 6px !important;
+        }
+
+        .toolbar-bottom .nav-area {
+            height: 60px !important;
+            padding: 6px 8px !important;
+        }
+
+        .toolbar-left .nav-item-text,
+        .toolbar-right .nav-item-text {
+            display: none !important;
+        }
+
+        .toolbar-left .nav-item,
+        .toolbar-right .nav-item {
+            justify-content: center !important;
+            padding: 12px 6px !important;
+            min-height: 48px !important;
+        }
+
+        .toolbar-bottom .nav-item {
+            min-width: 60px !important;
+            min-height: 48px !important;
+            padding: 8px 6px !important;
+        }
+
+        .toolbar-bottom .nav-item-text {
+            font-size: 10px !important;
+        }
+
+        .main-area {
+            padding: 8px;
         }
     }
 </style>
