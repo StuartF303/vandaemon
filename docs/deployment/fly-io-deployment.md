@@ -1,15 +1,23 @@
 # Fly.io Deployment Guide
 
-This guide explains how to deploy the VanDaemon application to Fly.io.
+This guide explains how to deploy the VanDaemon application to Fly.io as a single combined container.
 
 ## Architecture
 
-VanDaemon is deployed as two separate Fly.io applications:
+VanDaemon is deployed as a **single Fly.io application** that includes both:
 
-1. **API Backend** (`vandaemon-api`) - ASP.NET Core Web API
-2. **Web Frontend** (`vandaemon-web`) - Blazor WebAssembly with Nginx
+1. **API Backend** - ASP.NET Core Web API (runs on port 5000 internally)
+2. **Web Frontend** - Blazor WebAssembly served by Nginx
 
-The frontend proxies API requests to the backend application.
+The application uses:
+- **Nginx** (port 8080) - Serves static files and proxies API requests
+- **.NET API** (port 5000) - Handles API and SignalR requests
+- **Supervisor** - Manages both processes in the same container
+
+All traffic comes through a single endpoint at port 8080:
+- `/` → Blazor WebAssembly static files
+- `/api` → Proxied to .NET API
+- `/hubs` → Proxied to SignalR hubs
 
 ## Prerequisites
 
@@ -19,47 +27,38 @@ The frontend proxies API requests to the backend application.
 
 ## Initial Setup
 
-### 1. Create Fly.io Applications
+### 1. Create Fly.io Application
 
-Create the API application:
+Create the application:
 
 ```bash
-flyctl apps create vandaemon-api
+flyctl apps create vandaemon
 ```
 
-Create the Web frontend application:
+**Note**: You can choose a different name, but update the `app` field in `fly.toml` accordingly.
+
+### 2. Configure Secrets (Optional)
+
+If your application requires any secrets:
 
 ```bash
-flyctl apps create vandaemon-web
-```
-
-### 2. Configure Secrets (if needed)
-
-If your application requires any secrets (database connection strings, API keys, etc.):
-
-```bash
-# For API
-flyctl secrets set --app vandaemon-api \
+flyctl secrets set --app vandaemon \
   DATABASE_URL="your-database-url" \
   JWT_SECRET="your-jwt-secret"
-
-# For Web
-flyctl secrets set --app vandaemon-web \
-  API_KEY="your-api-key"
 ```
 
-### 3. Deploy Applications
+### 3. Deploy Application
 
-Deploy the API backend:
+Deploy the combined application:
 
 ```bash
-flyctl deploy --config fly.api.toml
+flyctl deploy
 ```
 
-Deploy the Web frontend:
+Or explicitly specify the config:
 
 ```bash
-flyctl deploy --config fly.web.toml
+flyctl deploy --config fly.toml
 ```
 
 ## GitHub Actions Deployment
@@ -91,175 +90,114 @@ You can also trigger a manual deployment:
 2. Select "Deploy to Fly.io" workflow
 3. Click "Run workflow"
 
-## Configuration Files
+## Configuration
 
-### API Configuration (`fly.api.toml`)
+### Main Configuration (`fly.toml`)
 
-- **App Name**: `vandaemon-api`
+```toml
+app = "vandaemon"
+primary_region = "iad"
+
+[build]
+  dockerfile = "docker/Dockerfile.combined"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+```
+
+**Key Settings:**
+- **App Name**: `vandaemon` (single application)
 - **Region**: `iad` (Ashburn, Virginia)
-- **Port**: 8080
-- **Resources**: 1 shared CPU, 512MB RAM
+- **Port**: 8080 (Nginx serves both static files and proxies API)
+- **Resources**: 1 shared CPU, 1024MB RAM
 - **Auto-scaling**: Stops when idle, starts on request
 
-### Web Configuration (`fly.web.toml`)
+### Architecture Details
 
-- **App Name**: `vandaemon-web`
-- **Region**: `iad` (Ashburn, Virginia)
-- **Port**: 8080
-- **Resources**: 1 shared CPU, 256MB RAM
-- **Auto-scaling**: Stops when idle, starts on request
-- **API URL**: Proxies to `https://vandaemon-api.fly.dev`
-
-## Updating the Deployment
-
-### Change App Names
-
-If you want to use different app names, update:
-
-1. `fly.api.toml` - Change the `app` field
-2. `fly.web.toml` - Change the `app` field AND the `API_URL` environment variable
-3. Create the new apps with `flyctl apps create`
-
-### Change Region
-
-To deploy to a different region:
-
-1. Update `primary_region` in both `fly.api.toml` and `fly.web.toml`
-2. See available regions: `flyctl platform regions`
-
-### Scale Resources
-
-To increase resources:
-
-```bash
-# Scale API
-flyctl scale vm --app vandaemon-api shared-cpu-2x --memory 1024
-
-# Scale Web
-flyctl scale vm --app vandaemon-web shared-cpu-1x --memory 512
+**Container Structure:**
 ```
-
-## Monitoring
-
-### View Logs
-
-```bash
-# API logs
-flyctl logs --app vandaemon-api
-
-# Web logs
-flyctl logs --app vandaemon-web
-```
-
-### Check Status
-
-```bash
-# API status
-flyctl status --app vandaemon-api
-
-# Web status
-flyctl status --app vandaemon-web
-```
-
-### Access Dashboard
-
-```bash
-# Open API dashboard
-flyctl dashboard --app vandaemon-api
-
-# Open Web dashboard
-flyctl dashboard --app vandaemon-web
+┌─────────────────────────────────────┐
+│  Fly.io Machine (1024MB RAM)        │
+│                                      │
+│  ┌────────────────────────────────┐ │
+│  │  Nginx (Port 8080)             │ │
+│  │  - Serves static Blazor files  │ │
+│  │  - Proxies /api → 127.0.0.1:5000│ │
+│  │  - Proxies /hubs → 127.0.0.1:5000│ │
+│  └────────────────────────────────┘ │
+│                                      │
+│  ┌────────────────────────────────┐ │
+│  │  .NET API (Port 5000)          │ │
+│  │  - REST API endpoints          │ │
+│  │  - SignalR hubs                │ │
+│  │  - Health checks               │ │
+│  └────────────────────────────────┘ │
+│                                      │
+│  Supervised by: supervisord          │
+└─────────────────────────────────────┘
 ```
 
 ## Accessing Your Application
 
 After deployment, your application will be available at:
 
-- **Web Frontend**: `https://vandaemon-web.fly.dev`
-- **API Backend**: `https://vandaemon-api.fly.dev`
+- **Single URL**: `https://vandaemon.fly.dev`
+  - Root (`/`) - Web Frontend
+  - API (`/api/*`) - Backend API
+  - SignalR (`/hubs/*`) - Real-time communication
+
+## Monitoring
+
+### View Logs
+
+```bash
+# Tail logs (both API and Nginx)
+flyctl logs --app vandaemon
+
+# View specific component
+flyctl logs --app vandaemon | grep "api:"
+flyctl logs --app vandaemon | grep "nginx:"
+```
+
+### Check Status
+
+```bash
+# Overall status
+flyctl status --app vandaemon
+
+# Check health
+flyctl checks list --app vandaemon
+```
+
+### Access Dashboard
+
+```bash
+# Open web dashboard
+flyctl dashboard --app vandaemon
+```
 
 ## Troubleshooting
 
-### API Not Responding
+### Application Not Responding
 
-1. Check if the app is running:
-   ```bash
-   flyctl status --app vandaemon-api
-   ```
-
-2. Check logs for errors:
-   ```bash
-   flyctl logs --app vandaemon-api
-   ```
-
-3. Restart the application:
-   ```bash
-   flyctl apps restart vandaemon-api
-   ```
-
-### Frontend Can't Connect to API
-
-1. Verify the API URL in `fly.web.toml` matches your API app name
-2. Check if CORS is properly configured in the API
-3. Ensure the API is deployed and running
+1. Check if the app is running: `flyctl status --app vandaemon`
+2. Check logs for errors: `flyctl logs --app vandaemon`
+3. Restart the application: `flyctl apps restart vandaemon`
 
 ### Build Failures
 
 1. Check the GitHub Actions workflow logs
-2. Verify all Dockerfiles are present and correct
+2. Test build locally: `docker build -f docker/Dockerfile.combined -t vandaemon-test .`
 3. Ensure the `FLY_API_TOKEN` secret is set correctly
 
-### Health Check Failures
-
-The API includes a `/health` endpoint. If health checks fail:
-
-1. Verify the endpoint exists in your API
-2. Check if the port (8080) is correct
-3. Review API logs for startup errors
-
-## Cost Optimization
-
-Fly.io offers:
-- Free tier with resource limits
-- Auto-scaling (scale to zero when idle)
-- Pay-as-you-go pricing
-
-Current configuration:
-- **API**: 512MB RAM, 1 shared CPU, auto-stops when idle
-- **Web**: 256MB RAM, 1 shared CPU, auto-stops when idle
-
-This should fit within the free tier for light usage.
-
-## Custom Domain
-
-To use a custom domain:
-
-1. Add certificate:
-   ```bash
-   flyctl certs create --app vandaemon-web your-domain.com
-   ```
-
-2. Configure DNS:
-   ```bash
-   flyctl ips list --app vandaemon-web
-   ```
-   Add the returned IP addresses to your DNS:
-   - IPv4: A record
-   - IPv6: AAAA record
-
-## Database Setup (Optional)
-
-If you need a database:
-
-```bash
-# Create Postgres database
-flyctl postgres create --name vandaemon-db --region iad
-
-# Attach to API
-flyctl postgres attach --app vandaemon-api vandaemon-db
-```
-
-This will automatically set the `DATABASE_URL` secret.
+See the full guide above for more troubleshooting options.
 
 ## Further Reading
 
