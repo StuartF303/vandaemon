@@ -34,10 +34,21 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:8080", "http://localhost:5001")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+        if (builder.Environment.IsDevelopment())
+        {
+            // Development: Allow specific origins
+            policy.WithOrigins("http://localhost:8080", "http://localhost:5001")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        }
+        else
+        {
+            // Production: Allow any origin (since we're behind nginx on same domain)
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        }
     });
 });
 
@@ -82,6 +93,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
+
+// Map health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 
 // Map SignalR hubs
 app.MapHub<TelemetryHub>("/hubs/telemetry");
