@@ -1,6 +1,7 @@
 @page "/controls"
 @inject HttpClient Http
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <PageTitle>Controls - VanDaemon</PageTitle>
 
@@ -48,8 +49,19 @@
 </style>
 
 <div class="controls-header">
-    <MudText Typo="Typo.h3" GutterBottom="true">Controls</MudText>
-    <MudText Class="mb-8">Manage your van's lights, pumps, and heating systems</MudText>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+            <MudText Typo="Typo.h3" GutterBottom="true">Controls</MudText>
+            <MudText Class="mb-2">Manage your van's lights, pumps, and heating systems</MudText>
+        </div>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="OpenAddDialog"
+                   Size="Size.Large">
+            Add Control
+        </MudButton>
+    </div>
 </div>
 
 @if (controls == null)
@@ -64,9 +76,21 @@ else
             <MudItem xs="12" sm="6" md="4">
                 <MudCard Elevation="2" Class="control-card">
                     <MudCardContent>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                            <MudIcon Icon="@GetControlIcon(control.IconName)" Size="Size.Large" Color="Color.Primary" />
-                            <MudText Typo="Typo.h6">@control.Name</MudText>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <MudIcon Icon="@GetControlIcon(control.IconName)" Size="Size.Large" Color="Color.Primary" />
+                                <MudText Typo="Typo.h6">@control.Name</MudText>
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                             Color="Color.Info"
+                                             Size="Size.Small"
+                                             OnClick="() => OpenEditDialog(control)" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                             Color="Color.Error"
+                                             Size="Size.Small"
+                                             OnClick="() => DeleteControl(control)" />
+                            </div>
                         </div>
 
                         @if (control.Type == "Toggle")
@@ -103,8 +127,107 @@ else
     </MudGrid>
 }
 
+<!-- Add/Edit Dialog -->
+<MudDialog @bind-IsVisible="dialogVisible" Options="dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@(editingControl?.Id == Guid.Empty ? "Add New Control" : "Edit Control")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="form">
+            <MudTextField @bind-Value="editingControl.Name"
+                         Label="Control Name"
+                         Required="true"
+                         RequiredError="Name is required"
+                         Class="mb-4" />
+
+            <MudSelect @bind-Value="editingControl.Type"
+                      Label="Control Type"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="@("Toggle")">Toggle Switch</MudSelectItem>
+                <MudSelectItem Value="@("Dimmer")">Dimmer / Slider</MudSelectItem>
+                <MudSelectItem Value="@("Momentary")">Momentary Button</MudSelectItem>
+                <MudSelectItem Value="@("Selector")">Selector</MudSelectItem>
+            </MudSelect>
+
+            <MudSelect @bind-Value="editingControl.IconName"
+                      Label="Icon"
+                      Class="mb-4">
+                <MudSelectItem Value="@("lightbulb")">Lightbulb</MudSelectItem>
+                <MudSelectItem Value="@("light_mode")">Light Mode</MudSelectItem>
+                <MudSelectItem Value="@("water_pump")">Water Pump</MudSelectItem>
+                <MudSelectItem Value="@("thermostat")">Thermostat</MudSelectItem>
+            </MudSelect>
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6" Class="mb-3">Provider Configuration</MudText>
+
+            <MudSelect @bind-Value="providerType"
+                      Label="Control Provider"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="@("Simulated")">Simulated (Testing)</MudSelectItem>
+                <MudSelectItem Value="@("GPIO")">GPIO Pin</MudSelectItem>
+                <MudSelectItem Value="@("Modbus")">Modbus Device</MudSelectItem>
+            </MudSelect>
+
+            @if (providerType == "GPIO")
+            {
+                <MudNumericField @bind-Value="gpioPin"
+                                Label="GPIO Pin Number"
+                                Required="true"
+                                Min="0"
+                                Max="40"
+                                Class="mb-4" />
+
+                <MudSwitch @bind-Checked="gpioActiveLow"
+                          Label="Active Low (Inverted)"
+                          Color="Color.Primary"
+                          Class="mb-4" />
+            }
+            else if (providerType == "Modbus")
+            {
+                <MudTextField @bind-Value="modbusAddress"
+                             Label="Modbus Address (e.g., 192.168.1.100:502)"
+                             Required="true"
+                             Class="mb-4" />
+
+                <MudNumericField @bind-Value="modbusRegister"
+                                Label="Register Address"
+                                Required="true"
+                                Min="0"
+                                Class="mb-4" />
+
+                <MudSelect @bind-Value="modbusRegisterType"
+                          Label="Register Type"
+                          Required="true"
+                          Class="mb-4">
+                    <MudSelectItem Value="@("Coil")">Coil (Read/Write)</MudSelectItem>
+                    <MudSelectItem Value="@("HoldingRegister")">Holding Register</MudSelectItem>
+                </MudSelect>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDialog">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="SaveControl" Variant="Variant.Filled">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
 @code {
     private List<ControlDto>? controls;
+    private bool dialogVisible = false;
+    private DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private MudForm? form;
+    private ControlDto editingControl = new();
+
+    // Provider configuration
+    private string providerType = "Simulated";
+    private int gpioPin = 0;
+    private bool gpioActiveLow = false;
+    private string modbusAddress = "";
+    private int modbusRegister = 0;
+    private string modbusRegisterType = "Coil";
 
     protected override async Task OnInitializedAsync()
     {
@@ -121,6 +244,161 @@ else
         {
             Console.WriteLine($"Error loading controls: {ex.Message}");
             Snackbar.Add("Failed to load controls", Severity.Error);
+        }
+    }
+
+    private void OpenAddDialog()
+    {
+        editingControl = new ControlDto
+        {
+            Id = Guid.Empty,
+            Name = "",
+            Type = "Toggle",
+            IconName = "lightbulb",
+            State = false
+        };
+        providerType = "Simulated";
+        gpioPin = 0;
+        gpioActiveLow = false;
+        modbusAddress = "";
+        modbusRegister = 0;
+        modbusRegisterType = "Coil";
+        dialogVisible = true;
+    }
+
+    private void OpenEditDialog(ControlDto control)
+    {
+        editingControl = new ControlDto
+        {
+            Id = control.Id,
+            Name = control.Name,
+            Type = control.Type,
+            IconName = control.IconName,
+            State = control.State,
+            ControlPlugin = control.ControlPlugin,
+            ControlConfiguration = control.ControlConfiguration != null
+                ? new Dictionary<string, object>(control.ControlConfiguration)
+                : new Dictionary<string, object>()
+        };
+
+        // Load provider configuration
+        LoadProviderConfiguration();
+        dialogVisible = true;
+    }
+
+    private void LoadProviderConfiguration()
+    {
+        if (editingControl.ControlPlugin == "GPIO" ||
+            editingControl.ControlConfiguration?.ContainsKey("GpioPin") == true)
+        {
+            providerType = "GPIO";
+            if (editingControl.ControlConfiguration.TryGetValue("GpioPin", out var pin))
+                gpioPin = Convert.ToInt32(pin);
+            if (editingControl.ControlConfiguration.TryGetValue("ActiveLow", out var activeLow))
+                gpioActiveLow = Convert.ToBoolean(activeLow);
+        }
+        else if (editingControl.ControlPlugin == "Modbus" ||
+                 editingControl.ControlConfiguration?.ContainsKey("ModbusAddress") == true)
+        {
+            providerType = "Modbus";
+            if (editingControl.ControlConfiguration.TryGetValue("ModbusAddress", out var addr))
+                modbusAddress = addr?.ToString() ?? "";
+            if (editingControl.ControlConfiguration.TryGetValue("Register", out var reg))
+                modbusRegister = Convert.ToInt32(reg);
+            if (editingControl.ControlConfiguration.TryGetValue("RegisterType", out var regType))
+                modbusRegisterType = regType?.ToString() ?? "Coil";
+        }
+        else
+        {
+            providerType = "Simulated";
+        }
+    }
+
+    private void CloseDialog()
+    {
+        dialogVisible = false;
+    }
+
+    private async Task SaveControl()
+    {
+        await form!.Validate();
+        if (!form.IsValid) return;
+
+        try
+        {
+            // Set provider plugin and configuration
+            editingControl.ControlPlugin = providerType;
+            editingControl.ControlConfiguration = new Dictionary<string, object>();
+
+            if (providerType == "GPIO")
+            {
+                editingControl.ControlConfiguration["GpioPin"] = gpioPin;
+                editingControl.ControlConfiguration["ActiveLow"] = gpioActiveLow;
+            }
+            else if (providerType == "Modbus")
+            {
+                editingControl.ControlConfiguration["ModbusAddress"] = modbusAddress;
+                editingControl.ControlConfiguration["Register"] = modbusRegister;
+                editingControl.ControlConfiguration["RegisterType"] = modbusRegisterType;
+            }
+
+            HttpResponseMessage response;
+            if (editingControl.Id == Guid.Empty)
+            {
+                // Create new control
+                response = await Http.PostAsJsonAsync("api/controls", editingControl);
+            }
+            else
+            {
+                // Update existing control
+                response = await Http.PutAsJsonAsync($"api/controls/{editingControl.Id}", editingControl);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Control {(editingControl.Id == Guid.Empty ? "created" : "updated")} successfully", Severity.Success);
+                await LoadControls();
+                CloseDialog();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save control: {response.StatusCode}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving control: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DeleteControl(ControlDto control)
+    {
+        bool? confirm = await DialogService.ShowMessageBox(
+            "Delete Control",
+            $"Are you sure you want to delete '{control.Name}'?",
+            yesText:"Delete", cancelText:"Cancel");
+
+        if (confirm == true)
+        {
+            try
+            {
+                var response = await Http.DeleteAsync($"api/controls/{control.Id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add($"Control '{control.Name}' deleted successfully", Severity.Success);
+                    await LoadControls();
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to delete control: {response.StatusCode}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting control: {ex.Message}");
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
         }
     }
 
@@ -199,6 +477,9 @@ else
         public string Type { get; set; } = string.Empty;
         public object State { get; set; } = false;
         public string IconName { get; set; } = string.Empty;
+        public string ControlPlugin { get; set; } = "Simulated";
+        public Dictionary<string, object>? ControlConfiguration { get; set; }
         public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

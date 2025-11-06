@@ -81,6 +81,7 @@
 
 @code {
     private List<TankDto>? tanks;
+    private List<ControlDto>? controls;
     private string lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
     private string backgroundImage = "";
     private bool isEditMode = false;
@@ -90,8 +91,10 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadTanks();
+        await LoadControls();
         await LoadSettings();
         CreateOverlaysFromTanks();
+        CreateOverlaysFromControls();
 
         // Subscribe to SignalR events
         Telemetry.TankLevelUpdated += OnTankLevelUpdated;
@@ -135,7 +138,9 @@
     {
         if (tanks == null) return;
 
-        overlays.Clear();
+        // Remove old tank overlays
+        overlays.RemoveAll(o => o.Type == OverlayType.Tank);
+
         int index = 0;
         foreach (var tank in tanks)
         {
@@ -148,6 +153,37 @@
                 Value = tank.CurrentLevel,
                 X = 20 + (index * 15), // Spread horizontally
                 Y = 30 + (index % 2) * 20 // Alternate vertically
+            });
+            index++;
+        }
+    }
+
+    private void CreateOverlaysFromControls()
+    {
+        if (controls == null) return;
+
+        // Remove old control overlays
+        overlays.RemoveAll(o => o.Type == OverlayType.Control);
+
+        int index = 0;
+        foreach (var control in controls)
+        {
+            bool isOn = false;
+            if (control.State is bool boolState)
+                isOn = boolState;
+            else if (control.State is System.Text.Json.JsonElement jsonElement &&
+                     jsonElement.ValueKind == System.Text.Json.JsonValueKind.True)
+                isOn = true;
+
+            overlays.Add(new OverlayItem
+            {
+                Id = control.Id,
+                Name = control.Name,
+                Type = OverlayType.Control,
+                Icon = "", // Not used for controls
+                IsOn = isOn,
+                X = 20 + (index * 15), // Spread horizontally
+                Y = 70 + (index % 2) * 20 // Position below tanks
             });
             index++;
         }
@@ -188,10 +224,24 @@
 
     private async Task OnControlToggle(OverlayItem overlay, bool value)
     {
-        overlay.IsOn = value;
-
-        // TODO: Call API to invoke configured action
-        Snackbar.Add($"{overlay.Name} turned {(value ? "ON" : "OFF")}", Severity.Success);
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"api/controls/{overlay.Id}/state", new { state = value });
+            if (response.IsSuccessStatusCode)
+            {
+                overlay.IsOn = value;
+                Snackbar.Add($"{overlay.Name} turned {(value ? "ON" : "OFF")}", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Failed to control {overlay.Name}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error controlling {overlay.Name}: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
 
         await InvokeAsync(StateHasChanged);
     }
@@ -222,6 +272,18 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading tanks: {ex.Message}");
+        }
+    }
+
+    private async Task LoadControls()
+    {
+        try
+        {
+            controls = await Http.GetFromJsonAsync<List<ControlDto>>("api/controls");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading controls: {ex.Message}");
         }
     }
 
@@ -280,6 +342,19 @@
         public double Capacity { get; set; }
         public double LowLevelThreshold { get; set; }
         public double HighLevelThreshold { get; set; }
+    }
+
+    public class ControlDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public object State { get; set; } = false;
+        public string IconName { get; set; } = string.Empty;
+        public string ControlPlugin { get; set; } = "Simulated";
+        public Dictionary<string, object>? ControlConfiguration { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 
     public class OverlayItem
