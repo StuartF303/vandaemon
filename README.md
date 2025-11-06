@@ -131,7 +131,33 @@ Customize the van diagram to match your vehicle:
 2. Add the diagram to `src/Frontend/VanDaemon.Web/wwwroot/diagrams/`
 3. Configure overlay positions in the Settings page
 
-## Deployment to Raspberry Pi
+## Deployment
+
+VanDaemon supports multiple deployment options:
+
+### Cloud Deployment (Fly.io)
+
+Deploy VanDaemon to the cloud for remote access:
+
+```bash
+# Install Fly.io CLI
+curl -L https://fly.io/install.sh | sh
+
+# Login and deploy
+flyctl auth login
+flyctl apps create vandaemon-api
+flyctl apps create vandaemon-web
+flyctl deploy --config fly.api.toml
+flyctl deploy --config fly.web.toml
+```
+
+Access your application at:
+- Web: https://vandaemon-web.fly.dev
+- API: https://vandaemon-api.fly.dev
+
+For detailed instructions including GitHub Actions auto-deployment, see **[DEPLOYMENT.md](DEPLOYMENT.md)**
+
+### Local/Raspberry Pi Deployment
 
 ### Step 1: Prepare the Raspberry Pi
 

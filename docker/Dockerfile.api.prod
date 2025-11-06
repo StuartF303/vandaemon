@@ -1,0 +1,32 @@
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy solution and project files
+COPY ["VanDaemon.sln", "."]
+COPY ["src/Backend/VanDaemon.Api/VanDaemon.Api.csproj", "src/Backend/VanDaemon.Api/"]
+COPY ["src/Backend/VanDaemon.Core/VanDaemon.Core.csproj", "src/Backend/VanDaemon.Core/"]
+COPY ["src/Backend/VanDaemon.Application/VanDaemon.Application.csproj", "src/Backend/VanDaemon.Application/"]
+COPY ["src/Backend/VanDaemon.Infrastructure/VanDaemon.Infrastructure.csproj", "src/Backend/VanDaemon.Infrastructure/"]
+COPY ["src/Backend/VanDaemon.Plugins/VanDaemon.Plugins.Abstractions/VanDaemon.Plugins.Abstractions.csproj", "src/Backend/VanDaemon.Plugins/VanDaemon.Plugins.Abstractions/"]
+COPY ["src/Backend/VanDaemon.Plugins/VanDaemon.Plugins.Simulated/VanDaemon.Plugins.Simulated.csproj", "src/Backend/VanDaemon.Plugins/VanDaemon.Plugins.Simulated/"]
+
+# Restore dependencies
+RUN dotnet restore "src/Backend/VanDaemon.Api/VanDaemon.Api.csproj"
+
+# Copy everything else and build
+COPY . .
+WORKDIR "/src/src/Backend/VanDaemon.Api"
+RUN dotnet build "VanDaemon.Api.csproj" -c Release -o /app/build
+
+# Publish stage
+FROM build AS publish
+RUN dotnet publish "VanDaemon.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+EXPOSE 8080
+
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "VanDaemon.Api.dll"]
