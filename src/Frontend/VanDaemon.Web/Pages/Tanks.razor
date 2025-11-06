@@ -1,6 +1,7 @@
 @page "/tanks"
 @inject HttpClient Http
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <PageTitle>Tanks - VanDaemon</PageTitle>
 
@@ -27,10 +28,21 @@
 </style>
 
 <div class="tanks-header">
-    <MudText Typo="Typo.h3" GutterBottom="true">Tank Monitoring</MudText>
-    <MudText Class="mb-4">Monitor water, waste, LPG, and fuel levels</MudText>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+            <MudText Typo="Typo.h3" GutterBottom="true">Tank Monitoring</MudText>
+            <MudText Class="mb-2">Monitor water, waste, LPG, and fuel levels</MudText>
+        </div>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="OpenAddDialog"
+                   Size="Size.Large">
+            Add Tank
+        </MudButton>
+    </div>
 
-    <MudButton Variant="Variant.Filled"
+    <MudButton Variant="Variant.Outlined"
                Color="Color.Primary"
                StartIcon="@Icons.Material.Filled.Refresh"
                OnClick="RefreshAll"
@@ -58,6 +70,12 @@ else
                         </CardHeaderContent>
                         <CardHeaderActions>
                             <MudIconButton Icon="@GetTankIcon(tank.Type)" Color="Color.Primary" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                         Color="Color.Info"
+                                         OnClick="() => OpenEditDialog(tank)" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                         Color="Color.Error"
+                                         OnClick="() => DeleteTank(tank)" />
                         </CardHeaderActions>
                     </MudCardHeader>
                     <MudCardContent>
@@ -94,8 +112,145 @@ else
     </MudGrid>
 }
 
+<!-- Add/Edit Dialog -->
+<MudDialog @bind-IsVisible="dialogVisible" Options="dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@(editingTank?.Id == Guid.Empty ? "Add New Tank" : "Edit Tank")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="form">
+            <MudTextField @bind-Value="editingTank.Name"
+                         Label="Tank Name"
+                         Required="true"
+                         RequiredError="Name is required"
+                         Class="mb-4" />
+
+            <MudSelect @bind-Value="editingTank.Type"
+                      Label="Tank Type"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="TankType.FreshWater">Fresh Water</MudSelectItem>
+                <MudSelectItem Value="TankType.WasteWater">Waste Water</MudSelectItem>
+                <MudSelectItem Value="TankType.LPG">LPG</MudSelectItem>
+                <MudSelectItem Value="TankType.Fuel">Fuel</MudSelectItem>
+                <MudSelectItem Value="TankType.Battery">Battery</MudSelectItem>
+            </MudSelect>
+
+            <MudNumericField @bind-Value="editingTank.Capacity"
+                            Label="Capacity (Liters)"
+                            Required="true"
+                            Min="0"
+                            Class="mb-4" />
+
+            <MudNumericField @bind-Value="editingTank.LowLevelThreshold"
+                            Label="Low Level Threshold (%)"
+                            Required="true"
+                            Min="0"
+                            Max="100"
+                            Class="mb-4" />
+
+            <MudNumericField @bind-Value="editingTank.HighLevelThreshold"
+                            Label="High Level Threshold (%)"
+                            Required="true"
+                            Min="0"
+                            Max="100"
+                            Class="mb-4" />
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6" Class="mb-3">Sensor Provider Configuration</MudText>
+
+            <MudSelect @bind-Value="providerType"
+                      Label="Sensor Provider"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="@("Simulated")">Simulated (Testing)</MudSelectItem>
+                <MudSelectItem Value="@("I2C")">I2C Sensor</MudSelectItem>
+                <MudSelectItem Value="@("Modbus")">Modbus Device</MudSelectItem>
+                <MudSelectItem Value="@("Analog")">Analog Input</MudSelectItem>
+            </MudSelect>
+
+            @if (providerType == "I2C")
+            {
+                <MudTextField @bind-Value="i2cAddress"
+                             Label="I2C Address (hex, e.g., 0x48)"
+                             Required="true"
+                             Class="mb-4" />
+
+                <MudNumericField @bind-Value="i2cChannel"
+                                Label="Channel Number"
+                                Required="true"
+                                Min="0"
+                                Max="7"
+                                Class="mb-4" />
+            }
+            else if (providerType == "Modbus")
+            {
+                <MudTextField @bind-Value="modbusAddress"
+                             Label="Modbus Address (e.g., 192.168.1.100:502)"
+                             Required="true"
+                             Class="mb-4" />
+
+                <MudNumericField @bind-Value="modbusRegister"
+                                Label="Register Address"
+                                Required="true"
+                                Min="0"
+                                Class="mb-4" />
+
+                <MudSelect @bind-Value="modbusRegisterType"
+                          Label="Register Type"
+                          Required="true"
+                          Class="mb-4">
+                    <MudSelectItem Value="@("InputRegister")">Input Register (Read Only)</MudSelectItem>
+                    <MudSelectItem Value="@("HoldingRegister")">Holding Register</MudSelectItem>
+                </MudSelect>
+            }
+            else if (providerType == "Analog")
+            {
+                <MudNumericField @bind-Value="analogPin"
+                                Label="Analog Pin Number"
+                                Required="true"
+                                Min="0"
+                                Class="mb-4" />
+
+                <MudNumericField @bind-Value="analogMinVoltage"
+                                Label="Minimum Voltage (Empty)"
+                                Required="true"
+                                Min="0"
+                                Step="0.1"
+                                Class="mb-4" />
+
+                <MudNumericField @bind-Value="analogMaxVoltage"
+                                Label="Maximum Voltage (Full)"
+                                Required="true"
+                                Min="0"
+                                Step="0.1"
+                                Class="mb-4" />
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDialog">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="SaveTank" Variant="Variant.Filled">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
 @code {
     private List<TankDto>? tanks;
+    private bool dialogVisible = false;
+    private DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private MudForm? form;
+    private TankDto editingTank = new();
+
+    // Provider configuration
+    private string providerType = "Simulated";
+    private string i2cAddress = "0x48";
+    private int i2cChannel = 0;
+    private string modbusAddress = "";
+    private int modbusRegister = 0;
+    private string modbusRegisterType = "InputRegister";
+    private int analogPin = 0;
+    private double analogMinVoltage = 0.0;
+    private double analogMaxVoltage = 5.0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -135,6 +290,185 @@ else
         {
             Console.WriteLine($"Error refreshing tanks: {ex.Message}");
             Snackbar.Add("Failed to refresh tanks", Severity.Error);
+        }
+    }
+
+    private void OpenAddDialog()
+    {
+        editingTank = new TankDto
+        {
+            Id = Guid.Empty,
+            Name = "",
+            Type = TankType.FreshWater,
+            Capacity = 100,
+            LowLevelThreshold = 10,
+            HighLevelThreshold = 90,
+            CurrentLevel = 0
+        };
+        providerType = "Simulated";
+        i2cAddress = "0x48";
+        i2cChannel = 0;
+        modbusAddress = "";
+        modbusRegister = 0;
+        modbusRegisterType = "InputRegister";
+        analogPin = 0;
+        analogMinVoltage = 0.0;
+        analogMaxVoltage = 5.0;
+        dialogVisible = true;
+    }
+
+    private void OpenEditDialog(TankDto tank)
+    {
+        editingTank = new TankDto
+        {
+            Id = tank.Id,
+            Name = tank.Name,
+            Type = tank.Type,
+            Capacity = tank.Capacity,
+            LowLevelThreshold = tank.LowLevelThreshold,
+            HighLevelThreshold = tank.HighLevelThreshold,
+            CurrentLevel = tank.CurrentLevel,
+            SensorPlugin = tank.SensorPlugin,
+            SensorConfiguration = tank.SensorConfiguration != null
+                ? new Dictionary<string, object>(tank.SensorConfiguration)
+                : new Dictionary<string, object>()
+        };
+
+        // Load provider configuration
+        LoadProviderConfiguration();
+        dialogVisible = true;
+    }
+
+    private void LoadProviderConfiguration()
+    {
+        if (editingTank.SensorPlugin == "I2C" ||
+            editingTank.SensorConfiguration?.ContainsKey("I2CAddress") == true)
+        {
+            providerType = "I2C";
+            if (editingTank.SensorConfiguration.TryGetValue("I2CAddress", out var addr))
+                i2cAddress = addr?.ToString() ?? "0x48";
+            if (editingTank.SensorConfiguration.TryGetValue("Channel", out var ch))
+                i2cChannel = Convert.ToInt32(ch);
+        }
+        else if (editingTank.SensorPlugin == "Modbus" ||
+                 editingTank.SensorConfiguration?.ContainsKey("ModbusAddress") == true)
+        {
+            providerType = "Modbus";
+            if (editingTank.SensorConfiguration.TryGetValue("ModbusAddress", out var addr))
+                modbusAddress = addr?.ToString() ?? "";
+            if (editingTank.SensorConfiguration.TryGetValue("Register", out var reg))
+                modbusRegister = Convert.ToInt32(reg);
+            if (editingTank.SensorConfiguration.TryGetValue("RegisterType", out var regType))
+                modbusRegisterType = regType?.ToString() ?? "InputRegister";
+        }
+        else if (editingTank.SensorPlugin == "Analog" ||
+                 editingTank.SensorConfiguration?.ContainsKey("AnalogPin") == true)
+        {
+            providerType = "Analog";
+            if (editingTank.SensorConfiguration.TryGetValue("AnalogPin", out var pin))
+                analogPin = Convert.ToInt32(pin);
+            if (editingTank.SensorConfiguration.TryGetValue("MinVoltage", out var minV))
+                analogMinVoltage = Convert.ToDouble(minV);
+            if (editingTank.SensorConfiguration.TryGetValue("MaxVoltage", out var maxV))
+                analogMaxVoltage = Convert.ToDouble(maxV);
+        }
+        else
+        {
+            providerType = "Simulated";
+        }
+    }
+
+    private void CloseDialog()
+    {
+        dialogVisible = false;
+    }
+
+    private async Task SaveTank()
+    {
+        await form!.Validate();
+        if (!form.IsValid) return;
+
+        try
+        {
+            // Set provider plugin and configuration
+            editingTank.SensorPlugin = providerType;
+            editingTank.SensorConfiguration = new Dictionary<string, object>();
+
+            if (providerType == "I2C")
+            {
+                editingTank.SensorConfiguration["I2CAddress"] = i2cAddress;
+                editingTank.SensorConfiguration["Channel"] = i2cChannel;
+            }
+            else if (providerType == "Modbus")
+            {
+                editingTank.SensorConfiguration["ModbusAddress"] = modbusAddress;
+                editingTank.SensorConfiguration["Register"] = modbusRegister;
+                editingTank.SensorConfiguration["RegisterType"] = modbusRegisterType;
+            }
+            else if (providerType == "Analog")
+            {
+                editingTank.SensorConfiguration["AnalogPin"] = analogPin;
+                editingTank.SensorConfiguration["MinVoltage"] = analogMinVoltage;
+                editingTank.SensorConfiguration["MaxVoltage"] = analogMaxVoltage;
+            }
+
+            HttpResponseMessage response;
+            if (editingTank.Id == Guid.Empty)
+            {
+                // Create new tank
+                response = await Http.PostAsJsonAsync("api/tanks", editingTank);
+            }
+            else
+            {
+                // Update existing tank
+                response = await Http.PutAsJsonAsync($"api/tanks/{editingTank.Id}", editingTank);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Tank {(editingTank.Id == Guid.Empty ? "created" : "updated")} successfully", Severity.Success);
+                await LoadTanks();
+                CloseDialog();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save tank: {response.StatusCode}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving tank: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DeleteTank(TankDto tank)
+    {
+        bool? confirm = await DialogService.ShowMessageBox(
+            "Delete Tank",
+            $"Are you sure you want to delete '{tank.Name}'?",
+            yesText:"Delete", cancelText:"Cancel");
+
+        if (confirm == true)
+        {
+            try
+            {
+                var response = await Http.DeleteAsync($"api/tanks/{tank.Id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add($"Tank '{tank.Name}' deleted successfully", Severity.Success);
+                    await LoadTanks();
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to delete tank: {response.StatusCode}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting tank: {ex.Message}");
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
         }
     }
 
@@ -220,6 +554,9 @@ else
         public double Capacity { get; set; }
         public double LowLevelThreshold { get; set; }
         public double HighLevelThreshold { get; set; }
+        public string SensorPlugin { get; set; } = "Simulated";
+        public Dictionary<string, object>? SensorConfiguration { get; set; }
         public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }
