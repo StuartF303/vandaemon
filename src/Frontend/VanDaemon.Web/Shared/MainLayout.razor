@@ -1,26 +1,319 @@
 @inherits LayoutComponentBase
+@inject HttpClient Http
+@implements IAsyncDisposable
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-        <MudText Typo="Typo.h5" Class="ml-3">VanDaemon Control System</MudText>
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" Href="/settings" />
-    </MudAppBar>
-    <MudDrawer Open="true" Elevation="2">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h6">Navigation</MudText>
-        </MudDrawerHeader>
-        <MudNavMenu>
-            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-            <MudNavLink Href="/tanks" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.WaterDrop">Tanks</MudNavLink>
-            <MudNavLink Href="/controls" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Lightbulb">Controls</MudNavLink>
-            <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4">
+<style>
+    .layout-container {
+        display: grid;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+    }
+
+    .layout-container.toolbar-left {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: 1fr;
+        grid-template-areas: "nav main";
+    }
+
+    .layout-container.toolbar-right {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: 1fr;
+        grid-template-areas: "main nav";
+    }
+
+    .layout-container.toolbar-bottom {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        grid-template-areas: "main" "nav";
+    }
+
+    .nav-area {
+        grid-area: nav;
+        background: var(--mud-palette-surface);
+        box-shadow: var(--mud-elevation-2);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .toolbar-left .nav-area,
+    .toolbar-right .nav-area {
+        width: 280px;
+        padding: 16px;
+    }
+
+    .toolbar-bottom .nav-area {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 12px 16px;
+        height: auto;
+    }
+
+    .main-area {
+        grid-area: main;
+        overflow: auto;
+        padding: 16px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        margin: 4px 0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        color: inherit;
+        min-height: 56px;
+    }
+
+    .toolbar-bottom .nav-item {
+        flex-direction: column;
+        padding: 12px 8px;
+        margin: 0;
+        gap: 4px;
+        min-width: 80px;
+        text-align: center;
+        min-height: 72px;
+    }
+
+    .nav-item:hover {
+        background-color: var(--mud-palette-action-default-hover);
+    }
+
+    .nav-item.active {
+        background-color: var(--mud-palette-primary);
+        color: var(--mud-palette-primary-text);
+    }
+
+    .nav-item-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .nav-item-text {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .toolbar-bottom .nav-item-text {
+        font-size: 12px;
+    }
+
+    /* Tablet optimizations (600-960px) - icon-only side navigation */
+    @@media (min-width: 601px) and (max-width: 960px) {
+        .toolbar-left .nav-area,
+        .toolbar-right .nav-area {
+            width: 80px;
+            padding: 8px;
+        }
+
+        .toolbar-left .nav-item-text,
+        .toolbar-right .nav-item-text {
+            display: none;
+        }
+
+        .toolbar-left .nav-item,
+        .toolbar-right .nav-item {
+            justify-content: center;
+            padding: 16px 8px;
+        }
+
+        .main-area {
+            padding: 8px;
+        }
+    }
+
+    /* Phone portrait mode (max 600px width) - force bottom toolbar */
+    @@media (max-width: 600px) and (orientation: portrait) {
+        .layout-container {
+            grid-template-columns: 1fr !important;
+            grid-template-rows: 1fr auto !important;
+            grid-template-areas: "main" "nav" !important;
+        }
+
+        .nav-area {
+            width: 100% !important;
+            flex-direction: row !important;
+            justify-content: space-around !important;
+            padding: 8px !important;
+        }
+
+        .nav-item {
+            flex-direction: column !important;
+            padding: 12px 8px !important;
+            margin: 0 !important;
+            gap: 4px !important;
+            min-width: 70px !important;
+            min-height: 64px !important;
+        }
+
+        .nav-item-text {
+            display: block !important;
+            font-size: 11px !important;
+        }
+
+        .main-area {
+            padding: 8px;
+        }
+    }
+
+    /* Phone landscape mode (max 900px height) - use configured side toolbar with icons only */
+    @@media (max-height: 900px) and (orientation: landscape) and (max-width: 1024px) {
+        .toolbar-left .nav-area,
+        .toolbar-right .nav-area {
+            width: 70px !important;
+            padding: 6px !important;
+        }
+
+        .toolbar-bottom .nav-area {
+            height: 60px !important;
+            padding: 6px 8px !important;
+        }
+
+        .toolbar-left .nav-item-text,
+        .toolbar-right .nav-item-text {
+            display: none !important;
+        }
+
+        .toolbar-left .nav-item,
+        .toolbar-right .nav-item {
+            justify-content: center !important;
+            padding: 12px 6px !important;
+            min-height: 48px !important;
+        }
+
+        .toolbar-bottom .nav-item {
+            min-width: 60px !important;
+            min-height: 48px !important;
+            padding: 8px 6px !important;
+        }
+
+        .toolbar-bottom .nav-item-text {
+            font-size: 10px !important;
+        }
+
+        .main-area {
+            padding: 8px;
+        }
+    }
+</style>
+
+@if (isLoading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <div class="layout-container @GetLayoutClass()">
+        <nav class="nav-area">
+            <a href="/" class="nav-item @GetActiveClass("/")">
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="nav-item-icon" />
+                <span class="nav-item-text">Dashboard</span>
+            </a>
+            <a href="/tanks" class="nav-item @GetActiveClass("/tanks")">
+                <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Class="nav-item-icon" />
+                <span class="nav-item-text">Tanks</span>
+            </a>
+            <a href="/controls" class="nav-item @GetActiveClass("/controls")">
+                <MudIcon Icon="@Icons.Material.Filled.Lightbulb" Class="nav-item-icon" />
+                <span class="nav-item-text">Controls</span>
+            </a>
+            <a href="/settings" class="nav-item @GetActiveClass("/settings")">
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Class="nav-item-icon" />
+                <span class="nav-item-text">Settings</span>
+            </a>
+        </nav>
+        <main class="main-area">
             @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+        </main>
+    </div>
+}
+
+@code {
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+
+    private bool isLoading = true;
+    private string toolbarPosition = "toolbar-left";
+    private string currentPath = "/";
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPath = new Uri(NavigationManager.Uri).AbsolutePath;
+        NavigationManager.LocationChanged += OnLocationChanged;
+
+        await LoadToolbarPosition();
+        isLoading = false;
+    }
+
+    private async Task LoadToolbarPosition()
+    {
+        try
+        {
+            var config = await Http.GetFromJsonAsync<SystemConfigurationDto>("api/settings");
+            if (config != null)
+            {
+                toolbarPosition = config.ToolbarPosition switch
+                {
+                    "Left" => "toolbar-left",
+                    "Right" => "toolbar-right",
+                    "Bottom" => "toolbar-bottom",
+                    _ => "toolbar-left"
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading toolbar position: {ex.Message}");
+            toolbarPosition = "toolbar-left";
+        }
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentPath = new Uri(e.Location).AbsolutePath;
+        StateHasChanged();
+    }
+
+    private string GetLayoutClass()
+    {
+        return toolbarPosition;
+    }
+
+    private string GetActiveClass(string path)
+    {
+        if (path == "/" && currentPath == "/")
+            return "active";
+        if (path != "/" && currentPath.StartsWith(path))
+            return "active";
+        return "";
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+        return ValueTask.CompletedTask;
+    }
+
+    public class SystemConfigurationDto
+    {
+        public Guid Id { get; set; }
+        public string VanModel { get; set; } = string.Empty;
+        public string VanDiagramPath { get; set; } = string.Empty;
+        public string ToolbarPosition { get; set; } = "Left";
+        public AlertSettingsDto AlertSettings { get; set; } = new();
+        public DateTime LastUpdated { get; set; }
+    }
+
+    public class AlertSettingsDto
+    {
+        public double TankLowLevelThreshold { get; set; }
+        public double TankHighLevelThreshold { get; set; }
+        public bool EnableAudioAlerts { get; set; }
+        public bool EnablePushNotifications { get; set; }
+    }
+}

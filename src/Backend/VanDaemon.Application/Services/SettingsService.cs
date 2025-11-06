@@ -25,6 +25,7 @@ public class SettingsService : ISettingsService
             Id = Guid.NewGuid(),
             VanModel = "Mercedes Sprinter LWB",
             VanDiagramPath = "/diagrams/sprinter-lwb.svg",
+            ToolbarPosition = ToolbarPosition.Left,
             AlertSettings = new AlertSettings
             {
                 TankLowLevelThreshold = 10.0,

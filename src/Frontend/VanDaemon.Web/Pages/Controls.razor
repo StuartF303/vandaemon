@@ -4,8 +4,53 @@
 
 <PageTitle>Controls - VanDaemon</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Controls</MudText>
-<MudText Class="mb-8">Manage your van's lights, pumps, and heating systems</MudText>
+<style>
+    .controls-header {
+        margin-bottom: 24px;
+    }
+
+    .control-card {
+        min-height: 180px;
+    }
+
+    .control-card .mud-card-content {
+        padding: 20px !important;
+    }
+
+    .control-switch {
+        transform: scale(1.3);
+        transform-origin: left;
+        margin: 16px 0;
+    }
+
+    .control-slider {
+        margin: 20px 0;
+    }
+
+    @@media (max-width: 600px) {
+        .controls-header h3 {
+            font-size: 1.75rem;
+        }
+
+        .control-card {
+            min-height: 200px;
+        }
+
+        .control-switch {
+            transform: scale(1.5);
+            margin: 20px 0;
+        }
+
+        .control-slider {
+            margin: 24px 0;
+        }
+    }
+</style>
+
+<div class="controls-header">
+    <MudText Typo="Typo.h3" GutterBottom="true">Controls</MudText>
+    <MudText Class="mb-8">Manage your van's lights, pumps, and heating systems</MudText>
+</div>
 
 @if (controls == null)
 {
@@ -17,30 +62,35 @@ else
         @foreach (var control in controls)
         {
             <MudItem xs="12" sm="6" md="4">
-                <MudCard Elevation="2">
+                <MudCard Elevation="2" Class="control-card">
                     <MudCardContent>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
                             <MudIcon Icon="@GetControlIcon(control.IconName)" Size="Size.Large" Color="Color.Primary" />
                             <MudText Typo="Typo.h6">@control.Name</MudText>
                         </div>
 
                         @if (control.Type == "Toggle")
                         {
-                            <MudSwitch Checked="@GetToggleState(control)"
-                                      Color="Color.Success"
-                                      Label="@(GetToggleState(control) ? "On" : "Off")"
-                                      T="bool"
-                                      CheckedChanged="@((bool value) => OnToggleChanged(control, value))" />
+                            <div class="control-switch">
+                                <MudSwitch Checked="@GetToggleState(control)"
+                                          Color="Color.Success"
+                                          Label="@(GetToggleState(control) ? "On" : "Off")"
+                                          T="bool"
+                                          CheckedChanged="@((bool value) => OnToggleChanged(control, value))" />
+                            </div>
                         }
                         else if (control.Type == "Dimmer")
                         {
-                            <MudSlider Value="@GetDimmerValue(control)"
-                                      Color="Color.Primary"
-                                      Min="0"
-                                      Max="100"
-                                      Step="5"
-                                      ValueChanged="@((int value) => OnDimmerChanged(control, value))" />
-                            <MudText Typo="Typo.caption" Align="Align.Center">@GetDimmerValue(control)%</MudText>
+                            <div class="control-slider">
+                                <MudSlider Value="@GetDimmerValue(control)"
+                                          Color="Color.Primary"
+                                          Min="0"
+                                          Max="100"
+                                          Step="5"
+                                          Size="Size.Large"
+                                          ValueChanged="@((int value) => OnDimmerChanged(control, value))" />
+                                <MudText Typo="Typo.body2" Align="Align.Center" Style="font-weight: 600;">@GetDimmerValue(control)%</MudText>
+                            </div>
                         }
 
                         <MudText Typo="Typo.caption" Class="mt-2">

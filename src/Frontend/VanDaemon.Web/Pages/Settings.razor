@@ -5,8 +5,41 @@
 
 <PageTitle>Settings - VanDaemon</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Settings</MudText>
-<MudText Class="mb-8">Configure your VanDaemon system</MudText>
+<style>
+    .settings-header {
+        margin-bottom: 24px;
+    }
+
+    .settings-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .settings-button {
+        min-height: 48px;
+    }
+
+    @@media (max-width: 600px) {
+        .settings-header h3 {
+            font-size: 1.75rem;
+        }
+
+        .settings-actions {
+            flex-direction: column;
+        }
+
+        .settings-button {
+            width: 100%;
+            min-height: 56px;
+        }
+    }
+</style>
+
+<div class="settings-header">
+    <MudText Typo="Typo.h3" GutterBottom="true">Settings</MudText>
+    <MudText Class="mb-8">Configure your VanDaemon system</MudText>
+</div>
 
 @if (configuration == null)
 {
@@ -35,6 +68,16 @@ else
                             <MudSelectItem Value="@diagram">@diagram</MudSelectItem>
                         }
                     }
+                </MudSelect>
+
+                <MudSelect @bind-Value="configuration.ToolbarPosition"
+                          Label="Toolbar Position"
+                          Variant="Variant.Outlined"
+                          Class="mb-3"
+                          HelperText="For tablets & landscape phones. Portrait phones always use bottom toolbar.">
+                    <MudSelectItem Value="@("Left")">Left Sidebar (Right-hand drive)</MudSelectItem>
+                    <MudSelectItem Value="@("Right")">Right Sidebar (Left-hand drive)</MudSelectItem>
+                    <MudSelectItem Value="@("Bottom")">Bottom Bar (Tablet/Desktop)</MudSelectItem>
                 </MudSelect>
 
                 <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">Upload Custom Van Diagram</MudText>
@@ -124,22 +167,25 @@ else
         </MudItem>
 
         <MudItem xs="12">
-            <MudButton Variant="Variant.Filled"
-                      Color="Color.Primary"
-                      Size="Size.Large"
-                      StartIcon="@Icons.Material.Filled.Save"
-                      OnClick="SaveSettings">
-                Save Settings
-            </MudButton>
+            <div class="settings-actions">
+                <MudButton Variant="Variant.Filled"
+                          Color="Color.Primary"
+                          Size="Size.Large"
+                          StartIcon="@Icons.Material.Filled.Save"
+                          OnClick="SaveSettings"
+                          Class="settings-button">
+                    Save Settings
+                </MudButton>
 
-            <MudButton Variant="Variant.Outlined"
-                      Color="Color.Default"
-                      Size="Size.Large"
-                      StartIcon="@Icons.Material.Filled.Refresh"
-                      OnClick="LoadSettings"
-                      Class="ml-2">
-                Reload
-            </MudButton>
+                <MudButton Variant="Variant.Outlined"
+                          Color="Color.Default"
+                          Size="Size.Large"
+                          StartIcon="@Icons.Material.Filled.Refresh"
+                          OnClick="LoadSettings"
+                          Class="settings-button">
+                    Reload
+                </MudButton>
+            </div>
         </MudItem>
     </MudGrid>
 }
@@ -249,6 +295,7 @@ else
         public Guid Id { get; set; }
         public string VanModel { get; set; } = string.Empty;
         public string VanDiagramPath { get; set; } = string.Empty;
+        public string ToolbarPosition { get; set; } = "Left";
         public AlertSettingsDto AlertSettings { get; set; } = new();
         public DateTime LastUpdated { get; set; }
     }

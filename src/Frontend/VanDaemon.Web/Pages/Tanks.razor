@@ -4,16 +4,41 @@
 
 <PageTitle>Tanks - VanDaemon</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Tank Monitoring</MudText>
-<MudText Class="mb-4">Monitor water, waste, LPG, and fuel levels</MudText>
+<style>
+    .tanks-header {
+        margin-bottom: 24px;
+    }
 
-<MudButton Variant="Variant.Filled"
-           Color="Color.Primary"
-           StartIcon="@Icons.Material.Filled.Refresh"
-           OnClick="RefreshAll"
-           Class="mb-4">
-    Refresh All Tanks
-</MudButton>
+    .refresh-button {
+        min-height: 48px;
+        font-size: 16px;
+    }
+
+    @@media (max-width: 600px) {
+        .tanks-header h3 {
+            font-size: 1.75rem;
+        }
+
+        .refresh-button {
+            width: 100%;
+            min-height: 56px;
+        }
+    }
+</style>
+
+<div class="tanks-header">
+    <MudText Typo="Typo.h3" GutterBottom="true">Tank Monitoring</MudText>
+    <MudText Class="mb-4">Monitor water, waste, LPG, and fuel levels</MudText>
+
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.Refresh"
+               OnClick="RefreshAll"
+               Class="mb-4 refresh-button"
+               Size="Size.Large">
+        Refresh All Tanks
+    </MudButton>
+</div>
 
 @if (tanks == null)
 {
