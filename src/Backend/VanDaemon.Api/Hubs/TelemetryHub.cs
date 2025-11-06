@@ -52,4 +52,12 @@ public class TelemetryHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, "alerts");
         _logger.LogDebug("Client {ConnectionId} subscribed to alerts", Context.ConnectionId);
     }
+
+    /// <summary>
+    /// Broadcast control state change to all clients
+    /// </summary>
+    public async Task BroadcastControlStateChange(Guid controlId, bool state, string controlName)
+    {
+        await Clients.Group("controls").SendAsync("ControlStateChanged", controlId, state, controlName);
+    }
 }

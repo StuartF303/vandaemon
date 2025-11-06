@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Serilog;
 using VanDaemon.Api.Hubs;
 using VanDaemon.Api.Services;
@@ -17,7 +18,11 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -39,6 +44,7 @@ builder.Services.AddCors(options =>
 // Register plugins
 builder.Services.AddSingleton<ISensorPlugin, SimulatedSensorPlugin>();
 builder.Services.AddSingleton<IControlPlugin, SimulatedControlPlugin>();
+builder.Services.AddSingleton<IControlPlugin, SimulatedSyncPlugin>();
 
 // Register application services
 builder.Services.AddSingleton<ITankService, TankService>();
