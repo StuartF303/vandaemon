@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using VanDaemon.Application.Persistence;
 using VanDaemon.Application.Services;
 using VanDaemon.Plugins.Abstractions;
 using Xunit;
@@ -10,18 +11,25 @@ namespace VanDaemon.Application.Tests.Services;
 public class TankServiceTests
 {
     private readonly Mock<ILogger<TankService>> _loggerMock;
+    private readonly Mock<ILogger<JsonFileStore>> _fileStoreLoggerMock;
     private readonly Mock<ISensorPlugin> _sensorPluginMock;
+    private readonly JsonFileStore _fileStore;
     private readonly TankService _tankService;
 
     public TankServiceTests()
     {
         _loggerMock = new Mock<ILogger<TankService>>();
+        _fileStoreLoggerMock = new Mock<ILogger<JsonFileStore>>();
         _sensorPluginMock = new Mock<ISensorPlugin>();
 
         _sensorPluginMock.Setup(x => x.Name).Returns("Simulated Sensor Plugin");
         _sensorPluginMock.Setup(x => x.Version).Returns("1.0.0");
 
-        _tankService = new TankService(_loggerMock.Object, new[] { _sensorPluginMock.Object });
+        // Create a temporary directory for test file storage
+        var tempPath = Path.Combine(Path.GetTempPath(), $"vandaemon-tests-{Guid.NewGuid()}");
+        _fileStore = new JsonFileStore(_fileStoreLoggerMock.Object, tempPath);
+
+        _tankService = new TankService(_loggerMock.Object, _fileStore, new[] { _sensorPluginMock.Object });
     }
 
     [Fact]
