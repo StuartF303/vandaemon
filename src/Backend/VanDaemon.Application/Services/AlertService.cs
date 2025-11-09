@@ -96,39 +96,38 @@ public class AlertService : IAlertService
         foreach (var tank in tanks)
         {
             var currentLevel = tank.CurrentLevel;
+            bool inAlertState = tank.AlertWhenOver
+                ? currentLevel >= tank.AlertLevel  // Alert when over (tank getting full)
+                : currentLevel <= tank.AlertLevel; // Alert when under (tank running empty)
 
-            // Check for low level alerts (for fresh water, LPG, fuel)
-            if (tank.Type is TankType.FreshWater or TankType.LPG or TankType.Fuel or TankType.Battery)
+            if (inAlertState)
             {
-                if (currentLevel <= tank.LowLevelThreshold)
+                // Determine severity based on how critical the situation is
+                AlertSeverity severity;
+                string message;
+
+                if (tank.AlertWhenOver)
                 {
-                    var severity = currentLevel <= tank.LowLevelThreshold / 2
-                        ? AlertSeverity.Critical
-                        : AlertSeverity.Warning;
-
-                    await CreateAlertAsync(
-                        severity,
-                        tank.Id.ToString(),
-                        $"{tank.Name} level is low: {currentLevel:F1}%",
-                        cancellationToken);
+                    // Tank getting full - critical if >= 95%
+                    severity = currentLevel >= 95 ? AlertSeverity.Critical : AlertSeverity.Warning;
+                    message = currentLevel >= 95
+                        ? $"{tank.Name} is almost full: {currentLevel:F1}%"
+                        : $"{tank.Name} level is high: {currentLevel:F1}% (alert at {tank.AlertLevel:F0}%)";
                 }
-            }
-
-            // Check for high level alerts (for waste water)
-            if (tank.Type == TankType.WasteWater)
-            {
-                if (currentLevel >= tank.HighLevelThreshold)
+                else
                 {
-                    var severity = currentLevel >= 95
-                        ? AlertSeverity.Critical
-                        : AlertSeverity.Warning;
-
-                    await CreateAlertAsync(
-                        severity,
-                        tank.Id.ToString(),
-                        $"{tank.Name} level is high: {currentLevel:F1}%",
-                        cancellationToken);
+                    // Tank running empty - critical if <= 10%
+                    severity = currentLevel <= 10 ? AlertSeverity.Critical : AlertSeverity.Warning;
+                    message = currentLevel <= 10
+                        ? $"{tank.Name} is critically low: {currentLevel:F1}%"
+                        : $"{tank.Name} level is low: {currentLevel:F1}% (alert at {tank.AlertLevel:F0}%)";
                 }
+
+                await CreateAlertAsync(
+                    severity,
+                    tank.Id.ToString(),
+                    message,
+                    cancellationToken);
             }
         }
 

@@ -28,8 +28,6 @@ public class SettingsService : ISettingsService
             ToolbarPosition = ToolbarPosition.Left,
             AlertSettings = new AlertSettings
             {
-                TankLowLevelThreshold = 10.0,
-                TankHighLevelThreshold = 90.0,
                 EnableAudioAlerts = true,
                 EnablePushNotifications = false
             },
