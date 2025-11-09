@@ -19,6 +19,7 @@ public class SystemConfiguration
     public string VanModel { get; set; } = "Mercedes Sprinter LWB";
     public string VanDiagramPath { get; set; } = "/diagrams/sprinter-lwb.svg";
     public ToolbarPosition ToolbarPosition { get; set; } = ToolbarPosition.Left;
+    public string Theme { get; set; } = "Light";
     public AlertSettings AlertSettings { get; set; } = new();
     public Dictionary<string, object> PluginConfigurations { get; set; } = new();
     public DateTime LastUpdated { get; set; }
