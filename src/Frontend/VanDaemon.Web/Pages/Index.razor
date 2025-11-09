@@ -2,6 +2,7 @@
 @inject HttpClient Http
 @inject TelemetryService Telemetry
 @inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
 
 <PageTitle>Dashboard - VanDaemon</PageTitle>
@@ -16,8 +17,12 @@
     </div>
 
     <!-- Van Diagram Container -->
-    <div style="flex: 1; position: relative; width: 100%; min-height: 500px;">
-        <div class="van-diagram-container" style="position: relative; width: 100%; height: 100%;">
+    <div style="flex: 1; position: relative; width: 100%; min-height: 500px;"
+         @onmousemove="OnMouseMove"
+         @onmouseup="OnMouseUp">
+        <div class="van-diagram-container"
+             @ref="diagramContainer"
+             style="position: relative; width: 100%; height: 100%;">
             @if (!string.IsNullOrEmpty(backgroundImage))
             {
                 <img src="@backgroundImage" alt="Van Diagram" style="width: 100%; height: 100%; object-fit: contain;" />
@@ -35,11 +40,10 @@
             @foreach (var overlay in overlays)
             {
                 <div class="overlay-item @(isEditMode ? "edit-mode" : "")"
-                     style="position: absolute; left: @(overlay.X)%; top: @(overlay.Y)%; transform: translate(-50%, -50%); cursor: @(isEditMode ? "move" : "pointer");"
+                     style="position: absolute; left: @(overlay.X)%; top: @(overlay.Y)%; transform: translate(-50%, -50%); cursor: @(isEditMode ? "move" : "pointer"); user-select: none;"
                      @onclick="() => OnOverlayClick(overlay)"
-                     @ondragstart="() => OnDragStart(overlay)"
-                     @ondragend="() => OnDragEnd(overlay)"
-                     draggable="@isEditMode">
+                     @onmousedown="(e) => OnMouseDown(e, overlay)"
+                     @onmousedown:preventDefault="isEditMode">
 
                     @if (overlay.Type == OverlayType.Tank)
                     {
@@ -87,12 +91,18 @@
     private bool isEditMode = false;
     private List<OverlayItem> overlays = new();
     private OverlayItem? draggedOverlay;
+    private ElementReference diagramContainer;
+    private double containerWidth = 1;
+    private double containerHeight = 1;
+    private double dragStartX = 0;
+    private double dragStartY = 0;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadTanks();
         await LoadControls();
         await LoadSettings();
+        await LoadOverlayPositions();
         CreateOverlaysFromTanks();
         CreateOverlaysFromControls();
 
@@ -102,6 +112,24 @@
 
         // Start SignalR connection
         await Telemetry.StartAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Get container dimensions for percentage calculations
+            var dimensions = await JSRuntime.InvokeAsync<BoundingBox>("eval",
+                @"(function() {
+                    const el = document.querySelector('.van-diagram-container');
+                    if (el) {
+                        return { width: el.offsetWidth, height: el.offsetHeight };
+                    }
+                    return { width: 1, height: 1 };
+                })()");
+            containerWidth = dimensions.Width > 0 ? dimensions.Width : 1;
+            containerHeight = dimensions.Height > 0 ? dimensions.Height : 1;
+        }
     }
 
     private void OnControlStateChanged(Guid controlId, object state, string name)
@@ -144,6 +172,16 @@
         int index = 0;
         foreach (var tank in tanks)
         {
+            // Use saved position if available, otherwise use default
+            double x = 20 + (index * 15);
+            double y = 30 + (index % 2) * 20;
+
+            if (savedPositions.TryGetValue(tank.Id, out var savedPos))
+            {
+                x = savedPos.X;
+                y = savedPos.Y;
+            }
+
             overlays.Add(new OverlayItem
             {
                 Id = tank.Id,
@@ -151,8 +189,8 @@
                 Type = OverlayType.Tank,
                 Icon = GetTankIcon(tank.Type),
                 Value = tank.CurrentLevel,
-                X = 20 + (index * 15), // Spread horizontally
-                Y = 30 + (index % 2) * 20 // Alternate vertically
+                X = x,
+                Y = y
             });
             index++;
         }
@@ -175,6 +213,16 @@
                      jsonElement.ValueKind == System.Text.Json.JsonValueKind.True)
                 isOn = true;
 
+            // Use saved position if available, otherwise use default
+            double x = 20 + (index * 15);
+            double y = 70 + (index % 2) * 20;
+
+            if (savedPositions.TryGetValue(control.Id, out var savedPos))
+            {
+                x = savedPos.X;
+                y = savedPos.Y;
+            }
+
             overlays.Add(new OverlayItem
             {
                 Id = control.Id,
@@ -182,8 +230,8 @@
                 Type = OverlayType.Control,
                 Icon = "", // Not used for controls
                 IsOn = isOn,
-                X = 20 + (index * 15), // Spread horizontally
-                Y = 70 + (index % 2) * 20 // Position below tanks
+                X = x,
+                Y = y
             });
             index++;
         }
@@ -207,19 +255,55 @@
         if (!isEditMode)
         {
             // Show details in a dialog or snackbar
-            Snackbar.Add($"{overlay.Name}: {overlay.Value}%", Severity.Info);
+            if (overlay.Type == OverlayType.Tank)
+            {
+                Snackbar.Add($"{overlay.Name}: {overlay.Value:F1}%", Severity.Info);
+            }
         }
     }
 
-    private void OnDragStart(OverlayItem overlay)
+    private void OnMouseDown(MouseEventArgs e, OverlayItem overlay)
     {
-        draggedOverlay = overlay;
+        if (isEditMode)
+        {
+            draggedOverlay = overlay;
+            dragStartX = e.ClientX;
+            dragStartY = e.ClientY;
+        }
     }
 
-    private void OnDragEnd(OverlayItem overlay)
+    private async Task OnMouseMove(MouseEventArgs e)
     {
-        // TODO: Save position to backend
-        draggedOverlay = null;
+        if (draggedOverlay != null && isEditMode)
+        {
+            // Calculate the change in mouse position
+            double deltaX = e.ClientX - dragStartX;
+            double deltaY = e.ClientY - dragStartY;
+
+            // Convert pixel delta to percentage
+            double deltaXPercent = (deltaX / containerWidth) * 100;
+            double deltaYPercent = (deltaY / containerHeight) * 100;
+
+            // Update overlay position
+            draggedOverlay.X = Math.Max(0, Math.Min(100, draggedOverlay.X + deltaXPercent));
+            draggedOverlay.Y = Math.Max(0, Math.Min(100, draggedOverlay.Y + deltaYPercent));
+
+            // Update drag start position for next move
+            dragStartX = e.ClientX;
+            dragStartY = e.ClientY;
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task OnMouseUp(MouseEventArgs e)
+    {
+        if (draggedOverlay != null && isEditMode)
+        {
+            // Save position to backend
+            await SaveOverlayPosition(draggedOverlay);
+            draggedOverlay = null;
+        }
     }
 
     private async Task OnControlToggle(OverlayItem overlay, bool value)
@@ -286,6 +370,52 @@
             Console.WriteLine($"Error loading controls: {ex.Message}");
         }
     }
+
+    private async Task LoadOverlayPositions()
+    {
+        try
+        {
+            var positions = await Http.GetFromJsonAsync<List<OverlayPositionDto>>("api/settings/overlay-positions");
+            if (positions != null)
+            {
+                savedPositions = positions.ToDictionary(p => p.Id, p => (p.X, p.Y));
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading overlay positions: {ex.Message}");
+            // Non-fatal - will use default positions
+        }
+    }
+
+    private async Task SaveOverlayPosition(OverlayItem overlay)
+    {
+        try
+        {
+            var position = new OverlayPositionDto
+            {
+                Id = overlay.Id,
+                Type = overlay.Type.ToString(),
+                X = overlay.X,
+                Y = overlay.Y
+            };
+
+            var response = await Http.PostAsJsonAsync("api/settings/overlay-positions", position);
+            if (response.IsSuccessStatusCode)
+            {
+                // Update saved positions cache
+                savedPositions[overlay.Id] = (overlay.X, overlay.Y);
+                Snackbar.Add("Position saved", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving overlay position: {ex.Message}");
+            Snackbar.Add("Failed to save position", Severity.Warning);
+        }
+    }
+
+    private Dictionary<Guid, (double X, double Y)> savedPositions = new();
 
     private void OnTankLevelUpdated(Guid tankId, double level, string name)
     {
@@ -368,5 +498,19 @@
         public double X { get; set; } // Position as percentage
         public double Y { get; set; } // Position as percentage
         public string? ConfiguredAction { get; set; } // For controls
+    }
+
+    public class OverlayPositionDto
+    {
+        public Guid Id { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+
+    public class BoundingBox
+    {
+        public double Width { get; set; }
+        public double Height { get; set; }
     }
 }
