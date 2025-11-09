@@ -73,11 +73,13 @@ foreach (var plugin in controlPlugins)
 }
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+// Enable Swagger in all environments for API documentation access
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "VanDaemon API v1");
+    c.RoutePrefix = "swagger"; // Explicitly set the route prefix
+});
 
 app.UseCors("AllowAll");
 app.UseAuthorization();
