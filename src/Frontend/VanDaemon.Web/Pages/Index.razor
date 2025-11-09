@@ -1,4 +1,5 @@
 @page "/"
+@using MudBlazor.Utilities
 @inject HttpClient Http
 @inject TelemetryService Telemetry
 @inject ISnackbar Snackbar
@@ -151,7 +152,7 @@
                                 }
                                 else if (overlay.ControlType == "ColorChooser" && !isEditMode)
                                 {
-                                    <MudColorPicker @bind-Value="@overlay.ColorValue"
+                                    <MudColorPicker Value="@overlay.ColorValue"
                                                    ColorPickerMode="ColorPickerMode.RGB"
                                                    DisableAlpha="true"
                                                    PickerVariant="PickerVariant.Inline"
