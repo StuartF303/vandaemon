@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using VanDaemon.Application.Interfaces;
+using VanDaemon.Application.Persistence;
 using VanDaemon.Core.Entities;
 using VanDaemon.Plugins.Abstractions;
 
@@ -11,15 +12,55 @@ namespace VanDaemon.Application.Services;
 public class TankService : ITankService
 {
     private readonly ILogger<TankService> _logger;
-    private readonly List<Tank> _tanks; // In-memory storage for now
+    private readonly JsonFileStore _fileStore;
+    private readonly List<Tank> _tanks;
     private readonly Dictionary<string, ISensorPlugin> _sensorPlugins;
+    private const string TanksFileName = "tanks.json";
 
-    public TankService(ILogger<TankService> logger, IEnumerable<ISensorPlugin> sensorPlugins)
+    public TankService(ILogger<TankService> logger, JsonFileStore fileStore, IEnumerable<ISensorPlugin> sensorPlugins)
     {
         _logger = logger;
+        _fileStore = fileStore;
         _tanks = new List<Tank>();
         _sensorPlugins = sensorPlugins.ToDictionary(p => p.Name, p => p);
-        InitializeDefaultTanks();
+        _ = LoadTanksAsync(); // Fire and forget to load tanks on startup
+    }
+
+    private async Task LoadTanksAsync()
+    {
+        try
+        {
+            var tanks = await _fileStore.LoadAsync<List<Tank>>(TanksFileName);
+            if (tanks != null && tanks.Any())
+            {
+                _tanks.Clear();
+                _tanks.AddRange(tanks);
+                _logger.LogInformation("Loaded {Count} tanks from {FileName}", tanks.Count, TanksFileName);
+            }
+            else
+            {
+                InitializeDefaultTanks();
+                await SaveTanksAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading tanks from JSON, using defaults");
+            InitializeDefaultTanks();
+        }
+    }
+
+    private async Task SaveTanksAsync()
+    {
+        try
+        {
+            await _fileStore.SaveAsync(TanksFileName, _tanks);
+            _logger.LogDebug("Saved {Count} tanks to {FileName}", _tanks.Count, TanksFileName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving tanks to JSON");
+        }
     }
 
     private void InitializeDefaultTanks()
@@ -32,8 +73,8 @@ public class TankService : ITankService
             Type = Core.Enums.TankType.FreshWater,
             Capacity = 100,
             CurrentLevel = 75,
-            LowLevelThreshold = 10,
-            HighLevelThreshold = 90,
+            AlertLevel = 20.0,
+            AlertWhenOver = false, // Alert when UNDER 20% (empty)
             SensorPlugin = "Simulated Sensor Plugin",
             SensorConfiguration = new Dictionary<string, object> { ["sensorId"] = "fresh_water" },
             LastUpdated = DateTime.UtcNow,
@@ -47,8 +88,8 @@ public class TankService : ITankService
             Type = Core.Enums.TankType.WasteWater,
             Capacity = 80,
             CurrentLevel = 25,
-            LowLevelThreshold = 10,
-            HighLevelThreshold = 90,
+            AlertLevel = 80.0,
+            AlertWhenOver = true, // Alert when OVER 80% (full)
             SensorPlugin = "Simulated Sensor Plugin",
             SensorConfiguration = new Dictionary<string, object> { ["sensorId"] = "waste_water" },
             LastUpdated = DateTime.UtcNow,
@@ -62,8 +103,8 @@ public class TankService : ITankService
             Type = Core.Enums.TankType.LPG,
             Capacity = 30,
             CurrentLevel = 60,
-            LowLevelThreshold = 10,
-            HighLevelThreshold = 90,
+            AlertLevel = 20.0,
+            AlertWhenOver = false, // Alert when UNDER 20% (empty)
             SensorPlugin = "Simulated Sensor Plugin",
             SensorConfiguration = new Dictionary<string, object> { ["sensorId"] = "lpg" },
             LastUpdated = DateTime.UtcNow,
@@ -114,7 +155,7 @@ public class TankService : ITankService
         return tank.CurrentLevel;
     }
 
-    public Task<Tank> UpdateTankAsync(Tank tank, CancellationToken cancellationToken = default)
+    public async Task<Tank> UpdateTankAsync(Tank tank, CancellationToken cancellationToken = default)
     {
         var existingTank = _tanks.FirstOrDefault(t => t.Id == tank.Id);
         if (existingTank != null)
@@ -125,28 +166,29 @@ public class TankService : ITankService
         tank.LastUpdated = DateTime.UtcNow;
         _tanks.Add(tank);
         _logger.LogInformation("Updated tank {TankName}", tank.Name);
-        return Task.FromResult(tank);
+        await SaveTanksAsync();
+        return tank;
     }
 
-    public Task<Tank> CreateTankAsync(Tank tank, CancellationToken cancellationToken = default)
+    public async Task<Tank> CreateTankAsync(Tank tank, CancellationToken cancellationToken = default)
     {
         tank.Id = Guid.NewGuid();
         tank.LastUpdated = DateTime.UtcNow;
         _tanks.Add(tank);
         _logger.LogInformation("Created tank {TankName} with ID {TankId}", tank.Name, tank.Id);
-        return Task.FromResult(tank);
+        await SaveTanksAsync();
+        return tank;
     }
 
-    public Task DeleteTankAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteTankAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var tank = _tanks.FirstOrDefault(t => t.Id == id);
         if (tank != null)
         {
             tank.IsActive = false;
             _logger.LogInformation("Deleted tank {TankName}", tank.Name);
+            await SaveTanksAsync();
         }
-
-        return Task.CompletedTask;
     }
 
     public async Task RefreshAllTankLevelsAsync(CancellationToken cancellationToken = default)

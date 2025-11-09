@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using VanDaemon.Application.Interfaces;
+using VanDaemon.Application.Persistence;
 using VanDaemon.Core.Entities;
 using VanDaemon.Plugins.Abstractions;
 
@@ -11,15 +12,55 @@ namespace VanDaemon.Application.Services;
 public class ControlService : IControlService
 {
     private readonly ILogger<ControlService> _logger;
+    private readonly JsonFileStore _fileStore;
     private readonly List<Control> _controls;
     private readonly Dictionary<string, IControlPlugin> _controlPlugins;
+    private const string ControlsFileName = "controls.json";
 
-    public ControlService(ILogger<ControlService> logger, IEnumerable<IControlPlugin> controlPlugins)
+    public ControlService(ILogger<ControlService> logger, JsonFileStore fileStore, IEnumerable<IControlPlugin> controlPlugins)
     {
         _logger = logger;
+        _fileStore = fileStore;
         _controls = new List<Control>();
         _controlPlugins = controlPlugins.ToDictionary(p => p.Name, p => p);
-        InitializeDefaultControls();
+        _ = LoadControlsAsync(); // Fire and forget to load controls on startup
+    }
+
+    private async Task LoadControlsAsync()
+    {
+        try
+        {
+            var controls = await _fileStore.LoadAsync<List<Control>>(ControlsFileName);
+            if (controls != null && controls.Any())
+            {
+                _controls.Clear();
+                _controls.AddRange(controls);
+                _logger.LogInformation("Loaded {Count} controls from {FileName}", controls.Count, ControlsFileName);
+            }
+            else
+            {
+                InitializeDefaultControls();
+                await SaveControlsAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading controls from JSON, using defaults");
+            InitializeDefaultControls();
+        }
+    }
+
+    private async Task SaveControlsAsync()
+    {
+        try
+        {
+            await _fileStore.SaveAsync(ControlsFileName, _controls);
+            _logger.LogDebug("Saved {Count} controls to {FileName}", _controls.Count, ControlsFileName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving controls to JSON");
+        }
     }
 
     private void InitializeDefaultControls()
@@ -61,7 +102,7 @@ public class ControlService : IControlService
             ControlConfiguration = new Dictionary<string, object> { ["controlId"] = "water_pump" },
             LastUpdated = DateTime.UtcNow,
             IsActive = true,
-            IconName = "water_pump"
+            IconName = "water_drop"
         });
 
         _controls.Add(new Control
@@ -154,7 +195,7 @@ public class ControlService : IControlService
         return false;
     }
 
-    public Task<Control> UpdateControlAsync(Control control, CancellationToken cancellationToken = default)
+    public async Task<Control> UpdateControlAsync(Control control, CancellationToken cancellationToken = default)
     {
         var existingControl = _controls.FirstOrDefault(c => c.Id == control.Id);
         if (existingControl != null)
@@ -165,27 +206,28 @@ public class ControlService : IControlService
         control.LastUpdated = DateTime.UtcNow;
         _controls.Add(control);
         _logger.LogInformation("Updated control {ControlName}", control.Name);
-        return Task.FromResult(control);
+        await SaveControlsAsync();
+        return control;
     }
 
-    public Task<Control> CreateControlAsync(Control control, CancellationToken cancellationToken = default)
+    public async Task<Control> CreateControlAsync(Control control, CancellationToken cancellationToken = default)
     {
         control.Id = Guid.NewGuid();
         control.LastUpdated = DateTime.UtcNow;
         _controls.Add(control);
         _logger.LogInformation("Created control {ControlName} with ID {ControlId}", control.Name, control.Id);
-        return Task.FromResult(control);
+        await SaveControlsAsync();
+        return control;
     }
 
-    public Task DeleteControlAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteControlAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var control = _controls.FirstOrDefault(c => c.Id == id);
         if (control != null)
         {
             control.IsActive = false;
             _logger.LogInformation("Deleted control {ControlName}", control.Name);
+            await SaveControlsAsync();
         }
-
-        return Task.CompletedTask;
     }
 }

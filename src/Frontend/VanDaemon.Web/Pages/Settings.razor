@@ -124,20 +124,9 @@ else
         <MudItem xs="12" md="6">
             <MudPaper Elevation="2" Class="pa-4">
                 <MudText Typo="Typo.h6" GutterBottom="true">Alert Settings</MudText>
-
-                <MudNumericField @bind-Value="configuration.AlertSettings.TankLowLevelThreshold"
-                               Label="Low Level Threshold (%)"
-                               Variant="Variant.Outlined"
-                               Min="0"
-                               Max="50"
-                               Class="mb-3" />
-
-                <MudNumericField @bind-Value="configuration.AlertSettings.TankHighLevelThreshold"
-                               Label="High Level Threshold (%)"
-                               Variant="Variant.Outlined"
-                               Min="50"
-                               Max="100"
-                               Class="mb-3" />
+                <MudText Typo="Typo.body2" Class="mb-4" Style="color: var(--mud-palette-text-secondary);">
+                    Alert levels are configured individually for each tank in the Tanks page.
+                </MudText>
 
                 <MudSwitch @bind-Checked="configuration.AlertSettings.EnableAudioAlerts"
                           Label="Enable Audio Alerts"
@@ -316,8 +305,6 @@ else
 
     public class AlertSettingsDto
     {
-        public double TankLowLevelThreshold { get; set; }
-        public double TankHighLevelThreshold { get; set; }
         public bool EnableAudioAlerts { get; set; }
         public bool EnablePushNotifications { get; set; }
     }

@@ -30,8 +30,6 @@ public class SystemConfiguration
 /// </summary>
 public class AlertSettings
 {
-    public double TankLowLevelThreshold { get; set; } = 10.0;
-    public double TankHighLevelThreshold { get; set; } = 90.0;
     public bool EnableAudioAlerts { get; set; } = true;
     public bool EnablePushNotifications { get; set; } = false;
 }
