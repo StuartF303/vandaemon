@@ -607,12 +607,24 @@
 
     private Color GetTankColor(TankDto tank)
     {
-        if (tank.Type == TankType.WasteWater)
-        {
-            return tank.CurrentLevel > tank.HighLevelThreshold ? Color.Error : Color.Info;
-        }
+        bool inAlertState = tank.AlertWhenOver
+            ? tank.CurrentLevel >= tank.AlertLevel
+            : tank.CurrentLevel <= tank.AlertLevel;
 
-        return tank.CurrentLevel < tank.LowLevelThreshold ? Color.Error : Color.Success;
+        if (!inAlertState)
+            return Color.Success;
+
+        // In alert state
+        if (tank.AlertWhenOver)
+        {
+            // Tank getting full
+            return tank.CurrentLevel >= 95 ? Color.Error : Color.Warning;
+        }
+        else
+        {
+            // Tank running empty
+            return tank.CurrentLevel <= 10 ? Color.Error : Color.Warning;
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -644,8 +656,8 @@
         public TankType Type { get; set; }
         public double CurrentLevel { get; set; }
         public double Capacity { get; set; }
-        public double LowLevelThreshold { get; set; }
-        public double HighLevelThreshold { get; set; }
+        public double AlertLevel { get; set; }
+        public bool AlertWhenOver { get; set; }
     }
 
     public class ControlDto

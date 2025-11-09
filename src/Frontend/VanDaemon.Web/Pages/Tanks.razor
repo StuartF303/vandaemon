@@ -144,19 +144,22 @@ else
                             Min="0"
                             Class="mb-4" />
 
-            <MudNumericField @bind-Value="editingTank.LowLevelThreshold"
-                            Label="Low Level Threshold (%)"
+            <MudNumericField @bind-Value="editingTank.AlertLevel"
+                            Label="Alert Level (%)"
                             Required="true"
                             Min="0"
                             Max="100"
+                            HelperText="Percentage level to trigger alerts"
                             Class="mb-4" />
 
-            <MudNumericField @bind-Value="editingTank.HighLevelThreshold"
-                            Label="High Level Threshold (%)"
-                            Required="true"
-                            Min="0"
-                            Max="100"
-                            Class="mb-4" />
+            <MudSwitch @bind-Checked="editingTank.AlertWhenOver"
+                      Label="Alert when over threshold (checked) or under threshold (unchecked)"
+                      Color="Color.Primary"
+                      Class="mb-4">
+                <MudText Typo="Typo.body2" Class="mt-1">
+                    @(editingTank.AlertWhenOver ? "🔔 Alert when OVER " + editingTank.AlertLevel + "% (tank getting full)" : "🔔 Alert when UNDER " + editingTank.AlertLevel + "% (tank running empty)")
+                </MudText>
+            </MudSwitch>
 
             <MudDivider Class="my-4" />
             <MudText Typo="Typo.h6" Class="mb-3">Sensor Provider Configuration</MudText>
@@ -305,8 +308,8 @@ else
             Name = "",
             Type = TankType.FreshWater,
             Capacity = 100,
-            LowLevelThreshold = 10,
-            HighLevelThreshold = 90,
+            AlertLevel = 20.0,
+            AlertWhenOver = false, // Default: alert when tank is running empty
             CurrentLevel = 0
         };
         providerType = "Simulated";
@@ -329,8 +332,8 @@ else
             Name = tank.Name,
             Type = tank.Type,
             Capacity = tank.Capacity,
-            LowLevelThreshold = tank.LowLevelThreshold,
-            HighLevelThreshold = tank.HighLevelThreshold,
+            AlertLevel = tank.AlertLevel,
+            AlertWhenOver = tank.AlertWhenOver,
             CurrentLevel = tank.CurrentLevel,
             SensorPlugin = tank.SensorPlugin,
             SensorConfiguration = tank.SensorConfiguration != null
@@ -478,16 +481,24 @@ else
 
     private Color GetTankProgressColor(TankDto tank)
     {
-        if (tank.Type == TankType.WasteWater)
-        {
-            return tank.CurrentLevel > tank.HighLevelThreshold ? Color.Error : Color.Info;
-        }
+        bool inAlertState = tank.AlertWhenOver
+            ? tank.CurrentLevel > tank.AlertLevel
+            : tank.CurrentLevel < tank.AlertLevel;
 
-        if (tank.CurrentLevel < tank.LowLevelThreshold)
-            return Color.Error;
-        if (tank.CurrentLevel < tank.LowLevelThreshold * 2)
-            return Color.Warning;
-        return Color.Success;
+        if (!inAlertState)
+            return Color.Success;
+
+        // In alert state - check severity
+        if (tank.AlertWhenOver)
+        {
+            // Tank getting full
+            return tank.CurrentLevel >= 95 ? Color.Error : Color.Warning;
+        }
+        else
+        {
+            // Tank running empty
+            return tank.CurrentLevel <= 10 ? Color.Error : Color.Warning;
+        }
     }
 
     private Color GetTankTypeColor(TankType type)
@@ -518,26 +529,41 @@ else
 
     private bool IsTankInWarningState(TankDto tank)
     {
-        if (tank.Type == TankType.WasteWater)
-            return tank.CurrentLevel >= tank.HighLevelThreshold;
-
-        return tank.CurrentLevel <= tank.LowLevelThreshold;
+        return tank.AlertWhenOver
+            ? tank.CurrentLevel >= tank.AlertLevel
+            : tank.CurrentLevel <= tank.AlertLevel;
     }
 
     private Severity GetAlertSeverity(TankDto tank)
     {
-        if (tank.Type == TankType.WasteWater)
+        if (tank.AlertWhenOver)
+        {
+            // Tank getting full
             return tank.CurrentLevel >= 95 ? Severity.Error : Severity.Warning;
-
-        return tank.CurrentLevel <= (tank.LowLevelThreshold / 2) ? Severity.Error : Severity.Warning;
+        }
+        else
+        {
+            // Tank running empty
+            return tank.CurrentLevel <= 10 ? Severity.Error : Severity.Warning;
+        }
     }
 
     private string GetWarningMessage(TankDto tank)
     {
-        if (tank.Type == TankType.WasteWater)
-            return tank.CurrentLevel >= 95 ? "Tank almost full!" : "Tank level high";
-
-        return tank.CurrentLevel <= (tank.LowLevelThreshold / 2) ? "Tank critically low!" : "Tank level low";
+        if (tank.AlertWhenOver)
+        {
+            // Tank getting full
+            return tank.CurrentLevel >= 95
+                ? $"Tank almost full! ({tank.CurrentLevel:F1}%)"
+                : $"Tank level high ({tank.CurrentLevel:F1}% > {tank.AlertLevel}%)";
+        }
+        else
+        {
+            // Tank running empty
+            return tank.CurrentLevel <= 10
+                ? $"Tank critically low! ({tank.CurrentLevel:F1}%)"
+                : $"Tank level low ({tank.CurrentLevel:F1}% < {tank.AlertLevel}%)";
+        }
     }
 
     public enum TankType
@@ -556,8 +582,8 @@ else
         public TankType Type { get; set; }
         public double CurrentLevel { get; set; }
         public double Capacity { get; set; }
-        public double LowLevelThreshold { get; set; }
-        public double HighLevelThreshold { get; set; }
+        public double AlertLevel { get; set; } = 20.0;
+        public bool AlertWhenOver { get; set; } = false;
         public string SensorPlugin { get; set; } = "Simulated";
         public Dictionary<string, object>? SensorConfiguration { get; set; }
         public DateTime LastUpdated { get; set; }

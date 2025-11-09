@@ -3,6 +3,7 @@ using Serilog;
 using VanDaemon.Api.Hubs;
 using VanDaemon.Api.Services;
 using VanDaemon.Application.Interfaces;
+using VanDaemon.Application.Persistence;
 using VanDaemon.Application.Services;
 using VanDaemon.Plugins.Abstractions;
 using VanDaemon.Plugins.Simulated;
@@ -51,6 +52,10 @@ builder.Services.AddCors(options =>
         }
     });
 });
+
+// Register JSON file persistence
+builder.Services.AddSingleton(sp =>
+    new JsonFileStore(sp.GetRequiredService<ILogger<JsonFileStore>>(), Path.Combine(AppContext.BaseDirectory, "data")));
 
 // Register plugins
 builder.Services.AddSingleton<ISensorPlugin, SimulatedSensorPlugin>();
