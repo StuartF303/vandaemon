@@ -5,8 +5,9 @@ namespace VanDaemon.Core.Enums;
 /// </summary>
 public enum ControlType
 {
-    Toggle,      // On/Off switch
-    Momentary,   // Push button
-    Dimmer,      // Variable control (0-100)
-    Selector     // Multi-position selector
+    Toggle,        // On/Off switch
+    Momentary,     // Push button
+    Dimmer,        // Variable control (0-100)
+    Selector,      // Multi-position selector
+    ColorChooser   // RGB color picker
 }

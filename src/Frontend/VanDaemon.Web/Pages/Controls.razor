@@ -5,6 +5,8 @@
 
 <PageTitle>Controls - VanDaemon</PageTitle>
 
+<div style="padding: 16px;">
+
 <style>
     .controls-header {
         margin-bottom: 24px;
@@ -144,8 +146,9 @@ else
                       Label="Control Type"
                       Required="true"
                       Class="mb-4">
-                <MudSelectItem Value="@("Toggle")">Toggle Switch</MudSelectItem>
-                <MudSelectItem Value="@("Dimmer")">Dimmer / Slider</MudSelectItem>
+                <MudSelectItem Value="@("Toggle")">On/Off Switch</MudSelectItem>
+                <MudSelectItem Value="@("Dimmer")">Dimmable / Slider</MudSelectItem>
+                <MudSelectItem Value="@("ColorChooser")">Color Chooser (RGB)</MudSelectItem>
                 <MudSelectItem Value="@("Momentary")">Momentary Button</MudSelectItem>
                 <MudSelectItem Value="@("Selector")">Selector</MudSelectItem>
             </MudSelect>
@@ -153,10 +156,16 @@ else
             <MudSelect @bind-Value="editingControl.IconName"
                       Label="Icon"
                       Class="mb-4">
-                <MudSelectItem Value="@("lightbulb")">Lightbulb</MudSelectItem>
-                <MudSelectItem Value="@("light_mode")">Light Mode</MudSelectItem>
-                <MudSelectItem Value="@("water_pump")">Water Pump</MudSelectItem>
-                <MudSelectItem Value="@("thermostat")">Thermostat</MudSelectItem>
+                <MudSelectItem Value="@("lightbulb")">💡 Lightbulb</MudSelectItem>
+                <MudSelectItem Value="@("light_mode")">☀️ Light Mode</MudSelectItem>
+                <MudSelectItem Value="@("water_drop")">💧 Water Pump</MudSelectItem>
+                <MudSelectItem Value="@("thermostat")">🌡️ Thermostat</MudSelectItem>
+                <MudSelectItem Value="@("power")">⚡ Power</MudSelectItem>
+                <MudSelectItem Value="@("fan")">🌀 Fan/Ventilation</MudSelectItem>
+                <MudSelectItem Value="@("heating")">🔥 Heating</MudSelectItem>
+                <MudSelectItem Value="@("air_conditioner")">❄️ Air Conditioner</MudSelectItem>
+                <MudSelectItem Value="@("outlet")">🔌 Outlet/Socket</MudSelectItem>
+                <MudSelectItem Value="@("nightlight")">🌙 Night Light</MudSelectItem>
             </MudSelect>
 
             <MudDivider Class="my-4" />
@@ -213,6 +222,8 @@ else
         <MudButton Color="Color.Primary" OnClick="SaveControl" Variant="Variant.Filled">Save</MudButton>
     </DialogActions>
 </MudDialog>
+
+</div>
 
 @code {
     private List<ControlDto>? controls;
@@ -464,8 +475,14 @@ else
         {
             "lightbulb" => Icons.Material.Filled.Lightbulb,
             "light_mode" => Icons.Material.Filled.LightMode,
-            "water_pump" => Icons.Material.Filled.WaterDrop,
+            "water_drop" => Icons.Material.Filled.WaterDrop,
             "thermostat" => Icons.Material.Filled.Thermostat,
+            "power" => Icons.Material.Filled.Power,
+            "fan" => Icons.Material.Filled.Air,
+            "heating" => Icons.Material.Filled.LocalFireDepartment,
+            "air_conditioner" => Icons.Material.Filled.AcUnit,
+            "outlet" => Icons.Material.Filled.PowerSettingsNew,
+            "nightlight" => Icons.Material.Filled.Nightlight,
             _ => Icons.Material.Filled.SettingsInputComponent
         };
     }
