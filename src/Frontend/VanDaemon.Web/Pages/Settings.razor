@@ -80,6 +80,15 @@ else
                     <MudSelectItem Value="@("Bottom")">Bottom Bar (Tablet/Desktop)</MudSelectItem>
                 </MudSelect>
 
+                <MudSelect @bind-Value="configuration.Theme"
+                          Label="Theme"
+                          Variant="Variant.Outlined"
+                          Class="mb-3"
+                          HelperText="Choose between light and dark mode">
+                    <MudSelectItem Value="@("Light")">Light Mode</MudSelectItem>
+                    <MudSelectItem Value="@("Dark")">Dark Mode</MudSelectItem>
+                </MudSelect>
+
                 <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">Upload Custom Van Diagram</MudText>
                 <MudFileUpload T="IBrowserFile"
                               FilesChanged="OnFileSelected"
@@ -296,6 +305,7 @@ else
         public string VanModel { get; set; } = string.Empty;
         public string VanDiagramPath { get; set; } = string.Empty;
         public string ToolbarPosition { get; set; } = "Left";
+        public string Theme { get; set; } = "Light";
         public AlertSettingsDto AlertSettings { get; set; } = new();
         public DateTime LastUpdated { get; set; }
     }
