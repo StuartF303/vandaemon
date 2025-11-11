@@ -87,7 +87,11 @@
     <!-- Van Diagram Container -->
     <div class="diagram-area"
          @onmousemove="OnMouseMove"
-         @onmouseup="OnMouseUp">
+         @onmouseup="OnMouseUp"
+         @ontouchmove="OnTouchMove"
+         @ontouchend="OnTouchEnd"
+         @ontouchmove:preventDefault="isEditMode"
+         @ontouchend:preventDefault="isEditMode">
         <div class="van-diagram-container" @ref="diagramContainer">
             @if (!string.IsNullOrEmpty(backgroundImage))
             {
@@ -106,10 +110,12 @@
             @foreach (var overlay in overlays)
             {
                 <div class="overlay-item @(isEditMode ? "edit-mode" : "")"
-                     style="position: absolute; left: @(overlay.X)%; top: @(overlay.Y)%; transform: translate(-50%, -50%); cursor: @(isEditMode ? "move" : "pointer"); user-select: none;"
+                     style="position: absolute; left: @(overlay.X)%; top: @(overlay.Y)%; transform: translate(-50%, -50%); cursor: @(isEditMode ? "move" : "pointer"); user-select: none; touch-action: none;"
                      @onclick="() => OnOverlayClick(overlay)"
                      @onmousedown="(e) => OnMouseDown(e, overlay)"
-                     @onmousedown:preventDefault="isEditMode">
+                     @onmousedown:preventDefault="isEditMode"
+                     @ontouchstart="(e) => OnTouchStart(e, overlay)"
+                     @ontouchstart:preventDefault="isEditMode">
 
                     @if (overlay.Type == OverlayType.Tank)
                     {
@@ -431,6 +437,54 @@
     }
 
     private async Task OnMouseUp(MouseEventArgs e)
+    {
+        if (draggedOverlay != null && isEditMode)
+        {
+            // Save position to backend
+            await SaveOverlayPosition(draggedOverlay);
+            draggedOverlay = null;
+        }
+    }
+
+    // Touch event handlers for mobile devices
+    private void OnTouchStart(TouchEventArgs e, OverlayItem overlay)
+    {
+        if (isEditMode && e.Touches.Length > 0)
+        {
+            draggedOverlay = overlay;
+            var touch = e.Touches[0];
+            dragStartX = touch.ClientX;
+            dragStartY = touch.ClientY;
+        }
+    }
+
+    private async Task OnTouchMove(TouchEventArgs e)
+    {
+        if (draggedOverlay != null && isEditMode && e.Touches.Length > 0)
+        {
+            var touch = e.Touches[0];
+
+            // Calculate the change in touch position
+            double deltaX = touch.ClientX - dragStartX;
+            double deltaY = touch.ClientY - dragStartY;
+
+            // Convert pixel delta to percentage
+            double deltaXPercent = (deltaX / containerWidth) * 100;
+            double deltaYPercent = (deltaY / containerHeight) * 100;
+
+            // Update overlay position
+            draggedOverlay.X = Math.Max(0, Math.Min(100, draggedOverlay.X + deltaXPercent));
+            draggedOverlay.Y = Math.Max(0, Math.Min(100, draggedOverlay.Y + deltaYPercent));
+
+            // Update drag start position for next move
+            dragStartX = touch.ClientX;
+            dragStartY = touch.ClientY;
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task OnTouchEnd(TouchEventArgs e)
     {
         if (draggedOverlay != null && isEditMode)
         {
