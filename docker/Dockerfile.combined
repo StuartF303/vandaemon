@@ -1,5 +1,5 @@
 # Stage 1: Build API
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-api
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build-api
 WORKDIR /src
 
 # Copy solution and project files
@@ -20,7 +20,7 @@ WORKDIR "/src/src/Backend/VanDaemon.Api"
 RUN dotnet publish "VanDaemon.Api.csproj" -c Release -o /app/api /p:UseAppHost=false
 
 # Stage 2: Build Web Frontend
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-web
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build-web
 WORKDIR /src
 
 # Copy project file
@@ -35,7 +35,7 @@ WORKDIR "/src/src/Frontend/VanDaemon.Web"
 RUN dotnet publish "VanDaemon.Web.csproj" -c Release -o /app/web /p:UseAppHost=false
 
 # Stage 3: Runtime - Combined API + Web
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
 # Install nginx and supervisor
