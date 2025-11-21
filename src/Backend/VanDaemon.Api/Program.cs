@@ -39,10 +39,14 @@ builder.Services.AddCors(options =>
         {
             // Development: Allow specific origins for local development
             // Frontend runs on 5001, Docker web on 8080
+            // Include both localhost and 127.0.0.1 (browsers treat them as different origins)
             policy.WithOrigins(
-                      "http://localhost:5001",  // Local development frontend
-                      "http://localhost:8080",  // Docker web container
-                      "https://localhost:5001"  // HTTPS local development
+                      "http://localhost:5001",      // Local development frontend (localhost)
+                      "http://127.0.0.1:5001",      // Local development frontend (127.0.0.1)
+                      "https://localhost:5001",     // HTTPS local development (localhost)
+                      "https://127.0.0.1:5001",     // HTTPS local development (127.0.0.1)
+                      "http://localhost:8080",      // Docker web container
+                      "http://127.0.0.1:8080"       // Docker web container (127.0.0.1)
                   )
                   .AllowAnyMethod()
                   .AllowAnyHeader()
