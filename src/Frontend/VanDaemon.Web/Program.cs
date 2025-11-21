@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components.Web;
@@ -10,10 +11,21 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Use the current host as API base URL (nginx proxies /api to backend)
-// In production (Fly.io), this will be https://vandaemon.fly.dev
-// In local development, this will be http://localhost:8080 or wherever the app is hosted
-var apiBaseUrl = builder.HostEnvironment.BaseAddress.TrimEnd('/');
+// Determine API base URL based on environment
+string apiBaseUrl;
+
+if (builder.HostEnvironment.IsDevelopment())
+{
+    // Development: Load from appsettings.json
+    using var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
+    var appSettings = await httpClient.GetFromJsonAsync<AppSettings>("appsettings.json");
+    apiBaseUrl = appSettings?.ApiBaseUrl ?? "http://localhost:5000";
+}
+else
+{
+    // Production: Use the current host (nginx proxies /api to backend)
+    apiBaseUrl = builder.HostEnvironment.BaseAddress.TrimEnd('/');
+}
 
 // Configure JSON options for enum string conversion
 var jsonOptions = new JsonSerializerOptions
@@ -35,3 +47,9 @@ builder.Services.AddMudServices();
 builder.Services.AddSingleton(sp => new TelemetryService($"{apiBaseUrl}/hubs/telemetry"));
 
 await builder.Build().RunAsync();
+
+// Helper class for reading appsettings.json
+public class AppSettings
+{
+    public string ApiBaseUrl { get; set; } = string.Empty;
+}

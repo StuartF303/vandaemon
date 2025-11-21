@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-VanDaemon is an IoT control system for camper vans built with .NET 8, Blazor WebAssembly, and SignalR. It monitors and controls van systems (water tanks, LPG, lighting, heating) through a modular plugin architecture that supports multiple hardware integration methods.
+VanDaemon is an IoT control system for camper vans built with .NET 10, Blazor WebAssembly, and SignalR. It monitors and controls van systems (water tanks, LPG, lighting, heating) through a modular plugin architecture that supports multiple hardware integration methods.
 
 ## Build and Development Commands
 
@@ -43,18 +43,26 @@ dotnet test --collect:"XPlat Code Coverage"
 
 **Development mode (two terminals required):**
 ```bash
-# Terminal 1 - Backend API
+# Terminal 1 - Backend API (runs on port 5000)
 cd src/Backend/VanDaemon.Api
 dotnet run
+# API available at: http://localhost:5000
 
-# Terminal 2 - Frontend Web
+# Terminal 2 - Frontend Web (runs on port 5001)
 cd src/Frontend/VanDaemon.Web
 dotnet run
+# Web UI available at: http://localhost:5001
 ```
 
-**Docker mode (recommended):**
+**Important for Development:**
+- The API runs on port **5000** (configured in `Properties/launchSettings.json`)
+- The frontend runs on port **5001** (configured in `Properties/launchSettings.json`)
+- The frontend loads API URL from `wwwroot/appsettings.json` in development
+- CORS is configured to allow `localhost:5001` → `localhost:5000` communication
+
+**Docker mode (recommended for production):**
 ```bash
-cd docker
+# Run from solution root
 docker compose up -d        # Start services
 docker compose logs -f      # View logs
 docker compose down         # Stop services
@@ -62,10 +70,17 @@ docker compose down -v      # Stop and remove volumes
 ```
 
 **Access points:**
-- Web UI: http://localhost:8080
-- API: http://localhost:5000
-- Swagger: http://localhost:5000/swagger
-- SignalR Hub: ws://localhost:5000/hubs/telemetry
+- **Development:**
+  - Web UI: http://localhost:5001
+  - API: http://localhost:5000
+  - Swagger: http://localhost:5000/swagger
+  - SignalR Hub: ws://localhost:5000/hubs/telemetry
+
+- **Docker/Production:**
+  - Web UI: http://localhost:8080
+  - API: http://localhost:5000
+  - Swagger: http://localhost:5000/swagger
+  - SignalR Hub: ws://localhost:5000/hubs/telemetry
 
 ## Architecture Overview
 
