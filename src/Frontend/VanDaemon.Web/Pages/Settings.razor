@@ -72,14 +72,23 @@ else
                     }
                 </MudSelect>
 
+                <MudSelect @bind-Value="configuration.DrivingSide"
+                          Label="Driving Side"
+                          Variant="Variant.Outlined"
+                          Class="mb-3"
+                          HelperText="Determines default toolbar position for driver accessibility">
+                    <MudSelectItem Value="@("Left")">Left-hand drive (Driver on left)</MudSelectItem>
+                    <MudSelectItem Value="@("Right")">Right-hand drive (Driver on right)</MudSelectItem>
+                </MudSelect>
+
                 <MudSelect @bind-Value="configuration.ToolbarPosition"
                           Label="Toolbar Position"
                           Variant="Variant.Outlined"
                           Class="mb-3"
-                          HelperText="For tablets & landscape phones. Portrait phones always use bottom toolbar.">
-                    <MudSelectItem Value="@("Left")">Left Sidebar (Right-hand drive)</MudSelectItem>
-                    <MudSelectItem Value="@("Right")">Right Sidebar (Left-hand drive)</MudSelectItem>
-                    <MudSelectItem Value="@("Bottom")">Bottom Bar (Tablet/Desktop)</MudSelectItem>
+                          HelperText="Override toolbar position. Portrait phones always use bottom toolbar.">
+                    <MudSelectItem Value="@("Left")">Left Sidebar</MudSelectItem>
+                    <MudSelectItem Value="@("Right")">Right Sidebar</MudSelectItem>
+                    <MudSelectItem Value="@("Bottom")">Bottom Bar</MudSelectItem>
                 </MudSelect>
 
                 <MudSelect @bind-Value="configuration.Theme"
@@ -122,6 +131,22 @@ else
         </MudItem>
 
         <MudItem xs="12" md="6">
+            <MudPaper Elevation="2" Class="pa-4 mb-4">
+                <MudText Typo="Typo.h6" GutterBottom="true">Display Settings</MudText>
+                <MudText Typo="Typo.body2" Class="mb-4" Style="color: var(--mud-palette-text-secondary);">
+                    Configure fullscreen behavior for vehicle touchscreen use
+                </MudText>
+
+                <MudSwitch @bind-Checked="configuration.EnableFullscreenOnStartup"
+                          Label="Enable Fullscreen on Startup"
+                          Color="Color.Primary"
+                          Class="mb-2" />
+
+                <MudSwitch @bind-Checked="configuration.ShowFullscreenToggle"
+                          Label="Show Fullscreen Toggle Button"
+                          Color="Color.Primary" />
+            </MudPaper>
+
             <MudPaper Elevation="2" Class="pa-4">
                 <MudText Typo="Typo.h6" GutterBottom="true">Alert Settings</MudText>
                 <MudText Typo="Typo.body2" Class="mb-4" Style="color: var(--mud-palette-text-secondary);">
@@ -298,7 +323,10 @@ else
         public string VanModel { get; set; } = string.Empty;
         public string VanDiagramPath { get; set; } = string.Empty;
         public string ToolbarPosition { get; set; } = "Left";
+        public string DrivingSide { get; set; } = "Left";
         public string Theme { get; set; } = "Light";
+        public bool EnableFullscreenOnStartup { get; set; } = true;
+        public bool ShowFullscreenToggle { get; set; } = true;
         public AlertSettingsDto AlertSettings { get; set; } = new();
         public DateTime LastUpdated { get; set; }
     }

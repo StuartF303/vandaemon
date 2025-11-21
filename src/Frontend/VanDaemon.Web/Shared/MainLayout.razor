@@ -4,11 +4,32 @@
 @implements IAsyncDisposable
 
 <style>
+    :root {
+        /* Light mode colors */
+        --nav-bg-light: #f5f5f5;
+        --nav-item-hover-light: #e0e0e0;
+        --nav-item-active-light: #2196F3;
+        --nav-item-active-text-light: #ffffff;
+        --nav-text-light: #333333;
+        --nav-shadow-light: rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+        /* Dark mode colors */
+        --nav-bg-dark: #1e1e1e;
+        --nav-item-hover-dark: #2d2d2d;
+        --nav-item-active-dark: #1976D2;
+        --nav-item-active-text-dark: #ffffff;
+        --nav-text-dark: #e0e0e0;
+        --nav-shadow-dark: rgba(0, 0, 0, 0.3);
+    }
+
     .layout-container {
         display: grid;
         height: 100vh;
         width: 100vw;
         overflow: hidden;
+        position: relative;
     }
 
     .layout-container.toolbar-left {
@@ -31,17 +52,23 @@
 
     .nav-area {
         grid-area: nav;
-        background: var(--mud-palette-surface);
-        box-shadow: var(--mud-elevation-2);
+        background: var(--nav-bg-light);
+        box-shadow: 2px 0 8px var(--nav-shadow-light);
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
+        z-index: 10;
+    }
+
+    [data-theme="dark"] .nav-area {
+        background: var(--nav-bg-dark);
+        box-shadow: 2px 0 8px var(--nav-shadow-dark);
     }
 
     .toolbar-left .nav-area,
     .toolbar-right .nav-area {
-        width: 120px;
-        padding: 24px 8px;
+        width: 140px;
+        padding: 24px 12px;
     }
 
     .toolbar-bottom .nav-area {
@@ -64,57 +91,130 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        padding: 20px 12px;
-        margin: 4px 0;
-        border-radius: 12px;
+        gap: 10px;
+        padding: 24px 16px;
+        margin: 6px 0;
+        border-radius: 16px;
         cursor: pointer;
-        transition: background-color 0.2s, transform 0.1s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
-        color: inherit;
-        min-height: 90px;
+        color: var(--nav-text-light);
+        min-height: 100px;
+        border: 3px solid transparent;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    [data-theme="dark"] .nav-item {
+        color: var(--nav-text-dark);
     }
 
     .toolbar-bottom .nav-item {
         flex-direction: column;
-        padding: 16px 12px;
-        margin: 0 4px;
-        gap: 8px;
-        min-width: 90px;
-        min-height: 80px;
+        padding: 20px 16px;
+        margin: 0 6px;
+        gap: 10px;
+        min-width: 100px;
+        min-height: 90px;
     }
 
     .nav-item:hover {
-        background-color: var(--mud-palette-action-default-hover);
-        transform: translateY(-2px);
+        background-color: var(--nav-item-hover-light);
+        transform: scale(1.05);
+        border-color: var(--nav-item-active-light);
+    }
+
+    [data-theme="dark"] .nav-item:hover {
+        background-color: var(--nav-item-hover-dark);
+        border-color: var(--nav-item-active-dark);
     }
 
     .nav-item.active {
-        background-color: var(--mud-palette-primary);
-        color: var(--mud-palette-primary-text);
+        background-color: var(--nav-item-active-light);
+        color: var(--nav-item-active-text-light);
+        border-color: var(--nav-item-active-light);
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        transform: scale(1.08);
+    }
+
+    [data-theme="dark"] .nav-item.active {
+        background-color: var(--nav-item-active-dark);
+        color: var(--nav-item-active-text-dark);
+        border-color: var(--nav-item-active-dark);
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.5);
     }
 
     .nav-item-icon {
-        font-size: 40px !important;
-        width: 40px;
-        height: 40px;
+        font-size: 48px !important;
+        width: 48px;
+        height: 48px;
+        transition: transform 0.2s;
+    }
+
+    .nav-item.active .nav-item-icon {
+        transform: scale(1.1);
     }
 
     .nav-item-text {
-        font-size: 13px;
-        font-weight: 500;
+        font-size: 14px;
+        font-weight: 600;
         text-align: center;
-        line-height: 1.2;
+        line-height: 1.3;
+        letter-spacing: 0.3px;
     }
 
     .toolbar-bottom .nav-item-icon {
-        font-size: 36px !important;
-        width: 36px;
-        height: 36px;
+        font-size: 42px !important;
+        width: 42px;
+        height: 42px;
     }
 
     .toolbar-bottom .nav-item-text {
-        font-size: 12px;
+        font-size: 13px;
+    }
+
+    .fullscreen-toggle {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 1000;
+        background: var(--nav-bg-light);
+        border: 2px solid var(--nav-item-active-light);
+        border-radius: 12px;
+        padding: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px var(--nav-shadow-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    [data-theme="dark"] .fullscreen-toggle {
+        background: var(--nav-bg-dark);
+        border-color: var(--nav-item-active-dark);
+        box-shadow: 0 2px 8px var(--nav-shadow-dark);
+    }
+
+    .fullscreen-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
+    }
+
+    [data-theme="dark"] .fullscreen-toggle:hover {
+        box-shadow: 0 4px 16px rgba(25, 118, 210, 0.5);
+    }
+
+    .fullscreen-toggle .mud-icon-root {
+        font-size: 32px !important;
+        color: var(--nav-text-light);
+    }
+
+    [data-theme="dark"] .fullscreen-toggle .mud-icon-root {
+        color: var(--nav-text-dark);
     }
 
     /* Tablet optimizations (600-960px) - icon-only side navigation */
@@ -223,6 +323,12 @@
 else
 {
     <div class="layout-container @GetLayoutClass()">
+        @if (showFullscreenToggle)
+        {
+            <div class="fullscreen-toggle" @onclick="ToggleFullscreen">
+                <MudIcon Icon="@(isFullscreen ? Icons.Material.Filled.FullscreenExit : Icons.Material.Filled.Fullscreen)" />
+            </div>
+        }
         <nav class="nav-area">
             <a href="/" class="nav-item @GetActiveClass("/")">
                 <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="nav-item-icon" />
@@ -254,6 +360,9 @@ else
     private string toolbarPosition = "toolbar-left";
     private string currentPath = "/";
     private string currentTheme = "Light";
+    private bool isFullscreen = false;
+    private bool showFullscreenToggle = true;
+    private bool enableFullscreenOnStartup = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -262,6 +371,13 @@ else
 
         await LoadSettings();
         isLoading = false;
+
+        // Enter fullscreen on startup if enabled
+        if (enableFullscreenOnStartup)
+        {
+            await Task.Delay(100); // Small delay to ensure DOM is ready
+            await EnterFullscreen();
+        }
     }
 
     private async Task LoadSettings()
@@ -271,16 +387,20 @@ else
             var config = await Http.GetFromJsonAsync<SystemConfigurationDto>("api/settings");
             if (config != null)
             {
+                // Apply driving side to toolbar position if not manually overridden
                 toolbarPosition = config.ToolbarPosition switch
                 {
                     "Left" => "toolbar-left",
                     "Right" => "toolbar-right",
                     "Bottom" => "toolbar-bottom",
-                    _ => "toolbar-left"
+                    _ => config.DrivingSide == "Right" ? "toolbar-right" : "toolbar-left"
                 };
 
                 currentTheme = config.Theme ?? "Light";
                 await ApplyTheme(currentTheme);
+
+                showFullscreenToggle = config.ShowFullscreenToggle;
+                enableFullscreenOnStartup = config.EnableFullscreenOnStartup;
             }
         }
         catch (Exception ex)
@@ -288,6 +408,8 @@ else
             Console.WriteLine($"Error loading settings: {ex.Message}");
             toolbarPosition = "toolbar-left";
             currentTheme = "Light";
+            showFullscreenToggle = true;
+            enableFullscreenOnStartup = true;
         }
     }
 
@@ -302,6 +424,62 @@ else
         catch (Exception ex)
         {
             Console.WriteLine($"Error applying theme: {ex.Message}");
+        }
+    }
+
+    private async Task EnterFullscreen()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("eval", @"
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log('Fullscreen request failed:', err);
+                    });
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+            ");
+            isFullscreen = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error entering fullscreen: {ex.Message}");
+        }
+    }
+
+    private async Task ExitFullscreen()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("eval", @"
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            ");
+            isFullscreen = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error exiting fullscreen: {ex.Message}");
+        }
+    }
+
+    private async Task ToggleFullscreen()
+    {
+        if (isFullscreen)
+        {
+            await ExitFullscreen();
+        }
+        else
+        {
+            await EnterFullscreen();
         }
     }
 
@@ -337,7 +515,10 @@ else
         public string VanModel { get; set; } = string.Empty;
         public string VanDiagramPath { get; set; } = string.Empty;
         public string ToolbarPosition { get; set; } = "Left";
+        public string DrivingSide { get; set; } = "Left";
         public string Theme { get; set; } = "Light";
+        public bool EnableFullscreenOnStartup { get; set; } = true;
+        public bool ShowFullscreenToggle { get; set; } = true;
         public AlertSettingsDto AlertSettings { get; set; } = new();
         public DateTime LastUpdated { get; set; }
     }
