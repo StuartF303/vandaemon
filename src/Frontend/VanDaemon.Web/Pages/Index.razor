@@ -1,6 +1,7 @@
 @page "/"
 @using MudBlazor.Utilities
 @using VanDaemon.Core.Entities
+@using VanDaemon.Web.Shared
 @inject HttpClient Http
 @inject TelemetryService Telemetry
 @inject ISnackbar Snackbar
@@ -17,13 +18,6 @@
         flex-direction: column;
         position: relative;
         background: var(--mud-palette-background);
-    }
-
-    .edit-toggle {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        z-index: 20;
     }
 
     .diagram-area {
@@ -75,15 +69,10 @@
 </style>
 
 <div class="dashboard-page">
-    <div class="edit-toggle">
-        <MudToggleIconButton @bind-Toggled="@isEditMode"
-                             Icon="@Icons.Material.Filled.Lock"
-                             ToggledIcon="@Icons.Material.Filled.Edit"
-                             Title="Toggle Edit Mode"
-                             ToggledTitle="Exit Edit Mode"
-                             Size="Size.Large"
-                             Color="Color.Primary" />
-    </div>
+    <DashboardMenu IsEditMode="@isEditMode"
+                   IsEditModeChanged="@((bool value) => isEditMode = value)"
+                   ShowFullscreenOption="false"
+                   IsFullscreen="false" />
 
     <!-- Van Diagram Container -->
     <div class="diagram-area"

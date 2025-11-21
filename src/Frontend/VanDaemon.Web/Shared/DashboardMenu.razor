@@ -1,0 +1,105 @@
+@inject IJSRuntime JSRuntime
+
+<style>
+    .dashboard-menu {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        z-index: 20;
+    }
+
+    .menu-button {
+        background: var(--nav-bg-light);
+        border: 2px solid var(--nav-item-active-light);
+        border-radius: 12px;
+        padding: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px var(--nav-shadow-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    [data-theme="dark"] .menu-button {
+        background: var(--nav-bg-dark);
+        border-color: var(--nav-item-active-dark);
+        box-shadow: 0 2px 8px var(--nav-shadow-dark);
+    }
+
+    .menu-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
+    }
+
+    [data-theme="dark"] .menu-button:hover {
+        box-shadow: 0 4px 16px rgba(25, 118, 210, 0.5);
+    }
+
+    .menu-button .mud-icon-root {
+        font-size: 32px !important;
+        color: var(--nav-text-light);
+    }
+
+    [data-theme="dark"] .menu-button .mud-icon-root {
+        color: var(--nav-text-dark);
+    }
+</style>
+
+<div class="dashboard-menu">
+    <MudMenu Icon="@Icons.Material.Filled.MoreVert"
+             Size="Size.Large"
+             AnchorOrigin="Origin.BottomRight"
+             TransformOrigin="Origin.TopRight"
+             Class="menu-button"
+             Dense="false">
+        <MudMenuItem OnClick="@(() => OnEditModeToggle())">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 8px;">
+                <MudIcon Icon="@(IsEditMode ? Icons.Material.Filled.Lock : Icons.Material.Filled.Edit)"
+                        Size="Size.Medium" />
+                <MudText>@(IsEditMode ? "Lock Positions" : "Edit Positions")</MudText>
+            </div>
+        </MudMenuItem>
+
+        @if (ShowFullscreenOption && IsFullscreen)
+        {
+            <MudMenuItem OnClick="@OnExitFullscreen">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 8px;">
+                    <MudIcon Icon="@Icons.Material.Filled.FullscreenExit"
+                            Size="Size.Medium" />
+                    <MudText>Exit Fullscreen</MudText>
+                </div>
+            </MudMenuItem>
+        }
+    </MudMenu>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsEditMode { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsEditModeChanged { get; set; }
+
+    [Parameter]
+    public bool ShowFullscreenOption { get; set; } = false;
+
+    [Parameter]
+    public bool IsFullscreen { get; set; } = false;
+
+    [Parameter]
+    public EventCallback OnExitFullscreenRequested { get; set; }
+
+    private async Task OnEditModeToggle()
+    {
+        await IsEditModeChanged.InvokeAsync(!IsEditMode);
+    }
+
+    private async Task OnExitFullscreen()
+    {
+        await OnExitFullscreenRequested.InvokeAsync();
+    }
+}

@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @inject HttpClient Http
 @inject ISnackbar Snackbar
+@inject SettingsStateService SettingsState
 
 <PageTitle>Settings - VanDaemon</PageTitle>
 
@@ -304,6 +305,9 @@ else
             {
                 Snackbar.Add("Settings saved successfully", Severity.Success);
                 await LoadSettings();
+
+                // Notify all components that settings have changed
+                SettingsState.NotifySettingsChanged();
             }
             else
             {

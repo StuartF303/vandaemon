@@ -1,6 +1,7 @@
 @inherits LayoutComponentBase
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
+@inject SettingsStateService SettingsState
 @implements IAsyncDisposable
 
 <style>
@@ -368,6 +369,7 @@ else
     {
         currentPath = new Uri(NavigationManager.Uri).AbsolutePath;
         NavigationManager.LocationChanged += OnLocationChanged;
+        SettingsState.SettingsChanged += OnSettingsChanged;
 
         await LoadSettings();
         isLoading = false;
@@ -378,6 +380,12 @@ else
             await Task.Delay(100); // Small delay to ensure DOM is ready
             await EnterFullscreen();
         }
+    }
+
+    private async void OnSettingsChanged()
+    {
+        await LoadSettings();
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task LoadSettings()
@@ -506,6 +514,7 @@ else
     public ValueTask DisposeAsync()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
+        SettingsState.SettingsChanged -= OnSettingsChanged;
         return ValueTask.CompletedTask;
     }
 

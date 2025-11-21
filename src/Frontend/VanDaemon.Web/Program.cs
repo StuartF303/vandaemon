@@ -46,6 +46,9 @@ builder.Services.AddMudServices();
 // Add Telemetry Service for real-time updates
 builder.Services.AddSingleton(sp => new TelemetryService($"{apiBaseUrl}/hubs/telemetry"));
 
+// Add Settings State Service for dynamic settings updates
+builder.Services.AddSingleton<SettingsStateService>();
+
 await builder.Build().RunAsync();
 
 // Helper class for reading appsettings.json
