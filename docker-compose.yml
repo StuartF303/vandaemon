@@ -1,0 +1,49 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: vandaemon-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5000:80"
+    volumes:
+      - api-data:/app/data
+      - api-logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - vandaemon
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web
+    container_name: vandaemon-web
+    environment:
+      - API_BASE_URL=http://api:80
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vandaemon
+
+volumes:
+  api-data:
+    driver: local
+  api-logs:
+    driver: local
+
+networks:
+  vandaemon:
+    driver: bridge

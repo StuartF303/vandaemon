@@ -1,9 +1,9 @@
 # VanDaemon - Camper Van Control System
 
-A comprehensive IoT control system for camper vans built with .NET 8 and Blazor WebAssembly. Monitor and control your van's systems including water tanks, LPG, lighting, heating, and more - all from your phone, tablet, or computer.
+A comprehensive IoT control system for camper vans built with .NET 10 and Blazor WebAssembly. Monitor and control your van's systems including water tanks, LPG, lighting, heating, and more - all from your phone, tablet, or computer.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![.NET](https://img.shields.io/badge/.NET-8.0-purple.svg)
+![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)
 
 ## Features
@@ -21,7 +21,7 @@ A comprehensive IoT control system for camper vans built with .NET 8 and Blazor 
 
 ### Prerequisites
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (for development)
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (for development)
 - [Docker](https://docs.docker.com/get-docker/) (for containerized deployment)
 - Raspberry Pi 4 (2GB+ RAM recommended) or similar Linux system
 
@@ -35,9 +35,10 @@ cd vandaemon
 
 2. Start the services:
 ```bash
-cd docker
 docker compose up -d
 ```
+
+For detailed Docker usage, configuration, and troubleshooting, see [DOCKER.md](DOCKER.md).
 
 3. Access the web interface:
 - Web UI: http://localhost:8080
@@ -95,7 +96,7 @@ VanDaemon follows a clean architecture pattern with clear separation of concerns
 - **Frontend**: Blazor WebAssembly with MudBlazor UI components
 - **Backend API**: ASP.NET Core Web API with SignalR for real-time updates
 - **Plugin System**: Modular hardware integration layer supporting multiple protocols
-- **Data Storage**: SQLite for configuration, in-memory cache for real-time data
+- **Data Storage**: JSON file storage for configuration, in-memory cache for real-time data
 
 See [PROJECT_PLAN.md](PROJECT_PLAN.md) for detailed architecture documentation.
 
@@ -191,7 +192,7 @@ sudo usermod -aG docker $USER
 
 ```bash
 git clone https://github.com/yourusername/vandaemon.git
-cd vandaemon/docker
+cd vandaemon
 docker compose up -d
 ```
 
@@ -225,7 +226,7 @@ After=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=/home/pi/vandaemon/docker
+WorkingDirectory=/home/pi/vandaemon
 ExecStart=/usr/bin/docker compose up -d
 ExecStop=/usr/bin/docker compose down
 

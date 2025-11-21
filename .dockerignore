@@ -1,0 +1,76 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.swp
+*~
+
+# Test and coverage
+**/TestResults/
+**/*.trx
+**/coverage/
+**/*.coverage
+**/*.coveragexml
+
+# Dependencies
+**/node_modules/
+**/bower_components/
+
+# Documentation
+*.md
+!docker/*.md
+docs/
+.specify/
+
+# Docker files (don't copy docker files into docker image)
+**/.dockerignore
+**/docker-compose*.yml
+**/Dockerfile*
+!docker/nginx.conf
+!docker/nginx.combined.conf
+!docker/supervisord.conf
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+**/logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+azure-pipelines.yml
+
+# Claude Code
+.claude/
+
+# Temporary files
+**/tmp/
+**/temp/
+**/*.tmp
+
+# Package files
+*.nupkg
+*.snupkg
