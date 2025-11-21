@@ -1,5 +1,6 @@
 @page "/"
 @using MudBlazor.Utilities
+@using VanDaemon.Core.Entities
 @inject HttpClient Http
 @inject TelemetryService Telemetry
 @inject ISnackbar Snackbar
@@ -253,9 +254,18 @@
     {
         try
         {
-            // TODO: Load from settings API
-            // For now, use the default Mercedes Sprinter LWB image
-            backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
+            var response = await Http.GetFromJsonAsync<SystemConfiguration>("api/settings");
+            if (response != null && !string.IsNullOrEmpty(response.VanDiagramPath))
+            {
+                backgroundImage = response.VanDiagramPath;
+                Console.WriteLine($"Loaded van diagram from settings: {backgroundImage}");
+            }
+            else
+            {
+                // No van diagram configured, use default
+                backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
+                Console.WriteLine("No van diagram configured, using default");
+            }
         }
         catch (Exception ex)
         {

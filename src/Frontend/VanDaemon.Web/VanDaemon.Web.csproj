@@ -13,4 +13,8 @@
     <PackageReference Include="MudBlazor" Version="6.11.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Backend\VanDaemon.Core\VanDaemon.Core.csproj" />
+  </ItemGroup>
+
 </Project>
