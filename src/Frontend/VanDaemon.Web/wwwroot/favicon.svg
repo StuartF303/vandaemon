@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="32" fill="#2196F3"/>
+
+  <!-- Campervan body -->
+  <g fill="#FFFFFF">
+    <!-- Main body -->
+    <rect x="14" y="22" width="36" height="20" rx="2"/>
+
+    <!-- Roof/cab area -->
+    <path d="M 18 22 L 18 16 L 32 16 L 32 22 Z"/>
+
+    <!-- Windows -->
+    <rect x="19" y="17" width="5" height="4" fill="#2196F3"/>
+    <rect x="26" y="17" width="5" height="4" fill="#2196F3"/>
+    <rect x="17" y="24" width="8" height="6" fill="#2196F3"/>
+    <rect x="27" y="24" width="10" height="6" fill="#2196F3"/>
+    <rect x="39" y="24" width="8" height="6" fill="#2196F3"/>
+
+    <!-- Door line -->
+    <line x1="25" y1="30" x2="25" y2="42" stroke="#2196F3" stroke-width="1"/>
+
+    <!-- Wheels -->
+    <circle cx="22" cy="42" r="4" fill="#333333"/>
+    <circle cx="22" cy="42" r="2" fill="#666666"/>
+    <circle cx="42" cy="42" r="4" fill="#333333"/>
+    <circle cx="42" cy="42" r="2" fill="#666666"/>
+
+    <!-- Headlight -->
+    <circle cx="14.5" cy="28" r="1.5" fill="#FFD700"/>
+  </g>
+</svg>
