@@ -57,8 +57,10 @@
         box-shadow: 2px 0 8px var(--nav-shadow-light);
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
+        justify-content: space-between;
         z-index: 10;
+        overflow: hidden;
+        height: 100%;
     }
 
     [data-theme="dark"] .nav-area {
@@ -69,22 +71,24 @@
     .toolbar-left .nav-area,
     .toolbar-right .nav-area {
         width: 140px;
-        padding: 24px 12px;
+        padding: 12px;
     }
 
     .toolbar-bottom .nav-area {
         width: 100%;
         flex-direction: row;
         justify-content: space-around;
-        padding: 16px;
+        padding: 8px 16px;
         height: auto;
     }
 
     .main-area {
         grid-area: main;
-        overflow: auto;
+        overflow: hidden;
         padding: 0;
         height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .nav-item {
@@ -92,15 +96,16 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        padding: 24px 16px;
-        margin: 6px 0;
-        border-radius: 16px;
+        gap: 8px;
+        padding: 16px 12px;
+        margin: 4px 0;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
         color: var(--nav-text-light);
-        min-height: 100px;
+        flex: 1;
+        min-height: 0;
         border: 3px solid transparent;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
