@@ -77,19 +77,9 @@ else
                           Label="Driving Side"
                           Variant="Variant.Outlined"
                           Class="mb-3"
-                          HelperText="Determines default toolbar position for driver accessibility">
-                    <MudSelectItem Value="@("Left")">Left-hand drive (Driver on left)</MudSelectItem>
-                    <MudSelectItem Value="@("Right")">Right-hand drive (Driver on right)</MudSelectItem>
-                </MudSelect>
-
-                <MudSelect @bind-Value="configuration.ToolbarPosition"
-                          Label="Toolbar Position"
-                          Variant="Variant.Outlined"
-                          Class="mb-3"
-                          HelperText="Override toolbar position. Portrait phones always use bottom toolbar.">
-                    <MudSelectItem Value="@("Left")">Left Sidebar</MudSelectItem>
-                    <MudSelectItem Value="@("Right")">Right Sidebar</MudSelectItem>
-                    <MudSelectItem Value="@("Bottom")">Bottom Bar</MudSelectItem>
+                          HelperText="Determines toolbar position - driver side for easy reach. Portrait phones automatically use bottom toolbar.">
+                    <MudSelectItem Value="@("Left")">Left-hand drive (Toolbar on left)</MudSelectItem>
+                    <MudSelectItem Value="@("Right")">Right-hand drive (Toolbar on right)</MudSelectItem>
                 </MudSelect>
 
                 <MudSelect @bind-Value="configuration.Theme"

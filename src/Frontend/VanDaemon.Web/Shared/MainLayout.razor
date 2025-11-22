@@ -377,6 +377,16 @@ else
         // Note: Automatic fullscreen removed - browser security requires user gesture
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            SettingsState.SetJSRuntime(JSRuntime);
+            // Apply initial theme
+            SettingsState.IsDarkMode = SettingsState.IsDarkMode;
+        }
+    }
+
     private async void OnSettingsChanged()
     {
         await LoadSettings();
@@ -390,14 +400,8 @@ else
             var config = await Http.GetFromJsonAsync<SystemConfigurationDto>("api/settings");
             if (config != null)
             {
-                // Apply driving side to toolbar position if not manually overridden
-                toolbarPosition = config.ToolbarPosition switch
-                {
-                    "Left" => "toolbar-left",
-                    "Right" => "toolbar-right",
-                    "Bottom" => "toolbar-bottom",
-                    _ => config.DrivingSide == "Right" ? "toolbar-right" : "toolbar-left"
-                };
+                // Use driving side to control toolbar position (bottom only on phone mode via CSS)
+                toolbarPosition = config.DrivingSide == "Right" ? "toolbar-right" : "toolbar-left";
 
                 currentTheme = config.Theme ?? "Light";
                 SettingsState.IsDarkMode = currentTheme == "Dark";
