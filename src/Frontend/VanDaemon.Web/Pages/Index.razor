@@ -383,6 +383,8 @@
                 Type = OverlayType.Tank,
                 Icon = GetTankIcon(tank.Type),
                 Value = tank.CurrentLevel,
+                AlertWhenOver = tank.AlertWhenOver,
+                AlertLevel = tank.AlertLevel,
                 X = x,
                 Y = y
             });
@@ -653,18 +655,40 @@
     {
         if (overlay.Type == OverlayType.Tank)
         {
-            if (overlay.Value < 20) return Color.Error;
-            if (overlay.Value < 50) return Color.Warning;
-            return Color.Success;
+            if (overlay.AlertWhenOver)
+            {
+                // Filling tanks (waste water): green when empty, red when full
+                if (overlay.Value > 80) return Color.Error;   // Nearly full - bad
+                if (overlay.Value > 50) return Color.Warning; // Getting full - warning
+                return Color.Success;                          // Empty/low - good
+            }
+            else
+            {
+                // Draining tanks (fresh water): green when full, red when empty
+                if (overlay.Value < 20) return Color.Error;   // Nearly empty - bad
+                if (overlay.Value < 50) return Color.Warning; // Getting low - warning
+                return Color.Success;                          // Full/high - good
+            }
         }
         return overlay.IsOn ? Color.Success : Color.Default;
     }
 
     private string GetTankBarColor(OverlayItem overlay)
     {
-        if (overlay.Value < 20) return "#f44336"; // Red
-        if (overlay.Value < 50) return "#ff9800"; // Orange
-        return "#4caf50"; // Green
+        if (overlay.AlertWhenOver)
+        {
+            // Filling tanks (waste water): green when empty, red when full
+            if (overlay.Value > 80) return "#f44336"; // Red - nearly full
+            if (overlay.Value > 50) return "#ff9800"; // Orange - getting full
+            return "#4caf50";                         // Green - empty/low
+        }
+        else
+        {
+            // Draining tanks (fresh water): green when full, red when empty
+            if (overlay.Value < 20) return "#f44336"; // Red - nearly empty
+            if (overlay.Value < 50) return "#ff9800"; // Orange - getting low
+            return "#4caf50";                         // Green - full/high
+        }
     }
 
     private async Task LoadTanks()
@@ -846,6 +870,8 @@
         public double X { get; set; } // Position as percentage
         public double Y { get; set; } // Position as percentage
         public string? ConfiguredAction { get; set; } // For controls
+        public bool AlertWhenOver { get; set; } // For tanks - true if alert when filling
+        public double AlertLevel { get; set; } // Alert threshold percentage
     }
 
     public class OverlayPositionDto
