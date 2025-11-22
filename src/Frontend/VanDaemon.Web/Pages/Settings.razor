@@ -3,6 +3,7 @@
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 @inject SettingsStateService SettingsState
+@implements IDisposable
 
 <PageTitle>Settings - VanDaemon</PageTitle>
 
@@ -13,14 +14,11 @@
         margin-bottom: 24px;
     }
 
-    .settings-actions {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .settings-button {
-        min-height: 48px;
+    .save-indicator {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 1000;
     }
 
     @@media (max-width: 600px) {
@@ -28,21 +26,30 @@
             font-size: 1.75rem;
         }
 
-        .settings-actions {
-            flex-direction: column;
-        }
-
-        .settings-button {
-            width: 100%;
-            min-height: 56px;
+        .save-indicator {
+            top: 70px;
+            right: 10px;
         }
     }
 </style>
 
 <div class="settings-header">
     <MudText Typo="Typo.h3" GutterBottom="true">Settings</MudText>
-    <MudText Class="mb-8">Configure your VanDaemon system</MudText>
+    <MudText Class="mb-4" Color="Color.Secondary">Changes save automatically</MudText>
 </div>
+
+@if (isSaving)
+{
+    <MudChip Class="save-indicator" Color="Color.Info" Size="Size.Small" Icon="@Icons.Material.Filled.CloudUpload">
+        Saving...
+    </MudChip>
+}
+else if (lastSavedTime != null)
+{
+    <MudChip Class="save-indicator" Color="Color.Success" Size="Size.Small" Icon="@Icons.Material.Filled.Check">
+        Saved @lastSavedTime.Value.ToString("HH:mm:ss")
+    </MudChip>
+}
 
 @if (configuration == null)
 {
@@ -50,160 +57,157 @@
 }
 else
 {
-    <MudGrid>
-        <MudItem xs="12" md="6">
-            <MudPaper Elevation="2" Class="pa-4">
-                <MudText Typo="Typo.h6" GutterBottom="true">Van Configuration</MudText>
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
+        <!-- Van Tab -->
+        <MudTabPanel Text="Van" Icon="@Icons.Material.Filled.DirectionsCar">
+            <MudText Typo="Typo.h6" GutterBottom="true" Class="mb-4">Van Configuration</MudText>
 
-                <MudTextField @bind-Value="configuration.VanModel"
-                             Label="Van Model"
-                             Variant="Variant.Outlined"
-                             Class="mb-3" />
+            <MudTextField Value="@configuration.VanModel"
+                         Label="Van Model"
+                         Variant="Variant.Outlined"
+                         Class="mb-4"
+                         ValueChanged="@((string value) => OnVanModelChanged(value))" />
 
-                <MudSelect @bind-Value="configuration.VanDiagramPath"
-                          Label="Select Van Diagram"
-                          Variant="Variant.Outlined"
-                          Class="mb-3">
-                    @if (availableDiagrams != null)
+            <MudSelect T="string"
+                      Value="@configuration.VanDiagramPath"
+                      Label="Select Van Diagram"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"
+                      ValueChanged="@((string value) => OnDiagramChanged(value))">
+                @if (availableDiagrams != null)
+                {
+                    @foreach (var diagram in availableDiagrams)
                     {
-                        @foreach (var diagram in availableDiagrams)
-                        {
-                            <MudSelectItem Value="@diagram">@diagram</MudSelectItem>
-                        }
+                        <MudSelectItem Value="@diagram">@diagram</MudSelectItem>
                     }
-                </MudSelect>
-
-                <MudSelect @bind-Value="configuration.DrivingSide"
-                          Label="Driving Side"
-                          Variant="Variant.Outlined"
-                          Class="mb-3"
-                          HelperText="Determines toolbar position - driver side for easy reach. Portrait phones automatically use bottom toolbar.">
-                    <MudSelectItem Value="@("Left")">Left-hand drive (Toolbar on left)</MudSelectItem>
-                    <MudSelectItem Value="@("Right")">Right-hand drive (Toolbar on right)</MudSelectItem>
-                </MudSelect>
-
-                <MudSelect @bind-Value="configuration.Theme"
-                          Label="Theme"
-                          Variant="Variant.Outlined"
-                          Class="mb-3"
-                          HelperText="Choose between light and dark mode">
-                    <MudSelectItem Value="@("Light")">Light Mode</MudSelectItem>
-                    <MudSelectItem Value="@("Dark")">Dark Mode</MudSelectItem>
-                </MudSelect>
-
-                <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">Upload Custom Van Diagram</MudText>
-                <MudFileUpload T="IBrowserFile"
-                              FilesChanged="OnFileSelected"
-                              Accept=".png,.jpg,.jpeg,.svg">
-                    <ButtonTemplate>
-                        <MudButton HtmlTag="label"
-                                  Variant="Variant.Filled"
-                                  Color="Color.Primary"
-                                  StartIcon="@Icons.Material.Filled.CloudUpload"
-                                  for="@context">
-                            Upload Image
-                        </MudButton>
-                    </ButtonTemplate>
-                </MudFileUpload>
-
-                @if (!string.IsNullOrEmpty(uploadedFileName))
-                {
-                    <MudText Typo="Typo.body2" Class="mt-2">
-                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
-                        Uploaded: @uploadedFileName
-                    </MudText>
                 }
+            </MudSelect>
 
-                @if (!string.IsNullOrEmpty(configuration.VanDiagramPath))
-                {
-                    <MudText Typo="Typo.caption" Class="mt-2">Current: @configuration.VanDiagramPath</MudText>
-                }
-            </MudPaper>
-        </MudItem>
+            <MudSelect T="string"
+                      Value="@configuration.DrivingSide"
+                      Label="Driving Side"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"
+                      HelperText="Determines toolbar position - driver side for easy reach. Portrait phones automatically use bottom toolbar."
+                      ValueChanged="@((string value) => OnDrivingSideChanged(value))">
+                <MudSelectItem Value="@("Left")">Left-hand drive (Toolbar on left)</MudSelectItem>
+                <MudSelectItem Value="@("Right")">Right-hand drive (Toolbar on right)</MudSelectItem>
+            </MudSelect>
 
-        <MudItem xs="12" md="6">
-            <MudPaper Elevation="2" Class="pa-4 mb-4">
-                <MudText Typo="Typo.h6" GutterBottom="true">Display Settings</MudText>
-                <MudText Typo="Typo.body2" Class="mb-4" Style="color: var(--mud-palette-text-secondary);">
-                    Configure fullscreen behavior for vehicle touchscreen use
+            <MudDivider Class="my-4" />
+
+            <MudText Typo="Typo.subtitle1" Class="mb-2">Upload Custom Van Diagram</MudText>
+            <MudFileUpload T="IBrowserFile"
+                          FilesChanged="OnFileSelected"
+                          Accept=".png,.jpg,.jpeg,.svg">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                              Variant="Variant.Filled"
+                              Color="Color.Primary"
+                              StartIcon="@Icons.Material.Filled.CloudUpload"
+                              for="@context">
+                        Upload Image
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+
+            @if (!string.IsNullOrEmpty(uploadedFileName))
+            {
+                <MudText Typo="Typo.body2" Class="mt-2">
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                    Uploaded: @uploadedFileName
                 </MudText>
+            }
 
-                <MudSwitch @bind-Checked="configuration.EnableFullscreenOnStartup"
-                          Label="Enable Fullscreen on Startup"
-                          Color="Color.Primary"
-                          Class="mb-2" />
+            @if (!string.IsNullOrEmpty(configuration.VanDiagramPath))
+            {
+                <MudText Typo="Typo.caption" Class="mt-2">Current: @configuration.VanDiagramPath</MudText>
+            }
+        </MudTabPanel>
 
-                <MudSwitch @bind-Checked="configuration.ShowFullscreenToggle"
-                          Label="Show Fullscreen Toggle Button"
-                          Color="Color.Primary" />
-            </MudPaper>
+        <!-- Display Tab -->
+        <MudTabPanel Text="Display" Icon="@Icons.Material.Filled.DisplaySettings">
+            <MudText Typo="Typo.h6" GutterBottom="true" Class="mb-4">Display Settings</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4" Color="Color.Secondary">
+                Configure appearance and fullscreen behavior for vehicle touchscreen use
+            </MudText>
 
-            <MudPaper Elevation="2" Class="pa-4">
-                <MudText Typo="Typo.h6" GutterBottom="true">Alert Settings</MudText>
-                <MudText Typo="Typo.body2" Class="mb-4" Style="color: var(--mud-palette-text-secondary);">
-                    Alert levels are configured individually for each tank in the Tanks page.
-                </MudText>
+            <MudSelect T="string"
+                      Value="@configuration.Theme"
+                      Label="Theme"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"
+                      HelperText="Choose between light and dark mode"
+                      ValueChanged="@((string value) => OnThemeChanged(value))">
+                <MudSelectItem Value="@("Light")">Light Mode</MudSelectItem>
+                <MudSelectItem Value="@("Dark")">Dark Mode</MudSelectItem>
+            </MudSelect>
 
-                <MudSwitch @bind-Checked="configuration.AlertSettings.EnableAudioAlerts"
-                          Label="Enable Audio Alerts"
-                          Color="Color.Primary"
-                          Class="mb-2" />
+            <MudSwitch Checked="@configuration.EnableFullscreenOnStartup"
+                      Label="Enable Fullscreen on Startup"
+                      Color="Color.Primary"
+                      Class="mb-3"
+                      CheckedChanged="@((bool value) => OnEnableFullscreenChanged(value))" />
 
-                <MudSwitch @bind-Checked="configuration.AlertSettings.EnablePushNotifications"
-                          Label="Enable Push Notifications"
-                          Color="Color.Primary" />
-            </MudPaper>
-        </MudItem>
+            <MudSwitch Checked="@configuration.ShowFullscreenToggle"
+                      Label="Show Fullscreen Toggle in Navigation"
+                      Color="Color.Primary"
+                      CheckedChanged="@((bool value) => OnShowFullscreenToggleChanged(value))" />
+        </MudTabPanel>
 
-        <MudItem xs="12">
-            <MudPaper Elevation="2" Class="pa-4">
-                <MudText Typo="Typo.h6" GutterBottom="true">System Information</MudText>
+        <!-- Alerts Tab -->
+        <MudTabPanel Text="Alerts" Icon="@Icons.Material.Filled.Notifications">
+            <MudText Typo="Typo.h6" GutterBottom="true" Class="mb-4">Alert Settings</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4" Color="Color.Secondary">
+                Configure system-wide alert behavior. Tank-specific alert levels are set on the Tanks page.
+            </MudText>
 
-                <MudSimpleTable Striped="true">
-                    <tbody>
-                        <tr>
-                            <td><strong>Van Model</strong></td>
-                            <td>@configuration.VanModel</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Configuration ID</strong></td>
-                            <td>@configuration.Id</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Last Updated</strong></td>
-                            <td>@configuration.LastUpdated.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        </tr>
-                        <tr>
-                            <td><strong>API Endpoint</strong></td>
-                            <td>@Http.BaseAddress</td>
-                        </tr>
-                    </tbody>
-                </MudSimpleTable>
-            </MudPaper>
-        </MudItem>
+            <MudSwitch Checked="@configuration.AlertSettings.EnableAudioAlerts"
+                      Label="Enable Audio Alerts"
+                      Color="Color.Primary"
+                      Class="mb-3"
+                      CheckedChanged="@((bool value) => OnEnableAudioAlertsChanged(value))" />
 
-        <MudItem xs="12">
-            <div class="settings-actions">
-                <MudButton Variant="Variant.Filled"
-                          Color="Color.Primary"
-                          Size="Size.Large"
-                          StartIcon="@Icons.Material.Filled.Save"
-                          OnClick="SaveSettings"
-                          Class="settings-button">
-                    Save Settings
-                </MudButton>
+            <MudSwitch Checked="@configuration.AlertSettings.EnablePushNotifications"
+                      Label="Enable Push Notifications"
+                      Color="Color.Primary"
+                      CheckedChanged="@((bool value) => OnEnablePushNotificationsChanged(value))" />
+        </MudTabPanel>
 
-                <MudButton Variant="Variant.Outlined"
-                          Color="Color.Default"
-                          Size="Size.Large"
-                          StartIcon="@Icons.Material.Filled.Refresh"
-                          OnClick="LoadSettings"
-                          Class="settings-button">
-                    Reload
-                </MudButton>
-            </div>
-        </MudItem>
-    </MudGrid>
+        <!-- Information Tab -->
+        <MudTabPanel Text="Information" Icon="@Icons.Material.Filled.Info">
+            <MudText Typo="Typo.h6" GutterBottom="true" Class="mb-4">System Information</MudText>
+
+            <MudSimpleTable Striped="true" Hover="true">
+                <tbody>
+                    <tr>
+                        <td style="width: 200px;"><strong>Van Model</strong></td>
+                        <td>@configuration.VanModel</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Configuration ID</strong></td>
+                        <td><code>@configuration.Id</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Updated</strong></td>
+                        <td>@configuration.LastUpdated.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Endpoint</strong></td>
+                        <td><code>@Http.BaseAddress</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Driving Side</strong></td>
+                        <td>@configuration.DrivingSide-hand drive</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Theme</strong></td>
+                        <td>@configuration.Theme Mode</td>
+                    </tr>
+                </tbody>
+            </MudSimpleTable>
+        </MudTabPanel>
+    </MudTabs>
 }
 
 </div>
@@ -212,11 +216,87 @@ else
     private SystemConfigurationDto? configuration;
     private List<string>? availableDiagrams;
     private string uploadedFileName = "";
+    private bool isSaving = false;
+    private DateTime? lastSavedTime = null;
+    private System.Threading.Timer? debounceTimer;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadSettings();
         await LoadAvailableDiagrams();
+    }
+
+    // Auto-save change handlers
+    private void OnVanModelChanged(string value)
+    {
+        if (configuration == null) return;
+        configuration.VanModel = value;
+        AutoSave();
+    }
+
+    private void OnDiagramChanged(string value)
+    {
+        if (configuration == null) return;
+        configuration.VanDiagramPath = value;
+        AutoSave();
+    }
+
+    private void OnDrivingSideChanged(string value)
+    {
+        if (configuration == null) return;
+        configuration.DrivingSide = value;
+        AutoSave();
+    }
+
+    private void OnThemeChanged(string value)
+    {
+        if (configuration == null) return;
+        configuration.Theme = value;
+        AutoSave();
+    }
+
+    private void OnEnableFullscreenChanged(bool value)
+    {
+        if (configuration == null) return;
+        configuration.EnableFullscreenOnStartup = value;
+        AutoSave();
+    }
+
+    private void OnShowFullscreenToggleChanged(bool value)
+    {
+        if (configuration == null) return;
+        configuration.ShowFullscreenToggle = value;
+        AutoSave();
+    }
+
+    private void OnEnableAudioAlertsChanged(bool value)
+    {
+        if (configuration == null) return;
+        configuration.AlertSettings.EnableAudioAlerts = value;
+        AutoSave();
+    }
+
+    private void OnEnablePushNotificationsChanged(bool value)
+    {
+        if (configuration == null) return;
+        configuration.AlertSettings.EnablePushNotifications = value;
+        AutoSave();
+    }
+
+    // Debounced auto-save
+    private void AutoSave()
+    {
+        // Cancel existing timer
+        debounceTimer?.Dispose();
+
+        // Set up new timer to save after 500ms of no changes
+        debounceTimer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                await SaveSettings();
+            });
+        }, null, 500, Timeout.Infinite);
     }
 
     private async Task OnFileSelected(IBrowserFile file)
@@ -233,6 +313,9 @@ else
             fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
             content.Add(fileContent, "file", file.Name);
 
+            isSaving = true;
+            StateHasChanged();
+
             var response = await Http.PostAsync("api/settings/upload-diagram", content);
             if (response.IsSuccessStatusCode)
             {
@@ -242,6 +325,7 @@ else
                 if (configuration != null)
                 {
                     configuration.VanDiagramPath = uploadedPath.Trim('"');
+                    await SaveSettings();
                 }
 
                 Snackbar.Add("Diagram uploaded successfully", Severity.Success);
@@ -250,12 +334,14 @@ else
             else
             {
                 Snackbar.Add("Failed to upload diagram", Severity.Error);
+                isSaving = false;
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error uploading file: {ex.Message}");
             Snackbar.Add($"Upload failed: {ex.Message}", Severity.Error);
+            isSaving = false;
         }
     }
 
@@ -290,10 +376,13 @@ else
 
         try
         {
+            isSaving = true;
+            StateHasChanged();
+
             var response = await Http.PutAsJsonAsync("api/settings", configuration);
             if (response.IsSuccessStatusCode)
             {
-                Snackbar.Add("Settings saved successfully", Severity.Success);
+                lastSavedTime = DateTime.Now;
                 await LoadSettings();
 
                 // Notify all components that settings have changed
@@ -309,6 +398,16 @@ else
             Console.WriteLine($"Error saving settings: {ex.Message}");
             Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
+        finally
+        {
+            isSaving = false;
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        debounceTimer?.Dispose();
     }
 
     public class SystemConfigurationDto
