@@ -1,4 +1,6 @@
-<MudThemeProvider />
+@inject SettingsStateService SettingsState
+
+<MudThemeProvider @bind-IsDarkMode="@SettingsState.IsDarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 

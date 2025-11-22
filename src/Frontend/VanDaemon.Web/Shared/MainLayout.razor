@@ -177,7 +177,7 @@
     .fullscreen-toggle {
         position: fixed;
         top: 16px;
-        right: 16px;
+        left: 80px;
         z-index: 1000;
         background: var(--nav-bg-light);
         border: 2px solid var(--nav-item-active-light);
@@ -374,12 +374,7 @@ else
         await LoadSettings();
         isLoading = false;
 
-        // Enter fullscreen on startup if enabled
-        if (enableFullscreenOnStartup)
-        {
-            await Task.Delay(100); // Small delay to ensure DOM is ready
-            await EnterFullscreen();
-        }
+        // Note: Automatic fullscreen removed - browser security requires user gesture
     }
 
     private async void OnSettingsChanged()
@@ -405,7 +400,7 @@ else
                 };
 
                 currentTheme = config.Theme ?? "Light";
-                await ApplyTheme(currentTheme);
+                SettingsState.IsDarkMode = currentTheme == "Dark";
 
                 showFullscreenToggle = config.ShowFullscreenToggle;
                 enableFullscreenOnStartup = config.EnableFullscreenOnStartup;
@@ -416,22 +411,9 @@ else
             Console.WriteLine($"Error loading settings: {ex.Message}");
             toolbarPosition = "toolbar-left";
             currentTheme = "Light";
+            SettingsState.IsDarkMode = false;
             showFullscreenToggle = true;
             enableFullscreenOnStartup = true;
-        }
-    }
-
-    private async Task ApplyTheme(string theme)
-    {
-        try
-        {
-            var isDark = theme == "Dark";
-            await JSRuntime.InvokeVoidAsync("eval",
-                $"document.documentElement.setAttribute('data-theme', '{(isDark ? "dark" : "light")}')");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error applying theme: {ex.Message}");
         }
     }
 
