@@ -1,5 +1,5 @@
 // VanDaemon Service Worker
-const CACHE_NAME = 'vandaemon-v1';
+const CACHE_NAME = 'vandaemon-v2';
 const RUNTIME_CACHE = 'vandaemon-runtime-v1';
 
 // Static assets to cache on install
