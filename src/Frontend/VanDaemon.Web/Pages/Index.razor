@@ -59,15 +59,92 @@
         pointer-events: auto;
     }
 
-    .status-footer {
-        padding: 12px 16px;
-        border-top: 1px solid var(--mud-palette-divider);
+    /* Consistent card styling for all movable objects */
+    .overlay-card {
         background: var(--mud-palette-surface);
+        border-radius: 12px;
+        box-shadow: var(--mud-elevation-6);
+        width: 140px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* Row 1: Icon and Name in grid */
+    .overlay-header {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .overlay-icon {
+        font-size: 32px !important;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        min-height: 56px;
+        justify-content: center;
     }
+
+    .overlay-name {
+        font-weight: 600;
+        font-size: 0.875rem;
+        line-height: 1.2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    /* Row 2: Control area */
+    .overlay-control {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+    }
+
+    /* Tank bar graph */
+    .tank-bar-container {
+        width: 100%;
+        height: 32px;
+        background: var(--mud-palette-background-grey);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    [data-theme="dark"] .tank-bar-container {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .tank-bar-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+        border-radius: 7px;
+    }
+
+    .tank-bar-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: 700;
+        font-size: 0.875rem;
+        color: var(--mud-palette-text-primary);
+        text-shadow: 0 0 3px var(--mud-palette-surface);
+        z-index: 1;
+    }
+
+    /* Control switch centered */
+    .control-switch {
+        transform: scale(1.2);
+    }
+
 </style>
 
 <div class="dashboard-page">
@@ -111,33 +188,52 @@
 
                     @if (overlay.Type == OverlayType.Tank)
                     {
-                        <MudTooltip Text="@overlay.Name">
-                            <div class="overlay-content" style="text-align: center; background: var(--mud-palette-surface); padding: 8px; border-radius: 8px; box-shadow: var(--mud-elevation-4);">
-                                <MudIcon Icon="@overlay.Icon" Size="Size.Large" Color="@GetOverlayColor(overlay)" />
-                                <MudText Typo="Typo.caption" Style="display: block; font-weight: bold;">@overlay.Value.ToString("F1")%</MudText>
+                        <div class="overlay-content overlay-card">
+                            <!-- Row 1: Icon and Name -->
+                            <div class="overlay-header">
+                                <MudIcon Icon="@overlay.Icon" Color="@GetOverlayColor(overlay)" Class="overlay-icon" />
+                                <div class="overlay-name">@overlay.Name</div>
                             </div>
-                        </MudTooltip>
+
+                            <!-- Row 2: Bar Graph -->
+                            <div class="overlay-control">
+                                <div class="tank-bar-container">
+                                    <div class="tank-bar-fill" style="width: @(overlay.Value)%; background-color: @GetTankBarColor(overlay);"></div>
+                                    <div class="tank-bar-text">@overlay.Value.ToString("F0")%</div>
+                                </div>
+                            </div>
+                        </div>
                     }
                     else if (overlay.Type == OverlayType.Control)
                     {
-                        <div class="overlay-content" style="text-align: center; background: var(--mud-palette-surface); padding: 12px 16px; border-radius: 12px; box-shadow: var(--mud-elevation-6); min-width: 100px;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <div class="overlay-content overlay-card">
+                            <!-- Row 1: Icon and Name -->
+                            <div class="overlay-header">
                                 <MudIcon Icon="@GetControlIcon(overlay.IconName)"
-                                        Size="Size.Large"
-                                        Style="font-size: 48px !important;"
-                                        Color="@(overlay.IsOn ? Color.Primary : Color.Default)" />
-                                <MudText Typo="Typo.body2" Style="font-weight: 600; white-space: nowrap;">@overlay.Name</MudText>
+                                        Color="@(overlay.IsOn ? Color.Primary : Color.Default)"
+                                        Class="overlay-icon" />
+                                <div class="overlay-name">@overlay.Name</div>
+                            </div>
 
+                            <!-- Row 2: Control Element -->
+                            <div class="overlay-control">
                                 @if (overlay.ControlType == "Toggle" && !isEditMode)
                                 {
                                     <MudSwitch Value="@overlay.IsOn"
                                               Color="Color.Success"
-                                              Size="Size.Small"
+                                              Class="control-switch"
+                                              ValueChanged="@((bool val) => OnControlToggle(overlay, val))" />
+                                }
+                                else if (overlay.ControlType == "Momentary" && !isEditMode)
+                                {
+                                    <MudSwitch Value="@overlay.IsOn"
+                                              Color="Color.Success"
+                                              Class="control-switch"
                                               ValueChanged="@((bool val) => OnControlToggle(overlay, val))" />
                                 }
                                 else if (overlay.ControlType == "Dimmer" && !isEditMode)
                                 {
-                                    <div style="width: 120px;">
+                                    <div style="width: 100%;">
                                         <MudSlider Value="@overlay.DimmerValue"
                                                   Color="Color.Primary"
                                                   Min="0"
@@ -145,18 +241,12 @@
                                                   Step="5"
                                                   Size="Size.Small"
                                                   ValueChanged="@((int val) => OnDimmerChange(overlay, val))" />
-                                        <MudText Typo="Typo.caption" Align="Align.Center">@overlay.DimmerValue%</MudText>
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Style="font-size: 0.75rem;">@overlay.DimmerValue%</MudText>
                                     </div>
                                 }
-                                else if (overlay.ControlType == "ColorChooser" && !isEditMode)
+                                else if (isEditMode)
                                 {
-                                    <MudColorPicker Value="@overlay.ColorValue"
-                                                   ColorPickerMode="ColorPickerMode.RGB"
-                                                   DisableAlpha="true"
-                                                   PickerVariant="PickerVariant.Inline"
-                                                   Style="width: 120px;"
-                                                   ColorPickerView="ColorPickerView.Palette"
-                                                   ValueChanged="@((MudColor val) => OnColorChange(overlay, val))" />
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary" Style="font-size: 0.7rem;">@overlay.ControlType</MudText>
                                 }
                             </div>
                         </div>
@@ -165,23 +255,11 @@
             }
         </div>
     </div>
-
-    <!-- Connection Status Footer -->
-    <div class="status-footer">
-        <div>
-            <MudChip Size="Size.Medium" Color="@(Telemetry.IsConnected ? Color.Success : Color.Warning)"
-                    Icon="@(Telemetry.IsConnected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.CloudOff)">
-                @(Telemetry.IsConnected ? "Connected" : "Connecting...")
-            </MudChip>
-        </div>
-        <MudText Typo="Typo.body2">Last update: @lastUpdateTime</MudText>
-    </div>
 </div>
 
 @code {
     private List<TankDto>? tanks;
     private List<ControlDto>? controls;
-    private string lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
     private string backgroundImage = "";
     private bool isEditMode = false;
     private List<OverlayItem> overlays = new();
@@ -570,6 +648,13 @@
         return overlay.IsOn ? Color.Success : Color.Default;
     }
 
+    private string GetTankBarColor(OverlayItem overlay)
+    {
+        if (overlay.Value < 20) return "#f44336"; // Red
+        if (overlay.Value < 50) return "#ff9800"; // Orange
+        return "#4caf50"; // Green
+    }
+
     private async Task LoadTanks()
     {
         try
@@ -580,7 +665,6 @@
                 Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
             };
             tanks = await Http.GetFromJsonAsync<List<TankDto>>("api/tanks", jsonOptions);
-            lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
         }
         catch (Exception ex)
         {
@@ -654,7 +738,6 @@
             if (tank != null)
             {
                 tank.CurrentLevel = level;
-                lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
                 InvokeAsync(StateHasChanged);
             }
         }

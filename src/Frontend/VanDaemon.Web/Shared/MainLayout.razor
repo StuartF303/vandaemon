@@ -2,6 +2,7 @@
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 @inject SettingsStateService SettingsState
+@inject TelemetryService Telemetry
 @implements IAsyncDisposable
 
 <style>
@@ -148,6 +149,42 @@
         color: var(--nav-item-active-text-dark);
         border-color: var(--nav-item-active-dark);
         box-shadow: 0 4px 12px rgba(25, 118, 210, 0.5);
+    }
+
+    .nav-status {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 12px;
+        margin-top: auto;
+        font-size: 11px;
+        color: var(--nav-text-light);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        background: rgba(0, 0, 0, 0.02);
+    }
+
+    [data-theme="dark"] .nav-status {
+        color: var(--nav-text-dark);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .nav-status-icon {
+        font-size: 14px !important;
+    }
+
+    .toolbar-bottom .nav-status {
+        flex-direction: row;
+        border-top: none;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 12px 8px;
+        margin-top: 0;
+        margin-left: auto;
+    }
+
+    [data-theme="dark"] .toolbar-bottom .nav-status {
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .nav-item-icon {
@@ -309,6 +346,14 @@ else
                     <span class="nav-item-text">@(isFullscreen ? "Exit Full" : "Fullscreen")</span>
                 </div>
             }
+
+            <!-- Status indicator -->
+            <div class="nav-status">
+                <MudIcon Icon="@(Telemetry.IsConnected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.CloudOff)"
+                         Color="@(Telemetry.IsConnected ? Color.Success : Color.Warning)"
+                         Class="nav-status-icon" />
+                <span>@lastUpdateTime</span>
+            </div>
         </nav>
         <main class="main-area">
             @Body
@@ -326,6 +371,8 @@ else
     private bool isFullscreen = false;
     private bool showFullscreenToggle = true;
     private bool enableFullscreenOnStartup = true;
+    private string lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
+    private System.Threading.Timer? statusTimer;
 
     protected override async Task OnInitializedAsync()
     {
@@ -337,6 +384,16 @@ else
         isLoading = false;
 
         // Note: Automatic fullscreen removed - browser security requires user gesture
+
+        // Update time every second
+        statusTimer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(() =>
+            {
+                lastUpdateTime = DateTime.Now.ToString("HH:mm:ss");
+                StateHasChanged();
+            });
+        }, null, 0, 1000);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -465,6 +522,7 @@ else
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
         SettingsState.SettingsChanged -= OnSettingsChanged;
+        statusTimer?.Dispose();
         return ValueTask.CompletedTask;
     }
 
