@@ -744,14 +744,22 @@
 
     private void OnTankLevelUpdated(Guid tankId, double level, string name)
     {
+        // Update the tank in the tanks list
         if (tanks != null)
         {
             var tank = tanks.FirstOrDefault(t => t.Id == tankId);
             if (tank != null)
             {
                 tank.CurrentLevel = level;
-                InvokeAsync(StateHasChanged);
             }
+        }
+
+        // Update the corresponding overlay for real-time display
+        var overlay = overlays.FirstOrDefault(o => o.Id == tankId && o.Type == OverlayType.Tank);
+        if (overlay != null)
+        {
+            overlay.Value = level;
+            InvokeAsync(StateHasChanged);
         }
     }
 
