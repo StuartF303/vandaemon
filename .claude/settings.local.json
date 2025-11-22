@@ -6,7 +6,21 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(git fetch:*)",
+      "Bash(pwsh -File:*)",
+      "Bash(cat:*)",
+      "Bash(git checkout:*)",
+      "Bash(dotnet:*)",
+      "Bash(find:*)",
+      "Bash(git merge:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker version:*)",
+      "Bash(where \"Docker Desktop.exe\")",
+      "Bash(Get-Command docker -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -ExpandProperty Source)",
+      "Bash(cmd /c \"where docker.exe\")",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []
