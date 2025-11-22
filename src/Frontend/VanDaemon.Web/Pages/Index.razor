@@ -151,7 +151,8 @@
     <DashboardMenu IsEditMode="@isEditMode"
                    IsEditModeChanged="@((bool value) => isEditMode = value)"
                    ShowFullscreenOption="false"
-                   IsFullscreen="false" />
+                   IsFullscreen="false"
+                   ToolbarPosition="@toolbarPosition" />
 
     <!-- Van Diagram Container -->
     <div class="diagram-area"
@@ -261,6 +262,7 @@
     private List<TankDto>? tanks;
     private List<ControlDto>? controls;
     private string backgroundImage = "";
+    private string toolbarPosition = "Left";
     private bool isEditMode = false;
     private List<OverlayItem> overlays = new();
     private OverlayItem? draggedOverlay;
@@ -324,16 +326,26 @@
         try
         {
             var response = await Http.GetFromJsonAsync<SystemConfiguration>("api/settings");
-            if (response != null && !string.IsNullOrEmpty(response.VanDiagramPath))
+            if (response != null)
             {
-                backgroundImage = response.VanDiagramPath;
-                Console.WriteLine($"Loaded van diagram from settings: {backgroundImage}");
+                if (!string.IsNullOrEmpty(response.VanDiagramPath))
+                {
+                    backgroundImage = response.VanDiagramPath;
+                    Console.WriteLine($"Loaded van diagram from settings: {backgroundImage}");
+                }
+                else
+                {
+                    // No van diagram configured, use default
+                    backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
+                    Console.WriteLine("No van diagram configured, using default");
+                }
+
+                // Load toolbar position from DrivingSide setting
+                toolbarPosition = response.DrivingSide.ToString();
             }
             else
             {
-                // No van diagram configured, use default
                 backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
-                Console.WriteLine("No van diagram configured, using default");
             }
         }
         catch (Exception ex)

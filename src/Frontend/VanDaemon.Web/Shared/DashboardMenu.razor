@@ -4,8 +4,15 @@
     .dashboard-menu {
         position: absolute;
         top: 16px;
-        left: 16px;
         z-index: 20;
+    }
+
+    .dashboard-menu.menu-left {
+        left: 16px;
+    }
+
+    .dashboard-menu.menu-right {
+        right: 16px;
     }
 
     .menu-button {
@@ -49,7 +56,7 @@
     }
 </style>
 
-<div class="dashboard-menu">
+<div class="dashboard-menu @GetMenuPositionClass()">
     <MudMenu Icon="@Icons.Material.Filled.MoreVert"
              Size="Size.Large"
              AnchorOrigin="Origin.BottomRight"
@@ -93,6 +100,9 @@
     [Parameter]
     public EventCallback OnExitFullscreenRequested { get; set; }
 
+    [Parameter]
+    public string ToolbarPosition { get; set; } = "Left";
+
     private async Task OnEditModeToggle()
     {
         await IsEditModeChanged.InvokeAsync(!IsEditMode);
@@ -101,5 +111,11 @@
     private async Task OnExitFullscreen()
     {
         await OnExitFullscreenRequested.InvokeAsync();
+    }
+
+    private string GetMenuPositionClass()
+    {
+        // Position hamburger menu on opposite side of the toolbar
+        return ToolbarPosition == "Right" ? "menu-left" : "menu-right";
     }
 }
