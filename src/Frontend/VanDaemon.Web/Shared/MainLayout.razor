@@ -174,50 +174,6 @@
         font-size: 13px;
     }
 
-    .fullscreen-toggle {
-        position: fixed;
-        top: 16px;
-        left: 80px;
-        z-index: 1000;
-        background: var(--nav-bg-light);
-        border: 2px solid var(--nav-item-active-light);
-        border-radius: 12px;
-        padding: 12px;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 2px 8px var(--nav-shadow-light);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        height: 56px;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    [data-theme="dark"] .fullscreen-toggle {
-        background: var(--nav-bg-dark);
-        border-color: var(--nav-item-active-dark);
-        box-shadow: 0 2px 8px var(--nav-shadow-dark);
-    }
-
-    .fullscreen-toggle:hover {
-        transform: scale(1.1);
-        box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
-    }
-
-    [data-theme="dark"] .fullscreen-toggle:hover {
-        box-shadow: 0 4px 16px rgba(25, 118, 210, 0.5);
-    }
-
-    .fullscreen-toggle .mud-icon-root {
-        font-size: 32px !important;
-        color: var(--nav-text-light);
-    }
-
-    [data-theme="dark"] .fullscreen-toggle .mud-icon-root {
-        color: var(--nav-text-dark);
-    }
-
     /* Tablet optimizations (600-960px) - icon-only side navigation */
     @@media (min-width: 601px) and (max-width: 960px) {
         .toolbar-left .nav-area,
@@ -324,12 +280,6 @@
 else
 {
     <div class="layout-container @GetLayoutClass()">
-        @if (showFullscreenToggle)
-        {
-            <div class="fullscreen-toggle" @onclick="ToggleFullscreen">
-                <MudIcon Icon="@(isFullscreen ? Icons.Material.Filled.FullscreenExit : Icons.Material.Filled.Fullscreen)" />
-            </div>
-        }
         <nav class="nav-area">
             <a href="/" class="nav-item @GetActiveClass("/")">
                 <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="nav-item-icon" />
@@ -347,6 +297,13 @@ else
                 <MudIcon Icon="@Icons.Material.Filled.Settings" Class="nav-item-icon" />
                 <span class="nav-item-text">Settings</span>
             </a>
+            @if (showFullscreenToggle)
+            {
+                <div class="nav-item @(isFullscreen ? "active" : "")" @onclick="ToggleFullscreen" style="cursor: pointer;">
+                    <MudIcon Icon="@(isFullscreen ? Icons.Material.Filled.FullscreenExit : Icons.Material.Filled.Fullscreen)" Class="nav-item-icon" />
+                    <span class="nav-item-text">@(isFullscreen ? "Exit Full" : "Fullscreen")</span>
+                </div>
+            }
         </nav>
         <main class="main-area">
             @Body
@@ -437,6 +394,7 @@ else
                 }
             ");
             isFullscreen = true;
+            StateHasChanged();
         }
         catch (Exception ex)
         {
@@ -458,6 +416,7 @@ else
                 }
             ");
             isFullscreen = false;
+            StateHasChanged();
         }
         catch (Exception ex)
         {
