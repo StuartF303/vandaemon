@@ -6,7 +6,7 @@ const RUNTIME_CACHE = 'vandaemon-runtime-v1';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
-    '/favicon.svg',
+    '/favicon.ico',
     '/manifest.json',
     '/_framework/blazor.webassembly.js',
     '/_content/MudBlazor/MudBlazor.min.css',
