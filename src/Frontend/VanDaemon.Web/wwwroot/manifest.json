@@ -1,0 +1,62 @@
+{
+  "name": "VanDaemon Control System",
+  "short_name": "VanDaemon",
+  "description": "Camper van control and monitoring system for water tanks, controls, and telemetry",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2196F3",
+  "theme_color": "#2196F3",
+  "orientation": "any",
+  "categories": ["utilities", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View van diagram and controls",
+      "url": "/",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Tanks",
+      "short_name": "Tanks",
+      "description": "Monitor tank levels",
+      "url": "/tanks",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Controls",
+      "short_name": "Controls",
+      "description": "Control lights and systems",
+      "url": "/controls",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

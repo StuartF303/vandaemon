@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PWA Icons</title>
+</head>
+<body>
+    <h1>PWA Icon Generator</h1>
+    <p>This will generate icons from the SVG favicon</p>
+    <canvas id="canvas192" width="192" height="192"></canvas>
+    <canvas id="canvas512" width="512" height="512"></canvas>
+    <div>
+        <button onclick="generateIcons()">Generate Icons</button>
+    </div>
+    <div id="downloads"></div>
+
+    <script>
+        async function generateIcons() {
+            const svgUrl = '/favicon.svg';
+
+            // Load SVG
+            const response = await fetch(svgUrl);
+            const svgText = await response.text();
+            const blob = new Blob([svgText], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+
+            const img = new Image();
+            img.onload = () => {
+                // Generate 192x192
+                const canvas192 = document.getElementById('canvas192');
+                const ctx192 = canvas192.getContext('2d');
+                ctx192.drawImage(img, 0, 0, 192, 192);
+
+                // Generate 512x512
+                const canvas512 = document.getElementById('canvas512');
+                const ctx512 = canvas512.getContext('2d');
+                ctx512.drawImage(img, 0, 0, 512, 512);
+
+                // Create download links
+                const downloads = document.getElementById('downloads');
+                downloads.innerHTML = '';
+
+                canvas192.toBlob(blob => {
+                    const link192 = document.createElement('a');
+                    link192.href = URL.createObjectURL(blob);
+                    link192.download = 'icon-192.png';
+                    link192.textContent = 'Download icon-192.png';
+                    downloads.appendChild(link192);
+                    downloads.appendChild(document.createElement('br'));
+                });
+
+                canvas512.toBlob(blob => {
+                    const link512 = document.createElement('a');
+                    link512.href = URL.createObjectURL(blob);
+                    link512.download = 'icon-512.png';
+                    link512.textContent = 'Download icon-512.png';
+                    downloads.appendChild(link512);
+                });
+
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        }
+    </script>
+</body>
+</html>
