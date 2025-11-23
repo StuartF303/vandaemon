@@ -325,19 +325,57 @@ public async Task<double> ReadValueAsync(string sensorId, CancellationToken canc
 }
 ```
 
-## Example: Modbus Plugin
+## Example: Modbus Control Plugin (Waveshare Relay)
 
-Here's a simplified example of a Modbus plugin:
+VanDaemon includes a production-ready Modbus control plugin that supports the **Waveshare 8-Channel PoE ETH Relay** and generic Modbus devices.
+
+### Waveshare 8-Channel PoE ETH Relay
+
+**Device Specifications:**
+- 8 relay channels (10A @ 250VAC/30VDC)
+- Modbus TCP protocol support
+- PoE powered (IEEE 802.3af) or external DC power
+- Default Modbus port: 502
+- Register type: Coils (FC05 - Write Single Coil)
+- Register addresses: 0-7 for relays 1-8
+
+**Configuration Example:**
+When adding a control in the VanDaemon web UI:
+1. Select "Control Provider" → "Modbus Device"
+2. Choose "Device Type" → "Waveshare 8-Channel PoE Relay"
+3. Enter "Modbus Address": `192.168.1.100:502`
+4. Select "Relay Channel": e.g., "Relay 1 (Register 0)"
+5. The plugin automatically uses Coil register type
+
+**Manual Configuration (Generic Modbus):**
+If not using the Waveshare preset, configure manually:
+- Modbus Address: `192.168.1.100:502`
+- Register Address: `0` (or custom)
+- Register Type: `Coil` (for on/off) or `HoldingRegister`
+
+### Implementation Details
+
+The Modbus plugin uses **FluentModbus** library and supports:
+
+- **Connection:** Per-operation (connect, write/read, disconnect)
+- **Protocol:** Modbus TCP over Ethernet
+- **Function Codes:** FC01 (Read Coils), FC03 (Read Holding Registers), FC05 (Write Single Coil), FC06 (Write Single Register)
+- **Endianness:** Big Endian (Modbus standard)
+- **Timeouts:** 5s connection, 1s read/write
+
+### Code Example
+
+Here's a simplified example based on the actual implementation:
 
 ```csharp
-using NModbus;
-using System.Net.Sockets;
+using FluentModbus;
+using System.Net;
 using Microsoft.Extensions.Logging;
 using VanDaemon.Plugins.Abstractions;
 
 namespace VanDaemon.Plugins.Modbus;
 
-public class ModbusSensorPlugin : ISensorPlugin
+public class ModbusControlPlugin : IControlPlugin
 {
     private readonly ILogger<ModbusSensorPlugin> _logger;
     private TcpClient? _tcpClient;
@@ -353,77 +391,67 @@ public class ModbusSensorPlugin : ISensorPlugin
         _logger = logger;
     }
 
-    public async Task InitializeAsync(Dictionary<string, object> configuration, CancellationToken cancellationToken = default)
+    public async Task<bool> SetStateAsync(string modbusAddress, int register,
+        string registerType, object state, CancellationToken cancellationToken = default)
     {
-        _ipAddress = configuration.GetValueOrDefault("IpAddress")?.ToString() ?? throw new ArgumentException("IpAddress required");
-        _port = Convert.ToInt32(configuration.GetValueOrDefault("Port") ?? 502);
-
-        _tcpClient = new TcpClient();
-        await _tcpClient.ConnectAsync(_ipAddress, _port);
-
-        var factory = new ModbusFactory();
-        _modbusMaster = factory.CreateMaster(_tcpClient);
-
-        _logger.LogInformation("Connected to Modbus device at {IpAddress}:{Port}", _ipAddress, _port);
-    }
-
-    public async Task<bool> TestConnectionAsync(CancellationToken cancellationToken = default)
-    {
-        if (_modbusMaster == null) return false;
-
         try
         {
-            // Try to read a register to test connection
-            await _modbusMaster.ReadHoldingRegistersAsync(1, 0, 1);
+            // Parse address and port
+            var parts = modbusAddress.Split(':');
+            var host = parts[0].Trim();
+            var port = parts.Length > 1 && int.TryParse(parts[1], out var p) ? p : 502;
+
+            // Convert state to boolean
+            bool boolState = state switch
+            {
+                bool b => b,
+                int i => i != 0,
+                string s => bool.TryParse(s, out var result) && result,
+                _ => false
+            };
+
+            _logger.LogInformation("Writing to {Host}:{Port}, Register={Register}, State={State}",
+                host, port, register, boolState);
+
+            // Create Modbus TCP client
+            using var client = new ModbusTcpClient();
+            client.ConnectTimeout = 5000;
+            client.WriteTimeout = 1000;
+
+            // Connect to device
+            var endpoint = new IPEndPoint(IPAddress.Parse(host), port);
+            await Task.Run(() => client.Connect(endpoint, ModbusEndianness.BigEndian), cancellationToken);
+
+            byte unitIdentifier = 0; // Modbus unit ID
+            ushort registerAddress = (ushort)register;
+
+            if (registerType.Equals("Coil", StringComparison.OrdinalIgnoreCase))
+            {
+                // Write single coil (FC05) - for relay on/off
+                await Task.Run(() => client.WriteSingleCoil(unitIdentifier, registerAddress, boolState),
+                    cancellationToken);
+            }
+            else if (registerType.Equals("HoldingRegister", StringComparison.OrdinalIgnoreCase))
+            {
+                // Write single holding register (FC06)
+                short value = (short)(boolState ? 1 : 0);
+                await Task.Run(() => client.WriteSingleRegister(unitIdentifier, registerAddress, value),
+                    cancellationToken);
+            }
+
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Failed to set Modbus state");
             return false;
         }
     }
 
-    public async Task<double> ReadValueAsync(string sensorId, CancellationToken cancellationToken = default)
-    {
-        if (_modbusMaster == null)
-        {
-            throw new InvalidOperationException("Plugin not initialized");
-        }
-
-        // Parse sensorId to get register address
-        // Format: "holding:1000" or "input:2000"
-        var parts = sensorId.Split(':');
-        var registerType = parts[0];
-        var address = ushort.Parse(parts[1]);
-
-        ushort[] registers;
-        if (registerType == "holding")
-        {
-            registers = await _modbusMaster.ReadHoldingRegistersAsync(1, address, 1);
-        }
-        else
-        {
-            registers = await _modbusMaster.ReadInputRegistersAsync(1, address, 1);
-        }
-
-        // Convert register value to percentage (0-100)
-        // Assuming register value is 0-10000 representing 0-100%
-        return registers[0] / 100.0;
-    }
-
-    public async Task<IDictionary<string, double>> ReadAllValuesAsync(CancellationToken cancellationToken = default)
-    {
-        var values = new Dictionary<string, double>();
-        // Read all configured sensors
-        // This would need to be configured per installation
-        return values;
-    }
-
     public void Dispose()
     {
-        _modbusMaster?.Dispose();
-        _tcpClient?.Close();
-        _tcpClient?.Dispose();
+        // FluentModbus client is disposed per-operation
+        _logger.LogInformation("Disposing {PluginName}", Name);
     }
 }
 ```

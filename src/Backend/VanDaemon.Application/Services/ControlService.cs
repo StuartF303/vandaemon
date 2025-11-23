@@ -144,10 +144,45 @@ public class ControlService : IControlService
         // Get the control plugin and read the current state
         if (_controlPlugins.TryGetValue(control.ControlPlugin, out var plugin))
         {
-            var controlId = control.ControlConfiguration.GetValueOrDefault("controlId")?.ToString() ?? string.Empty;
             try
             {
-                var state = await plugin.GetStateAsync(controlId, cancellationToken);
+                object state;
+
+                // Special handling for Modbus plugin
+                if (plugin.Name == "Modbus Control Plugin")
+                {
+                    var modbusAddress = control.ControlConfiguration.GetValueOrDefault("ModbusAddress")?.ToString() ?? "";
+                    var register = Convert.ToInt32(control.ControlConfiguration.GetValueOrDefault("Register") ?? 0);
+                    var registerType = control.ControlConfiguration.GetValueOrDefault("RegisterType")?.ToString() ?? "Coil";
+                    var deviceType = control.ControlConfiguration.GetValueOrDefault("DeviceType")?.ToString();
+
+                    // Use reflection to call GetStateWithConfigAsync
+                    var method = plugin.GetType().GetMethod("GetStateWithConfigAsync");
+                    if (method != null)
+                    {
+                        var task = (Task<object>)method.Invoke(plugin, new object[]
+                        {
+                            modbusAddress,
+                            register,
+                            registerType,
+                            deviceType,
+                            cancellationToken
+                        })!;
+                        state = await task;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("GetStateWithConfigAsync method not found on Modbus plugin");
+                        return control.State;
+                    }
+                }
+                else
+                {
+                    // Standard plugin behavior
+                    var controlId = control.ControlConfiguration.GetValueOrDefault("controlId")?.ToString() ?? string.Empty;
+                    state = await plugin.GetStateAsync(controlId, cancellationToken);
+                }
+
                 control.State = state;
                 control.LastUpdated = DateTime.UtcNow;
                 _logger.LogDebug("Read control {ControlName} state: {State}", control.Name, state);
@@ -174,10 +209,46 @@ public class ControlService : IControlService
         // Get the control plugin and set the state
         if (_controlPlugins.TryGetValue(control.ControlPlugin, out var plugin))
         {
-            var controlId = control.ControlConfiguration.GetValueOrDefault("controlId")?.ToString() ?? string.Empty;
             try
             {
-                var success = await plugin.SetStateAsync(controlId, state, cancellationToken);
+                bool success;
+
+                // Special handling for Modbus plugin
+                if (plugin.Name == "Modbus Control Plugin")
+                {
+                    var modbusAddress = control.ControlConfiguration.GetValueOrDefault("ModbusAddress")?.ToString() ?? "";
+                    var register = Convert.ToInt32(control.ControlConfiguration.GetValueOrDefault("Register") ?? 0);
+                    var registerType = control.ControlConfiguration.GetValueOrDefault("RegisterType")?.ToString() ?? "Coil";
+                    var deviceType = control.ControlConfiguration.GetValueOrDefault("DeviceType")?.ToString();
+
+                    // Use reflection to call SetStateWithConfigAsync
+                    var method = plugin.GetType().GetMethod("SetStateWithConfigAsync");
+                    if (method != null)
+                    {
+                        var task = (Task<bool>)method.Invoke(plugin, new object[]
+                        {
+                            modbusAddress,
+                            register,
+                            registerType,
+                            state,
+                            deviceType,
+                            cancellationToken
+                        })!;
+                        success = await task;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("SetStateWithConfigAsync method not found on Modbus plugin");
+                        return false;
+                    }
+                }
+                else
+                {
+                    // Standard plugin behavior
+                    var controlId = control.ControlConfiguration.GetValueOrDefault("controlId")?.ToString() ?? string.Empty;
+                    success = await plugin.SetStateAsync(controlId, state, cancellationToken);
+                }
+
                 if (success)
                 {
                     control.State = state;

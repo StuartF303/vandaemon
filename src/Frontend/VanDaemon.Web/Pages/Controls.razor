@@ -196,24 +196,51 @@ else
             }
             else if (providerType == "Modbus")
             {
+                <MudSelect @bind-Value="modbusDeviceType"
+                          Label="Device Type (Optional Preset)"
+                          Class="mb-4"
+                          Clearable="true">
+                    <MudSelectItem Value="@("")">None (Manual Configuration)</MudSelectItem>
+                    <MudSelectItem Value="@("Waveshare8Relay")">Waveshare 8-Channel PoE Relay</MudSelectItem>
+                </MudSelect>
+
                 <MudTextField @bind-Value="modbusAddress"
                              Label="Modbus Address (e.g., 192.168.1.100:502)"
                              Required="true"
                              Class="mb-4" />
 
-                <MudNumericField @bind-Value="modbusRegister"
-                                Label="Register Address"
-                                Required="true"
-                                Min="0"
-                                Class="mb-4" />
+                @if (modbusDeviceType == "Waveshare8Relay")
+                {
+                    <MudSelect @bind-Value="modbusRegister"
+                              Label="Relay Channel"
+                              Required="true"
+                              Class="mb-4">
+                        <MudSelectItem Value="0">Relay 1 (Register 0)</MudSelectItem>
+                        <MudSelectItem Value="1">Relay 2 (Register 1)</MudSelectItem>
+                        <MudSelectItem Value="2">Relay 3 (Register 2)</MudSelectItem>
+                        <MudSelectItem Value="3">Relay 4 (Register 3)</MudSelectItem>
+                        <MudSelectItem Value="4">Relay 5 (Register 4)</MudSelectItem>
+                        <MudSelectItem Value="5">Relay 6 (Register 5)</MudSelectItem>
+                        <MudSelectItem Value="6">Relay 7 (Register 6)</MudSelectItem>
+                        <MudSelectItem Value="7">Relay 8 (Register 7)</MudSelectItem>
+                    </MudSelect>
+                }
+                else
+                {
+                    <MudNumericField @bind-Value="modbusRegister"
+                                    Label="Register Address"
+                                    Required="true"
+                                    Min="0"
+                                    Class="mb-4" />
 
-                <MudSelect @bind-Value="modbusRegisterType"
-                          Label="Register Type"
-                          Required="true"
-                          Class="mb-4">
-                    <MudSelectItem Value="@("Coil")">Coil (Read/Write)</MudSelectItem>
-                    <MudSelectItem Value="@("HoldingRegister")">Holding Register</MudSelectItem>
-                </MudSelect>
+                    <MudSelect @bind-Value="modbusRegisterType"
+                              Label="Register Type"
+                              Required="true"
+                              Class="mb-4">
+                        <MudSelectItem Value="@("Coil")">Coil (Read/Write)</MudSelectItem>
+                        <MudSelectItem Value="@("HoldingRegister")">Holding Register</MudSelectItem>
+                    </MudSelect>
+                }
             }
         </MudForm>
     </DialogContent>
@@ -239,6 +266,7 @@ else
     private string modbusAddress = "";
     private int modbusRegister = 0;
     private string modbusRegisterType = "Coil";
+    private string modbusDeviceType = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -274,6 +302,7 @@ else
         modbusAddress = "";
         modbusRegister = 0;
         modbusRegisterType = "Coil";
+        modbusDeviceType = "";
         dialogVisible = true;
     }
 
@@ -318,6 +347,8 @@ else
                 modbusRegister = Convert.ToInt32(reg);
             if (editingControl.ControlConfiguration.TryGetValue("RegisterType", out var regType))
                 modbusRegisterType = regType?.ToString() ?? "Coil";
+            if (editingControl.ControlConfiguration.TryGetValue("DeviceType", out var deviceType))
+                modbusDeviceType = deviceType?.ToString() ?? "";
         }
         else
         {
@@ -351,6 +382,12 @@ else
                 editingControl.ControlConfiguration["ModbusAddress"] = modbusAddress;
                 editingControl.ControlConfiguration["Register"] = modbusRegister;
                 editingControl.ControlConfiguration["RegisterType"] = modbusRegisterType;
+
+                // Save device type if specified
+                if (!string.IsNullOrEmpty(modbusDeviceType))
+                {
+                    editingControl.ControlConfiguration["DeviceType"] = modbusDeviceType;
+                }
             }
 
             HttpResponseMessage response;

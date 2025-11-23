@@ -7,6 +7,7 @@ using VanDaemon.Application.Persistence;
 using VanDaemon.Application.Services;
 using VanDaemon.Plugins.Abstractions;
 using VanDaemon.Plugins.Simulated;
+using VanDaemon.Plugins.Modbus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +71,7 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddSingleton<ISensorPlugin, SimulatedSensorPlugin>();
 builder.Services.AddSingleton<IControlPlugin, SimulatedControlPlugin>();
 builder.Services.AddSingleton<IControlPlugin, SimulatedSyncPlugin>();
+builder.Services.AddSingleton<IControlPlugin, ModbusControlPlugin>();
 
 // Register application services
 builder.Services.AddSingleton<ITankService, TankService>();
