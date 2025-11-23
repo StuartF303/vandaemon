@@ -20,7 +20,10 @@
       "Bash(Get-Command docker -ErrorAction SilentlyContinue)",
       "Bash(Select-Object -ExpandProperty Source)",
       "Bash(cmd /c \"where docker.exe\")",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
