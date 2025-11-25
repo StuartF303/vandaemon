@@ -10,6 +10,7 @@ public class TelemetryService : IAsyncDisposable
     public event Action<Guid, double, string>? TankLevelUpdated;
     public event Action<Guid, object, string>? ControlStateChanged;
     public event Action<List<object>>? AlertsUpdated;
+    public event Action<object>? ElectricalSystemUpdated;
 
     public bool IsConnected => _hubConnection.State == HubConnectionState.Connected;
 
@@ -34,6 +35,11 @@ public class TelemetryService : IAsyncDisposable
         {
             AlertsUpdated?.Invoke(alerts);
         });
+
+        _hubConnection.On<object>("ElectricalSystemUpdated", (electricalSystem) =>
+        {
+            ElectricalSystemUpdated?.Invoke(electricalSystem);
+        });
     }
 
     public async Task StartAsync()
@@ -46,6 +52,7 @@ public class TelemetryService : IAsyncDisposable
                 await _hubConnection.InvokeAsync("SubscribeToTanks");
                 await _hubConnection.InvokeAsync("SubscribeToControls");
                 await _hubConnection.InvokeAsync("SubscribeToAlerts");
+                await _hubConnection.InvokeAsync("SubscribeToElectrical");
             }
             catch (Exception ex)
             {

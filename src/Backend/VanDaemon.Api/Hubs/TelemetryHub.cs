@@ -54,6 +54,15 @@ public class TelemetryHub : Hub
     }
 
     /// <summary>
+    /// Subscribe to electrical system updates
+    /// </summary>
+    public async Task SubscribeToElectrical()
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, "electrical");
+        _logger.LogDebug("Client {ConnectionId} subscribed to electrical", Context.ConnectionId);
+    }
+
+    /// <summary>
     /// Broadcast control state change to all clients
     /// </summary>
     public async Task BroadcastControlStateChange(Guid controlId, bool state, string controlName)

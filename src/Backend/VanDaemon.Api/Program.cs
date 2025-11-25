@@ -78,6 +78,7 @@ builder.Services.AddSingleton<ITankService, TankService>();
 builder.Services.AddSingleton<IControlService, ControlService>();
 builder.Services.AddSingleton<IAlertService, AlertService>();
 builder.Services.AddSingleton<ISettingsService, SettingsService>();
+builder.Services.AddSingleton<IElectricalService, ElectricalService>();
 
 // Register background services
 builder.Services.AddHostedService<TelemetryBackgroundService>();

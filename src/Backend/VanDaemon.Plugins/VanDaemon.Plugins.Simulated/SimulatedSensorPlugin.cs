@@ -43,11 +43,27 @@ public class SimulatedSensorPlugin : ISensorPlugin
         _sensorDirection["fuel"] = true; // draining
 
         _sensorStartTimes["battery"] = now;
-        _sensorDirection["battery"] = true; // draining
+        _sensorDirection["battery"] = true; // draining (SOC %)
 
         // Filling tank: waste_water
         _sensorStartTimes["waste_water"] = now;
         _sensorDirection["waste_water"] = false; // filling
+
+        // Electrical system sensors (battery draining cycle)
+        _sensorStartTimes["battery_soc"] = now;
+        _sensorDirection["battery_soc"] = true; // draining
+
+        _sensorStartTimes["battery_voltage"] = now;
+        _sensorDirection["battery_voltage"] = true; // decreasing with discharge
+
+        _sensorStartTimes["battery_current"] = now;
+        _sensorDirection["battery_current"] = true; // varies
+
+        _sensorStartTimes["battery_temperature"] = now;
+        _sensorDirection["battery_temperature"] = false; // temperature varies
+
+        _sensorStartTimes["solar_power"] = now;
+        _sensorDirection["solar_power"] = false; // solar increases during day
 
         return Task.CompletedTask;
     }
@@ -74,33 +90,81 @@ public class SimulatedSensorPlugin : ISensorPlugin
         // Calculate progress through the 2-minute cycle (0.0 to 1.0)
         var progress = (elapsedSeconds % CYCLE_DURATION_SECONDS) / CYCLE_DURATION_SECONDS;
 
-        // Calculate base value based on direction
-        double baseValue;
-        if (isDraining)
-        {
-            // Draining: starts at 100%, goes to 0%, then resets to 100%
-            baseValue = 100.0 - (progress * 100.0);
-        }
-        else
-        {
-            // Filling: starts at 0%, goes to 100%, then resets to 0%
-            baseValue = progress * 100.0;
-        }
+        double value;
 
-        // Add small random variation to simulate real sensor readings (+/- 0.5%)
-        var variation = (_random.NextDouble() - 0.5) * 1.0;
-        var value = Math.Clamp(baseValue + variation, 0, 100);
+        // Special handling for electrical system sensors
+        switch (sensorId)
+        {
+            case "battery_voltage":
+                // 12V battery: 11.8V (empty) to 13.8V (full)
+                // Progress from high to low (draining)
+                var voltageRange = 13.8 - 11.8;
+                var baseVoltage = isDraining ? 13.8 - (progress * voltageRange) : 11.8 + (progress * voltageRange);
+                var voltageVariation = (_random.NextDouble() - 0.5) * 0.1;
+                value = Math.Clamp(baseVoltage + voltageVariation, 11.5, 14.0);
+                break;
+
+            case "battery_current":
+                // Current varies between -50A (discharging) and +30A (charging)
+                // Simulate realistic current fluctuations
+                var baseCurrent = isDraining ? -20.0 - (progress * 30.0) : 5.0 + (progress * 25.0);
+                var currentVariation = (_random.NextDouble() - 0.5) * 10.0;
+                value = baseCurrent + currentVariation;
+                break;
+
+            case "battery_soc":
+                // State of Charge: 0-100%
+                var socBase = isDraining ? 100.0 - (progress * 100.0) : progress * 100.0;
+                var socVariation = (_random.NextDouble() - 0.5) * 1.0;
+                value = Math.Clamp(socBase + socVariation, 0, 100);
+                break;
+
+            case "battery_temperature":
+                // Temperature: 18-28°C with slow variation
+                var tempBase = 23.0 + Math.Sin(progress * Math.PI * 2) * 5.0;
+                var tempVariation = (_random.NextDouble() - 0.5) * 0.5;
+                value = tempBase + tempVariation;
+                break;
+
+            case "solar_power":
+                // Solar power: 0-400W simulating sun position
+                // Peaks at midday (50% progress)
+                var solarProgress = Math.Sin(progress * Math.PI); // 0 at start/end, 1 at middle
+                var baseSolar = solarProgress * 400.0;
+                var solarVariation = (_random.NextDouble() - 0.5) * 20.0;
+                value = Math.Max(0, baseSolar + solarVariation);
+                break;
+
+            default:
+                // Standard tank behavior (0-100%)
+                double baseValue;
+                if (isDraining)
+                {
+                    // Draining: starts at 100%, goes to 0%, then resets to 100%
+                    baseValue = 100.0 - (progress * 100.0);
+                }
+                else
+                {
+                    // Filling: starts at 0%, goes to 100%, then resets to 0%
+                    baseValue = progress * 100.0;
+                }
+
+                // Add small random variation to simulate real sensor readings (+/- 0.5%)
+                var variation = (_random.NextDouble() - 0.5) * 1.0;
+                value = Math.Clamp(baseValue + variation, 0, 100);
+                break;
+        }
 
         // Reset cycle if complete
         if (elapsedSeconds >= CYCLE_DURATION_SECONDS)
         {
             var cyclesCompleted = (int)(elapsedSeconds / CYCLE_DURATION_SECONDS);
             _sensorStartTimes[sensorId] = startTime.AddSeconds(cyclesCompleted * CYCLE_DURATION_SECONDS);
-            _logger.LogInformation("Sensor {SensorId} completed cycle - resetting to {StartValue}%",
-                sensorId, isDraining ? "100" : "0");
+            _logger.LogInformation("Sensor {SensorId} completed cycle - resetting",
+                sensorId);
         }
 
-        _logger.LogDebug("Read sensor {SensorId}: {Value}% (cycle progress: {Progress:P0})", sensorId, value, progress);
+        _logger.LogDebug("Read sensor {SensorId}: {Value} (cycle progress: {Progress:P0})", sensorId, value, progress);
         return Task.FromResult(value);
     }
 

@@ -37,6 +37,7 @@ public class TelemetryBackgroundService : BackgroundService
                 using var scope = _serviceProvider.CreateScope();
                 var tankService = scope.ServiceProvider.GetRequiredService<ITankService>();
                 var alertService = scope.ServiceProvider.GetRequiredService<IAlertService>();
+                var electricalService = scope.ServiceProvider.GetRequiredService<IElectricalService>();
 
                 // Refresh all tank levels
                 await tankService.RefreshAllTankLevelsAsync(stoppingToken);
@@ -50,6 +51,19 @@ public class TelemetryBackgroundService : BackgroundService
                         tank.Id,
                         tank.CurrentLevel,
                         tank.Name,
+                        stoppingToken);
+                }
+
+                // Refresh electrical system data
+                await electricalService.RefreshElectricalDataAsync(stoppingToken);
+
+                // Get electrical system and send update
+                var electricalSystem = await electricalService.GetElectricalSystemAsync(stoppingToken);
+                if (electricalSystem != null)
+                {
+                    await _hubContext.Clients.Group("electrical").SendAsync(
+                        "ElectricalSystemUpdated",
+                        electricalSystem,
                         stoppingToken);
                 }
 
@@ -67,7 +81,7 @@ public class TelemetryBackgroundService : BackgroundService
                         stoppingToken);
                 }
 
-                _logger.LogDebug("Telemetry update sent: {TankCount} tanks, {AlertCount} alerts",
+                _logger.LogDebug("Telemetry update sent: {TankCount} tanks, {AlertCount} alerts, electrical system",
                     tanks.Count(), alertsList.Count);
             }
             catch (Exception ex)
