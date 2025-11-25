@@ -67,6 +67,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddSingleton(sp =>
     new JsonFileStore(sp.GetRequiredService<ILogger<JsonFileStore>>(), Path.Combine(AppContext.BaseDirectory, "data")));
 
+// Register unified configuration service
+builder.Services.AddSingleton<IUnifiedConfigService, UnifiedConfigService>();
+
 // Register plugins
 builder.Services.AddSingleton<ISensorPlugin, SimulatedSensorPlugin>();
 builder.Services.AddSingleton<IControlPlugin, SimulatedControlPlugin>();
@@ -79,6 +82,7 @@ builder.Services.AddSingleton<IControlService, ControlService>();
 builder.Services.AddSingleton<IAlertService, AlertService>();
 builder.Services.AddSingleton<ISettingsService, SettingsService>();
 builder.Services.AddSingleton<IElectricalService, ElectricalService>();
+builder.Services.AddSingleton<IElectricalDeviceService, ElectricalDeviceService>();
 
 // Register background services
 builder.Services.AddHostedService<TelemetryBackgroundService>();

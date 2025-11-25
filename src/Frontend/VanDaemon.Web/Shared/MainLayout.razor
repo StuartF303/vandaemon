@@ -327,17 +327,13 @@ else
                 <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="nav-item-icon" />
                 <span class="nav-item-text">Dashboard</span>
             </a>
-            <a href="/tanks" class="nav-item @GetActiveClass("/tanks")">
-                <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Class="nav-item-icon" />
-                <span class="nav-item-text">Tanks</span>
-            </a>
             <a href="/electrical" class="nav-item @GetActiveClass("/electrical")">
                 <MudIcon Icon="@Icons.Material.Filled.BatteryChargingFull" Class="nav-item-icon" />
                 <span class="nav-item-text">Electrical</span>
             </a>
-            <a href="/controls" class="nav-item @GetActiveClass("/controls")">
-                <MudIcon Icon="@Icons.Material.Filled.Lightbulb" Class="nav-item-icon" />
-                <span class="nav-item-text">Controls</span>
+            <a href="/devices" class="nav-item @GetActiveClass("/devices")">
+                <MudIcon Icon="@Icons.Material.Filled.Devices" Class="nav-item-icon" />
+                <span class="nav-item-text">Devices</span>
             </a>
             <a href="/settings" class="nav-item @GetActiveClass("/settings")">
                 <MudIcon Icon="@Icons.Material.Filled.Settings" Class="nav-item-icon" />
@@ -345,7 +341,7 @@ else
             </a>
             @if (showFullscreenToggle)
             {
-                <div class="nav-item @(isFullscreen ? "active" : "")" @onclick="ToggleFullscreen" style="cursor: pointer;">
+                <div class="nav-item" @onclick="ToggleFullscreen" style="cursor: pointer;">
                     <MudIcon Icon="@(isFullscreen ? Icons.Material.Filled.FullscreenExit : Icons.Material.Filled.Fullscreen)" Class="nav-item-icon" />
                     <span class="nav-item-text">@(isFullscreen ? "Exit Full" : "Fullscreen")</span>
                 </div>

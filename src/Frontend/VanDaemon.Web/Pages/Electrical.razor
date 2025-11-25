@@ -1,24 +1,59 @@
 @page "/electrical"
 @using System.Text.Json
+@using VanDaemon.Web.Shared
 @inject HttpClient Http
 @inject TelemetryService Telemetry
 @inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
 
 <PageTitle>Electrical System - VanDaemon</PageTitle>
 
 <style>
     .electrical-page {
-        padding: 20px;
-        max-width: 1400px;
-        margin: 0 auto;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        background: var(--mud-palette-background);
+        overflow: hidden;
     }
 
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
+    .diagram-area {
+        flex: 1;
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        min-height: 0;
+    }
+
+    .electrical-diagram-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .electrical-diagram-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .overlay-item {
+        z-index: 10;
+        position: absolute;
+        user-select: none;
+        touch-action: none;
+    }
+
+    .overlay-item.edit-mode {
+        z-index: 15;
     }
 
     .stat-card {
@@ -27,6 +62,9 @@
         padding: 20px;
         box-shadow: var(--mud-elevation-4);
         transition: transform 0.2s, box-shadow 0.2s;
+        min-width: 220px;
+        max-width: 280px;
+        pointer-events: auto;
     }
 
     .stat-card:hover {
@@ -42,11 +80,11 @@
     }
 
     .stat-icon {
-        font-size: 48px !important;
+        font-size: 40px !important;
     }
 
     .stat-title {
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         color: var(--mud-palette-text-secondary);
         font-weight: 500;
         text-transform: uppercase;
@@ -54,28 +92,28 @@
     }
 
     .stat-value {
-        font-size: 2.5rem;
+        font-size: 2rem;
         font-weight: 700;
         line-height: 1;
         margin-bottom: 8px;
     }
 
     .stat-unit {
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: 400;
         opacity: 0.7;
         margin-left: 4px;
     }
 
     .stat-subtitle {
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         color: var(--mud-palette-text-secondary);
         margin-top: 8px;
     }
 
     .battery-bar-container {
         width: 100%;
-        height: 40px;
+        height: 32px;
         background: var(--mud-palette-background-grey);
         border-radius: 8px;
         position: relative;
@@ -101,17 +139,10 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 0.875rem;
         color: var(--mud-palette-text-primary);
         text-shadow: 0 0 4px var(--mud-palette-surface);
         z-index: 1;
-    }
-
-    .last-updated {
-        text-align: center;
-        color: var(--mud-palette-text-secondary);
-        font-size: 0.75rem;
-        margin-top: 20px;
     }
 
     .positive-value {
@@ -128,148 +159,241 @@
 </style>
 
 <div class="electrical-page">
-    <MudText Typo="Typo.h4" GutterBottom="true">
-        <MudIcon Icon="@Icons.Material.Filled.BatteryChargingFull" Style="vertical-align: middle; margin-right: 8px;" />
-        Electrical System
-    </MudText>
+    <DashboardMenu IsEditMode="@isEditMode"
+                   IsEditModeChanged="@((bool value) => isEditMode = value)"
+                   ShowFullscreenOption="false"
+                   IsFullscreen="false"
+                   ToolbarPosition="@toolbarPosition" />
 
-    @if (electricalSystem == null)
-    {
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-        <MudText>Loading electrical system data...</MudText>
-    }
-    else
-    {
-        <div class="stats-grid">
-            <!-- Battery State of Charge -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <MudIcon Icon="@Icons.Material.Filled.BatteryFull" Color="@GetSocColor()" Class="stat-icon" />
-                    <div style="flex: 1;">
-                        <div class="stat-title">State of Charge</div>
-                    </div>
-                </div>
-                <div class="stat-value">
-                    @electricalSystem.StateOfCharge.ToString("F1")<span class="stat-unit">%</span>
-                </div>
-                <div class="battery-bar-container">
-                    <div class="battery-bar-fill" style="width: @(electricalSystem.StateOfCharge)%; background-color: @GetSocBarColor();"></div>
-                    <div class="battery-bar-text">@electricalSystem.StateOfCharge.ToString("F0")%</div>
-                </div>
-                @if (electricalSystem.TimeToGo > 0)
+    <!-- Electrical Diagram Container -->
+    <div class="diagram-area"
+         @onmousemove="OnMouseMove"
+         @onmouseup="OnMouseUp"
+         @ontouchmove="OnTouchMove"
+         @ontouchend="OnTouchEnd"
+         @ontouchmove:preventDefault="isEditMode"
+         @ontouchend:preventDefault="isEditMode">
+        <div class="electrical-diagram-container" @ref="diagramContainer">
+            @if (!string.IsNullOrEmpty(backgroundImage))
+            {
+                <img src="@backgroundImage" alt="Electrical Diagram" class="electrical-diagram-background" />
+            }
+
+            <!-- SVG Layer for Connections -->
+            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;">
+                @if (electricalConnections != null && devicesWithPositions != null)
                 {
-                    <div class="stat-subtitle">
-                        Time to empty: @FormatTimeToGo(electricalSystem.TimeToGo)
+                    @foreach (var connection in electricalConnections)
+                    {
+                        var sourceDevice = devicesWithPositions.FirstOrDefault(d => d.Device.Id == connection.SourceDeviceId);
+                        var targetDevice = devicesWithPositions.FirstOrDefault(d => d.Device.Id == connection.TargetDeviceId);
+
+                        if (sourceDevice != null && targetDevice != null)
+                        {
+                            var sourcePort = sourceDevice.Device.Ports.FirstOrDefault(p => p.PortId == connection.SourcePortId);
+                            var targetPort = targetDevice.Device.Ports.FirstOrDefault(p => p.PortId == connection.TargetPortId);
+
+                            if (sourcePort != null && targetPort != null)
+                            {
+                                var (x1, y1) = CalculatePortPosition(sourceDevice, sourcePort);
+                                var (x2, y2) = CalculatePortPosition(targetDevice, targetPort);
+
+                                <g class="connection-line">
+                                    <!-- Connection Line -->
+                                    <line x1="@x1" y1="@y1" x2="@x2" y2="@y2"
+                                          stroke="@connection.Color"
+                                          stroke-width="@connection.LineWidth"
+                                          stroke-linecap="round" />
+
+                                    <!-- Flow Animation Circle -->
+                                    @if (connection.IsFlowing && connection.CurrentFlow != 0)
+                                    {
+                                        <circle r="4" fill="@connection.Color">
+                                            <animateMotion
+                                                dur="2s"
+                                                repeatCount="indefinite"
+                                                path="M @x1 @y1 L @x2 @y2" />
+                                        </circle>
+                                    }
+                                </g>
+                            }
+                        }
+                    }
+                }
+            </svg>
+
+            @if (devicesWithPositions == null)
+            {
+                <div style="text-align: center; padding: 50px; z-index: 10; position: relative;">
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" />
+                    <MudText Typo="Typo.h6" Class="mt-4">Loading electrical devices...</MudText>
+                </div>
+            }
+            else if (!devicesWithPositions.Any())
+            {
+                <div style="text-align: center; padding: 50px; z-index: 10; position: relative;">
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Filled">
+                        <MudText Typo="Typo.h6">No Electrical Devices Configured</MudText>
+                        <MudText Typo="Typo.body2" Class="mt-2">
+                            Go to Devices → Electrical tab to add your first device.
+                        </MudText>
+                    </MudAlert>
+                </div>
+            }
+            else
+            {
+                <!-- Render Device Cards -->
+                @foreach (var deviceWithPos in devicesWithPositions)
+                {
+                    <div class="overlay-item @(isEditMode ? "edit-mode" : "")"
+                         style="position: absolute; left: @(deviceWithPos.X)%; top: @(deviceWithPos.Y)%; transform: translate(-50%, -50%); cursor: @(isEditMode ? "move" : "default");"
+                         @onmousedown="@((e) => OnDeviceMouseDown(e, deviceWithPos.Device.Id))"
+                         @onmousedown:preventDefault="isEditMode">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <MudIcon Icon="@GetDeviceIcon(deviceWithPos.Device.DeviceType)" Color="@GetDeviceColor(deviceWithPos.Device.DeviceType)" Class="stat-icon" />
+                                <div style="flex: 1;">
+                                    <div class="stat-title">@deviceWithPos.Device.Name</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.7;">@deviceWithPos.Device.DeviceType</div>
+                                </div>
+                            </div>
+
+                            <!-- Device Metrics -->
+                            @if (deviceWithPos.Device.CurrentMetrics.Any())
+                            {
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
+                                    @foreach (var metric in deviceWithPos.Device.CurrentMetrics.Take(4))
+                                    {
+                                        <div>
+                                            <div style="font-size: 0.65rem; color: var(--mud-palette-text-secondary); text-transform: uppercase;">
+                                                @metric.Key
+                                            </div>
+                                            <div style="font-size: 1rem; font-weight: 600;">
+                                                @metric.Value.ToString("F1")
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="stat-subtitle">No data available</div>
+                            }
+
+                            <!-- Port Indicators -->
+                            @if (deviceWithPos.Device.Ports.Any())
+                            {
+                                <div style="margin-top: 12px; display: flex; gap: 4px; flex-wrap: wrap;">
+                                    @foreach (var port in deviceWithPos.Device.Ports)
+                                    {
+                                        <div style="font-size: 0.65rem; padding: 2px 6px; background: var(--mud-palette-background-grey); border-radius: 4px;">
+                                            @port.Label
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
                     </div>
                 }
-            </div>
-
-            <!-- Battery Voltage -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Bolt" Color="Color.Warning" Class="stat-icon" />
-                    <div style="flex: 1;">
-                        <div class="stat-title">Battery Voltage</div>
-                    </div>
-                </div>
-                <div class="stat-value">
-                    @electricalSystem.Voltage.ToString("F2")<span class="stat-unit">V</span>
-                </div>
-                <div class="stat-subtitle">
-                    @GetVoltageStatus(electricalSystem.Voltage)
-                </div>
-            </div>
-
-            <!-- Battery Current -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Power" Color="@GetCurrentColor()" Class="stat-icon" />
-                    <div style="flex: 1;">
-                        <div class="stat-title">Battery Current</div>
-                    </div>
-                </div>
-                <div class="stat-value @GetCurrentClass()">
-                    @Math.Abs(electricalSystem.Current).ToString("F1")<span class="stat-unit">A</span>
-                </div>
-                <div class="stat-subtitle">
-                    @(electricalSystem.Current > 0 ? "Charging" : electricalSystem.Current < 0 ? "Discharging" : "Idle")
-                </div>
-            </div>
-
-            <!-- Battery Power -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" Color="@GetPowerColor()" Class="stat-icon" />
-                    <div style="flex: 1;">
-                        <div class="stat-title">Battery Power</div>
-                    </div>
-                </div>
-                <div class="stat-value @GetPowerClass()">
-                    @Math.Abs(electricalSystem.Power).ToString("F0")<span class="stat-unit">W</span>
-                </div>
-                <div class="stat-subtitle">
-                    @(electricalSystem.Power > 0 ? "Charging" : electricalSystem.Power < 0 ? "Load" : "Idle")
-                </div>
-            </div>
-
-            <!-- Battery Temperature -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Thermostat" Color="@GetTemperatureColor()" Class="stat-icon" />
-                    <div style="flex: 1;">
-                        <div class="stat-title">Battery Temperature</div>
-                    </div>
-                </div>
-                <div class="stat-value">
-                    @electricalSystem.Temperature.ToString("F1")<span class="stat-unit">°C</span>
-                </div>
-                <div class="stat-subtitle">
-                    @GetTemperatureStatus(electricalSystem.Temperature)
-                </div>
-            </div>
-
-            <!-- Solar Power -->
-            <div class="stat-card">
-                <div class="stat-header">
-                    <MudIcon Icon="@Icons.Material.Filled.WbSunny" Color="@GetSolarColor()" Class="stat-icon" />
-                    <div style="flex: 1;">
-                        <div class="stat-title">Solar Power</div>
-                    </div>
-                </div>
-                <div class="stat-value">
-                    @electricalSystem.SolarPower.ToString("F0")<span class="stat-unit">W</span>
-                </div>
-                @if (electricalSystem.SolarPower > 0)
-                {
-                    <div class="stat-subtitle">
-                        @electricalSystem.SolarVoltage.ToString("F1")V @@ @electricalSystem.SolarCurrent.ToString("F1")A
-                    </div>
-                }
-                else
-                {
-                    <div class="stat-subtitle">No solar input</div>
-                }
-            </div>
+            }
         </div>
-
-        <div class="last-updated">
-            Last updated: @electricalSystem.LastUpdated.ToLocalTime().ToString("HH:mm:ss")
-        </div>
-    }
+    </div>
 </div>
 
 @code {
     private ElectricalSystemDto? electricalSystem;
+    private List<ElectricalDeviceDto>? electricalDevices;
+    private List<DevicePositionDto>? devicePositions;
+    private List<DeviceWithPosition>? devicesWithPositions;
+    private List<ElectricalConnectionDto>? electricalConnections;
+    private string backgroundImage = "";
+    private string toolbarPosition = "Left";
+    private bool isEditMode = false;
+    private string? draggedCardId;
+    private Guid? draggedDeviceId;
+    private ElementReference diagramContainer;
+    private double containerWidth = 1;
+    private double containerHeight = 1;
+    private double dragStartX = 0;
+    private double dragStartY = 0;
+
+    // Default card positions (percentage) - kept for backward compatibility
+    private Dictionary<string, (double X, double Y)> cardPositions = new()
+    {
+        { "soc", (20, 20) },
+        { "voltage", (50, 20) },
+        { "current", (80, 20) },
+        { "power", (20, 50) },
+        { "temperature", (50, 50) },
+        { "solar", (80, 50) }
+    };
 
     protected override async Task OnInitializedAsync()
     {
         await LoadElectricalSystem();
+        await LoadElectricalDevices();
+        await LoadElectricalConnections();
+        await LoadSettings();
+        await LoadCardPositions();
 
         // Subscribe to SignalR events
         Telemetry.ElectricalSystemUpdated += OnElectricalSystemUpdated;
 
         // Start SignalR connection
         await Telemetry.StartAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Get container dimensions for percentage calculations
+            var dimensions = await JSRuntime.InvokeAsync<BoundingBox>("eval",
+                @"(function() {
+                    const el = document.querySelector('.electrical-diagram-container');
+                    if (el) {
+                        return { width: el.offsetWidth, height: el.offsetHeight };
+                    }
+                    return { width: 1, height: 1 };
+                })()");
+            containerWidth = dimensions.Width > 0 ? dimensions.Width : 1;
+            containerHeight = dimensions.Height > 0 ? dimensions.Height : 1;
+        }
+    }
+
+    private async Task LoadSettings()
+    {
+        try
+        {
+            var response = await Http.GetFromJsonAsync<SystemConfiguration>("api/settings");
+            if (response != null)
+            {
+                toolbarPosition = response.DrivingSide.ToString();
+
+                // Load background image
+                if (!string.IsNullOrEmpty(response.VanDiagramPath))
+                {
+                    backgroundImage = response.VanDiagramPath;
+                    Console.WriteLine($"Loaded electrical diagram from settings: {backgroundImage}");
+                }
+                else
+                {
+                    // No diagram configured, use default
+                    backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
+                    Console.WriteLine("No electrical diagram configured, using default");
+                }
+            }
+            else
+            {
+                backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading settings: {ex.Message}");
+            // Fallback to default image on error
+            backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
+        }
     }
 
     private async Task LoadElectricalSystem()
@@ -289,11 +413,309 @@
         }
     }
 
+    private async Task LoadElectricalDevices()
+    {
+        try
+        {
+            var devices = await Http.GetFromJsonAsync<List<ElectricalDeviceDto>>("api/electrical-devices");
+            electricalDevices = devices ?? new List<ElectricalDeviceDto>();
+
+            // Load device positions separately
+            await LoadDevicePositions();
+
+            // Merge devices with positions
+            MergeDevicesWithPositions();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading electrical devices: {ex.Message}");
+            electricalDevices = new List<ElectricalDeviceDto>();
+            devicesWithPositions = new List<DeviceWithPosition>();
+        }
+    }
+
+    private async Task LoadDevicePositions()
+    {
+        try
+        {
+            var positions = await Http.GetFromJsonAsync<List<DevicePositionDto>>("api/device-positions");
+            devicePositions = positions ?? new List<DevicePositionDto>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading device positions: {ex.Message}");
+            devicePositions = new List<DevicePositionDto>();
+        }
+    }
+
+    private void MergeDevicesWithPositions()
+    {
+        if (electricalDevices == null || devicePositions == null)
+        {
+            devicesWithPositions = new List<DeviceWithPosition>();
+            return;
+        }
+
+        devicesWithPositions = electricalDevices
+            .Select(device =>
+            {
+                var position = devicePositions.FirstOrDefault(p => p.DeviceId == device.Id.ToString() && p.DeviceType == "ElectricalDevice");
+                return new DeviceWithPosition
+                {
+                    Device = device,
+                    X = position?.X ?? 50.0, // Default center if no position found
+                    Y = position?.Y ?? 50.0
+                };
+            })
+            .ToList();
+    }
+
+    private async Task LoadElectricalConnections()
+    {
+        try
+        {
+            var connections = await Http.GetFromJsonAsync<List<ElectricalConnectionDto>>("api/electrical-devices/connections");
+            electricalConnections = connections ?? new List<ElectricalConnectionDto>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading electrical connections: {ex.Message}");
+            electricalConnections = new List<ElectricalConnectionDto>();
+        }
+    }
+
+    private (double x, double y) CalculatePortPosition(DeviceWithPosition deviceWithPos, DevicePortDto port)
+    {
+        // Get container dimensions
+        if (containerWidth <= 1 || containerHeight <= 1)
+        {
+            return (0, 0);
+        }
+
+        // Calculate device position in pixels
+        var deviceX = (deviceWithPos.X / 100.0) * containerWidth;
+        var deviceY = (deviceWithPos.Y / 100.0) * containerHeight;
+
+        // Assume card width is ~250px and height is ~200px
+        var cardWidth = 250.0;
+        var cardHeight = 200.0;
+
+        // Port position relative to device (port.RelativeX and port.RelativeY are 0-1)
+        var portX = deviceX - (cardWidth / 2) + (port.RelativeX * cardWidth);
+        var portY = deviceY - (cardHeight / 2) + (port.RelativeY * cardHeight);
+
+        return (portX, portY);
+    }
+
+    private async Task LoadCardPositions()
+    {
+        try
+        {
+            var positions = await Http.GetFromJsonAsync<List<ElectricalCardPositionDto>>("api/settings/electrical-positions");
+            if (positions != null && positions.Any())
+            {
+                foreach (var pos in positions)
+                {
+                    if (cardPositions.ContainsKey(pos.CardId))
+                    {
+                        cardPositions[pos.CardId] = (pos.X, pos.Y);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading card positions: {ex.Message}");
+            // Non-fatal - will use default positions
+        }
+    }
+
+    private async Task SaveCardPosition(string cardId)
+    {
+        try
+        {
+            var position = new ElectricalCardPositionDto
+            {
+                CardId = cardId,
+                X = cardPositions[cardId].X,
+                Y = cardPositions[cardId].Y
+            };
+
+            var response = await Http.PostAsJsonAsync("api/settings/electrical-positions", position);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Position saved", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving card position: {ex.Message}");
+            Snackbar.Add("Failed to save position", Severity.Warning);
+        }
+    }
+
+    private void OnMouseDown(MouseEventArgs e, string cardId)
+    {
+        if (isEditMode)
+        {
+            draggedCardId = cardId;
+            dragStartX = e.ClientX;
+            dragStartY = e.ClientY;
+        }
+    }
+
+    private async Task OnMouseMove(MouseEventArgs e)
+    {
+        if (isEditMode)
+        {
+            if (draggedCardId != null)
+            {
+                double deltaX = e.ClientX - dragStartX;
+                double deltaY = e.ClientY - dragStartY;
+
+                double deltaXPercent = (deltaX / containerWidth) * 100;
+                double deltaYPercent = (deltaY / containerHeight) * 100;
+
+                var (currentX, currentY) = cardPositions[draggedCardId];
+                cardPositions[draggedCardId] = (
+                    Math.Max(0, Math.Min(100, currentX + deltaXPercent)),
+                    Math.Max(0, Math.Min(100, currentY + deltaYPercent))
+                );
+
+                dragStartX = e.ClientX;
+                dragStartY = e.ClientY;
+
+                await InvokeAsync(StateHasChanged);
+            }
+            else if (draggedDeviceId != null && devicesWithPositions != null)
+            {
+                var deviceWithPos = devicesWithPositions.FirstOrDefault(d => d.Device.Id == draggedDeviceId);
+                if (deviceWithPos != null)
+                {
+                    double deltaX = e.ClientX - dragStartX;
+                    double deltaY = e.ClientY - dragStartY;
+
+                    double deltaXPercent = (deltaX / containerWidth) * 100;
+                    double deltaYPercent = (deltaY / containerHeight) * 100;
+
+                    deviceWithPos.X = Math.Max(0, Math.Min(100, deviceWithPos.X + deltaXPercent));
+                    deviceWithPos.Y = Math.Max(0, Math.Min(100, deviceWithPos.Y + deltaYPercent));
+
+                    dragStartX = e.ClientX;
+                    dragStartY = e.ClientY;
+
+                    await InvokeAsync(StateHasChanged);
+                }
+            }
+        }
+    }
+
+    private async Task OnMouseUp(MouseEventArgs e)
+    {
+        if (isEditMode)
+        {
+            if (draggedCardId != null)
+            {
+                await SaveCardPosition(draggedCardId);
+                draggedCardId = null;
+            }
+            else if (draggedDeviceId != null && devicesWithPositions != null)
+            {
+                var deviceWithPos = devicesWithPositions.FirstOrDefault(d => d.Device.Id == draggedDeviceId);
+                if (deviceWithPos != null)
+                {
+                    await SaveDevicePosition(deviceWithPos);
+                }
+                draggedDeviceId = null;
+            }
+        }
+    }
+
+    private void OnTouchStart(TouchEventArgs e, string cardId)
+    {
+        if (isEditMode && e.Touches.Length > 0)
+        {
+            draggedCardId = cardId;
+            var touch = e.Touches[0];
+            dragStartX = touch.ClientX;
+            dragStartY = touch.ClientY;
+        }
+    }
+
+    private async Task OnTouchMove(TouchEventArgs e)
+    {
+        if (draggedCardId != null && isEditMode && e.Touches.Length > 0)
+        {
+            var touch = e.Touches[0];
+
+            double deltaX = touch.ClientX - dragStartX;
+            double deltaY = touch.ClientY - dragStartY;
+
+            double deltaXPercent = (deltaX / containerWidth) * 100;
+            double deltaYPercent = (deltaY / containerHeight) * 100;
+
+            var (currentX, currentY) = cardPositions[draggedCardId];
+            cardPositions[draggedCardId] = (
+                Math.Max(0, Math.Min(100, currentX + deltaXPercent)),
+                Math.Max(0, Math.Min(100, currentY + deltaYPercent))
+            );
+
+            dragStartX = touch.ClientX;
+            dragStartY = touch.ClientY;
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task OnTouchEnd(TouchEventArgs e)
+    {
+        if (draggedCardId != null && isEditMode)
+        {
+            await SaveCardPosition(draggedCardId);
+            draggedCardId = null;
+        }
+    }
+
+    private void OnDeviceMouseDown(MouseEventArgs e, Guid deviceId)
+    {
+        if (isEditMode)
+        {
+            draggedDeviceId = deviceId;
+            dragStartX = e.ClientX;
+            dragStartY = e.ClientY;
+        }
+    }
+
+    private async Task SaveDevicePosition(DeviceWithPosition deviceWithPos)
+    {
+        try
+        {
+            var position = new DevicePositionDto
+            {
+                DeviceId = deviceWithPos.Device.Id.ToString(),
+                DeviceType = "ElectricalDevice",
+                X = deviceWithPos.X,
+                Y = deviceWithPos.Y,
+                LastUpdated = DateTime.UtcNow
+            };
+
+            var response = await Http.PostAsJsonAsync("api/device-positions", position);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Device position saved", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving device position: {ex.Message}");
+            Snackbar.Add("Failed to save device position", Severity.Warning);
+        }
+    }
+
     private void OnElectricalSystemUpdated(object systemData)
     {
         try
         {
-            // Deserialize the object to ElectricalSystemDto
             var json = JsonSerializer.Serialize(systemData);
             var system = JsonSerializer.Deserialize<ElectricalSystemDto>(json, new JsonSerializerOptions
             {
@@ -324,10 +746,10 @@
     private string GetSocBarColor()
     {
         if (electricalSystem == null) return "#4caf50";
-        if (electricalSystem.StateOfCharge >= 80) return "#4caf50"; // Green
-        if (electricalSystem.StateOfCharge >= 50) return "#2196f3"; // Blue
-        if (electricalSystem.StateOfCharge >= 20) return "#ff9800"; // Orange
-        return "#f44336"; // Red
+        if (electricalSystem.StateOfCharge >= 80) return "#4caf50";
+        if (electricalSystem.StateOfCharge >= 50) return "#2196f3";
+        if (electricalSystem.StateOfCharge >= 20) return "#ff9800";
+        return "#f44336";
     }
 
     private Color GetCurrentColor()
@@ -400,6 +822,36 @@
         return $"{timeSpan.TotalMinutes:F0} minutes";
     }
 
+    private string GetDeviceIcon(string deviceType)
+    {
+        return deviceType switch
+        {
+            "Battery" => Icons.Material.Filled.BatteryFull,
+            "SolarMPPT" => Icons.Material.Filled.WbSunny,
+            "DCDCCharger" => Icons.Material.Filled.Power,
+            "Inverter" => Icons.Material.Filled.PowerInput,
+            "ShoreCharger" => Icons.Material.Filled.ElectricalServices,
+            "LoadOutput" => Icons.Material.Filled.Lightbulb,
+            "Controller" => Icons.Material.Filled.Settings,
+            _ => Icons.Material.Filled.DeviceUnknown
+        };
+    }
+
+    private Color GetDeviceColor(string deviceType)
+    {
+        return deviceType switch
+        {
+            "Battery" => Color.Success,
+            "SolarMPPT" => Color.Warning,
+            "DCDCCharger" => Color.Info,
+            "Inverter" => Color.Secondary,
+            "ShoreCharger" => Color.Primary,
+            "LoadOutput" => Color.Default,
+            "Controller" => Color.Tertiary,
+            _ => Color.Default
+        };
+    }
+
     public async ValueTask DisposeAsync()
     {
         Telemetry.ElectricalSystemUpdated -= OnElectricalSystemUpdated;
@@ -423,5 +875,82 @@
         public double AcInputPower { get; set; }
         public double AcOutputPower { get; set; }
         public DateTime LastUpdated { get; set; }
+    }
+
+    public class ElectricalCardPositionDto
+    {
+        public string CardId { get; set; } = string.Empty;
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+
+    public class BoundingBox
+    {
+        public double Width { get; set; }
+        public double Height { get; set; }
+    }
+
+    public class SystemConfiguration
+    {
+        public string DrivingSide { get; set; } = "Left";
+        public string VanDiagramPath { get; set; } = string.Empty;
+    }
+
+    // Electrical Device DTOs
+    public class ElectricalDeviceDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string DeviceType { get; set; } = string.Empty;
+        public Dictionary<string, object> Configuration { get; set; } = new();
+        public List<DevicePortDto> Ports { get; set; } = new();
+        public string DataSourcePlugin { get; set; } = "Simulated";
+        public Dictionary<string, object> DataSourceConfiguration { get; set; } = new();
+        public Dictionary<string, double> CurrentMetrics { get; set; } = new();
+        public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+
+    public class DevicePositionDto
+    {
+        public string DeviceId { get; set; } = string.Empty;
+        public string DeviceType { get; set; } = string.Empty;
+        public double X { get; set; }
+        public double Y { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
+
+    public class DeviceWithPosition
+    {
+        public ElectricalDeviceDto Device { get; set; } = new();
+        public double X { get; set; }
+        public double Y { get; set; }
+    }
+
+    public class DevicePortDto
+    {
+        public string PortId { get; set; } = string.Empty;
+        public string Label { get; set; } = string.Empty;
+        public string PortType { get; set; } = string.Empty;
+        public string EnergyType { get; set; } = string.Empty;
+        public double RelativeX { get; set; }
+        public double RelativeY { get; set; }
+    }
+
+    public class ElectricalConnectionDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public Guid SourceDeviceId { get; set; }
+        public string SourcePortId { get; set; } = string.Empty;
+        public Guid TargetDeviceId { get; set; }
+        public string TargetPortId { get; set; } = string.Empty;
+        public double CurrentFlow { get; set; }
+        public double PowerFlow { get; set; }
+        public bool IsFlowing { get; set; }
+        public string Color { get; set; } = "#2196F3";
+        public double LineWidth { get; set; } = 2.0;
+        public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

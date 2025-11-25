@@ -1,0 +1,1778 @@
+@page "/devices"
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<PageTitle>Devices - VanDaemon</PageTitle>
+
+<div style="overflow-y: auto; height: 100%; display: flex; flex-direction: column;">
+
+<style>
+    .devices-header {
+        padding: 16px 16px 0 16px;
+        margin-bottom: 0;
+    }
+
+    .tanks-header, .controls-header {
+        margin-bottom: 24px;
+    }
+
+    .refresh-button {
+        min-height: 48px;
+        font-size: 16px;
+    }
+
+    .control-card {
+        min-height: 180px;
+    }
+
+    .control-card .mud-card-content {
+        padding: 20px !important;
+    }
+
+    .control-switch {
+        transform: scale(1.3);
+        transform-origin: left;
+        margin: 16px 0;
+    }
+
+    .control-slider {
+        margin: 20px 0;
+    }
+
+    @@media (max-width: 600px) {
+        .devices-header h3 {
+            font-size: 1.75rem;
+        }
+
+        .refresh-button {
+            width: 100%;
+            min-height: 56px;
+        }
+
+        .control-card {
+            min-height: 200px;
+        }
+
+        .control-switch {
+            transform: scale(1.5);
+            margin: 20px 0;
+        }
+
+        .control-slider {
+            margin: 24px 0;
+        }
+    }
+</style>
+
+<div class="devices-header">
+    <MudText Typo="Typo.h3" GutterBottom="true">Devices</MudText>
+    <MudText Class="mb-2">Manage tanks, switches, and sensors</MudText>
+</div>
+
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4" Style="flex: 1; display: flex; flex-direction: column;">
+    <!-- TANKS TAB -->
+    <MudTabPanel Text="Tanks" Icon="@Icons.Material.Filled.WaterDrop">
+        <div style="overflow-y: auto; height: 100%; padding: 16px;">
+            <div class="tanks-header">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <MudText Typo="Typo.h4" GutterBottom="true">Tank Monitoring</MudText>
+                        <MudText Class="mb-2">Monitor water, waste, LPG, and fuel levels</MudText>
+                    </div>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="OpenAddTankDialog"
+                               Size="Size.Large">
+                        Add Tank
+                    </MudButton>
+                </div>
+
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Refresh"
+                           OnClick="RefreshAllTanks"
+                           Class="mb-4 refresh-button"
+                           Size="Size.Large">
+                    Refresh All Tanks
+                </MudButton>
+            </div>
+
+            @if (tanks == null)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                <MudGrid>
+                    @foreach (var tank in tanks)
+                    {
+                        <MudItem xs="12" md="6" lg="4">
+                            <MudCard Elevation="2">
+                                <MudCardHeader>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.h6">@tank.Name</MudText>
+                                        <MudChip Size="Size.Small" Color="@GetTankTypeColor(tank.Type)">@tank.Type</MudChip>
+                                    </CardHeaderContent>
+                                    <CardHeaderActions>
+                                        <MudIconButton Icon="@GetTankIcon(tank.Type)" Color="Color.Primary" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                     Color="Color.Info"
+                                                     OnClick="() => OpenEditTankDialog(tank)" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                     Color="Color.Error"
+                                                     OnClick="() => DeleteTank(tank)" />
+                                    </CardHeaderActions>
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-2">
+                                        @tank.CurrentLevel.ToString("F1")%
+                                    </MudText>
+
+                                    <MudProgressLinear Color="@GetTankProgressColor(tank)"
+                                                     Value="@tank.CurrentLevel"
+                                                     Size="Size.Large"
+                                                     Class="my-2" />
+
+                                    <MudText Typo="Typo.body2" Class="mt-3">
+                                        <strong>Capacity:</strong> @tank.Capacity L
+                                    </MudText>
+                                    <MudText Typo="Typo.body2">
+                                        <strong>Actual:</strong> @((tank.CurrentLevel / 100 * tank.Capacity).ToString("F1")) L
+                                    </MudText>
+
+                                    @if (IsTankInWarningState(tank))
+                                    {
+                                        <MudAlert Severity="@GetAlertSeverity(tank)" Dense="true" Class="mt-2">
+                                            @GetWarningMessage(tank)
+                                        </MudAlert>
+                                    }
+
+                                    <MudText Typo="Typo.caption" Class="mt-2">
+                                        Last updated: @tank.LastUpdated.ToLocalTime().ToString("HH:mm:ss")
+                                    </MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+        </div>
+    </MudTabPanel>
+
+    <!-- SWITCHES TAB (renamed from Controls) -->
+    <MudTabPanel Text="Switches" Icon="@Icons.Material.Filled.Lightbulb">
+        <div style="overflow-y: auto; height: 100%; padding: 16px;">
+            <div class="controls-header">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <MudText Typo="Typo.h4" GutterBottom="true">Switches & Controls</MudText>
+                        <MudText Class="mb-2">Manage your van's lights, pumps, and heating systems</MudText>
+                    </div>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="OpenAddControlDialog"
+                               Size="Size.Large">
+                        Add Switch
+                    </MudButton>
+                </div>
+            </div>
+
+            @if (controls == null)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                <MudGrid>
+                    @foreach (var control in controls)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Elevation="2" Class="control-card">
+                                <MudCardContent>
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <MudIcon Icon="@GetControlIcon(control.IconName)" Size="Size.Large" Color="Color.Primary" />
+                                            <MudText Typo="Typo.h6">@control.Name</MudText>
+                                        </div>
+                                        <div style="display: flex; gap: 4px;">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                         Color="Color.Info"
+                                                         Size="Size.Small"
+                                                         OnClick="() => OpenEditControlDialog(control)" />
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                         Color="Color.Error"
+                                                         Size="Size.Small"
+                                                         OnClick="() => DeleteControl(control)" />
+                                        </div>
+                                    </div>
+
+                                    @if (control.Type == "Toggle")
+                                    {
+                                        <div class="control-switch">
+                                            <MudSwitch Checked="@GetToggleState(control)"
+                                                      Color="Color.Success"
+                                                      Label="@(GetToggleState(control) ? "On" : "Off")"
+                                                      T="bool"
+                                                      CheckedChanged="@((bool value) => OnToggleChanged(control, value))" />
+                                        </div>
+                                    }
+                                    else if (control.Type == "Dimmer")
+                                    {
+                                        <div class="control-slider">
+                                            <MudSlider Value="@GetDimmerValue(control)"
+                                                      Color="Color.Primary"
+                                                      Min="0"
+                                                      Max="100"
+                                                      Step="5"
+                                                      Size="Size.Large"
+                                                      ValueChanged="@((int value) => OnDimmerChanged(control, value))" />
+                                            <MudText Typo="Typo.body2" Align="Align.Center" Style="font-weight: 600;">@GetDimmerValue(control)%</MudText>
+                                        </div>
+                                    }
+
+                                    <MudText Typo="Typo.caption" Class="mt-2">
+                                        Last updated: @control.LastUpdated.ToLocalTime().ToString("HH:mm:ss")
+                                    </MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+        </div>
+    </MudTabPanel>
+
+    <!-- SENSORS TAB (new placeholder) -->
+    <MudTabPanel Text="Sensors" Icon="@Icons.Material.Filled.Sensors">
+        <div style="overflow-y: auto; height: 100%; padding: 16px;">
+            <MudText Typo="Typo.h4" GutterBottom="true">Sensors</MudText>
+            <MudText Class="mb-4">Additional sensor monitoring (coming soon)</MudText>
+
+            <MudAlert Severity="Severity.Info" Variant="Variant.Filled">
+                <MudText Typo="Typo.body1" Style="font-weight: 600;">Feature Coming Soon</MudText>
+                <MudText Typo="Typo.body2">
+                    This section will allow you to configure and monitor additional sensors such as:
+                </MudText>
+                <ul style="margin-top: 8px;">
+                    <li>Temperature sensors</li>
+                    <li>Humidity sensors</li>
+                    <li>Door/window sensors</li>
+                    <li>Motion sensors</li>
+                    <li>Gas detectors</li>
+                </ul>
+            </MudAlert>
+        </div>
+    </MudTabPanel>
+
+    <!-- ELECTRICAL DEVICES TAB -->
+    <MudTabPanel Text="Electrical" Icon="@Icons.Material.Filled.ElectricalServices">
+        <div style="overflow-y: auto; height: 100%; padding: 16px;">
+            <MudText Typo="Typo.h4" GutterBottom="true">Electrical System Devices</MudText>
+            <MudText Class="mb-4">Configure physical electrical devices and their connections</MudText>
+
+            <MudTabs Elevation="0" Rounded="false" Border="true" Class="mb-4">
+                <!-- Devices Sub-Tab -->
+                <MudTabPanel Text="Devices">
+                    <div style="padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <MudText Typo="Typo.h5">Physical Devices</MudText>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       OnClick="OpenAddElectricalDeviceDialog">
+                                Add Device
+                            </MudButton>
+                        </div>
+
+                        @if (electricalDevices == null)
+                        {
+                            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                        }
+                        else if (!electricalDevices.Any())
+                        {
+                            <MudAlert Severity="Severity.Info">
+                                No devices configured yet. Add your first device to get started.
+                            </MudAlert>
+                        }
+                        else
+                        {
+                            <MudGrid>
+                                @foreach (var device in electricalDevices)
+                                {
+                                    <MudItem xs="12" md="6" lg="4">
+                                        <MudCard Elevation="2">
+                                            <MudCardHeader>
+                                                <CardHeaderContent>
+                                                    <MudText Typo="Typo.h6">@device.Name</MudText>
+                                                    <MudChip Size="Size.Small" Color="Color.Primary">@device.DeviceType</MudChip>
+                                                </CardHeaderContent>
+                                                <CardHeaderActions>
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                                 Color="Color.Info"
+                                                                 OnClick="() => OpenEditElectricalDeviceDialog(device)" />
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                                 Color="Color.Error"
+                                                                 OnClick="() => DeleteElectricalDevice(device)" />
+                                                </CardHeaderActions>
+                                            </MudCardHeader>
+                                            <MudCardContent>
+                                                <MudText Typo="Typo.body2">
+                                                    <strong>Data Source:</strong> @device.DataSourcePlugin
+                                                </MudText>
+                                                <MudText Typo="Typo.body2">
+                                                    <strong>Ports:</strong> @device.Ports.Count
+                                                </MudText>
+                                                <MudText Typo="Typo.caption" Class="mt-2">
+                                                    Drag and drop on Electrical diagram to position
+                                                </MudText>
+                                            </MudCardContent>
+                                        </MudCard>
+                                    </MudItem>
+                                }
+                            </MudGrid>
+                        }
+                    </div>
+                </MudTabPanel>
+
+                <!-- Connections Sub-Tab -->
+                <MudTabPanel Text="Connections">
+                    <div style="padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <MudText Typo="Typo.h5">Device Connections</MudText>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Cable"
+                                       OnClick="OpenAddConnectionDialog">
+                                Add Connection
+                            </MudButton>
+                        </div>
+
+                        @if (electricalConnections == null)
+                        {
+                            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                        }
+                        else if (!electricalConnections.Any())
+                        {
+                            <MudAlert Severity="Severity.Info">
+                                No connections configured yet. Connect your devices to visualize power flow.
+                            </MudAlert>
+                        }
+                        else
+                        {
+                            <MudTable Items="@electricalConnections" Hover="true" Breakpoint="Breakpoint.Sm">
+                                <HeaderContent>
+                                    <MudTh>Name</MudTh>
+                                    <MudTh>From</MudTh>
+                                    <MudTh>To</MudTh>
+                                    <MudTh>Actions</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Name">@context.Name</MudTd>
+                                    <MudTd DataLabel="From">
+                                        @GetDeviceName(context.SourceDeviceId) → @context.SourcePortId
+                                    </MudTd>
+                                    <MudTd DataLabel="To">
+                                        @GetDeviceName(context.TargetDeviceId) → @context.TargetPortId
+                                    </MudTd>
+                                    <MudTd DataLabel="Actions">
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                     Color="Color.Info"
+                                                     Size="Size.Small"
+                                                     OnClick="() => OpenEditConnectionDialog(context)" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                     Color="Color.Error"
+                                                     Size="Size.Small"
+                                                     OnClick="() => DeleteConnection(context)" />
+                                    </MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        }
+                    </div>
+                </MudTabPanel>
+            </MudTabs>
+        </div>
+    </MudTabPanel>
+</MudTabs>
+
+<!-- Tank Add/Edit Dialog -->
+<MudDialog @bind-IsVisible="tankDialogVisible" Options="tankDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@(editingTank?.Id == Guid.Empty ? "Add New Tank" : "Edit Tank")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="tankForm">
+            <MudTextField @bind-Value="editingTank.Name"
+                         Label="Tank Name"
+                         Required="true"
+                         RequiredError="Name is required"
+                         Class="mb-4" />
+
+            <MudSelect @bind-Value="editingTank.Type"
+                      Label="Tank Type"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="TankType.FreshWater">Fresh Water</MudSelectItem>
+                <MudSelectItem Value="TankType.WasteWater">Waste Water</MudSelectItem>
+                <MudSelectItem Value="TankType.LPG">LPG</MudSelectItem>
+                <MudSelectItem Value="TankType.Fuel">Fuel</MudSelectItem>
+                <MudSelectItem Value="TankType.Battery">Battery</MudSelectItem>
+            </MudSelect>
+
+            <MudNumericField @bind-Value="editingTank.Capacity"
+                            Label="Capacity (Liters)"
+                            Required="true"
+                            Min="0"
+                            Class="mb-4" />
+
+            <MudNumericField @bind-Value="editingTank.AlertLevel"
+                            Label="Alert Level (%)"
+                            Required="true"
+                            Min="0"
+                            Max="100"
+                            HelperText="Percentage level to trigger alerts"
+                            Class="mb-4" />
+
+            <MudSwitch @bind-Checked="editingTank.AlertWhenOver"
+                      Label="Alert when over threshold (checked) or under threshold (unchecked)"
+                      Color="Color.Primary"
+                      Class="mb-4">
+                <MudText Typo="Typo.body2" Class="mt-1">
+                    @(editingTank.AlertWhenOver ? "🔔 Alert when OVER " + editingTank.AlertLevel + "% (tank getting full)" : "🔔 Alert when UNDER " + editingTank.AlertLevel + "% (tank running empty)")
+                </MudText>
+            </MudSwitch>
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6" Class="mb-3">Sensor Provider Configuration</MudText>
+
+            <MudSelect @bind-Value="tankProviderType"
+                      Label="Sensor Provider"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="@("Simulated")">Simulated (Testing)</MudSelectItem>
+                <MudSelectItem Value="@("I2C")">I2C Sensor</MudSelectItem>
+                <MudSelectItem Value="@("Modbus")">Modbus Device</MudSelectItem>
+                <MudSelectItem Value="@("Analog")">Analog Input</MudSelectItem>
+            </MudSelect>
+
+            @if (tankProviderType == "I2C")
+            {
+                <MudTextField @bind-Value="i2cAddress"
+                             Label="I2C Address (hex, e.g., 0x48)"
+                             Required="true"
+                             Class="mb-4" />
+
+                <MudNumericField @bind-Value="i2cChannel"
+                                Label="Channel Number"
+                                Required="true"
+                                Min="0"
+                                Max="7"
+                                Class="mb-4" />
+            }
+            else if (tankProviderType == "Modbus")
+            {
+                <MudTextField @bind-Value="tankModbusAddress"
+                             Label="Modbus Address (e.g., 192.168.1.100:502)"
+                             Required="true"
+                             Class="mb-4" />
+
+                <MudNumericField @bind-Value="tankModbusRegister"
+                                Label="Register Address"
+                                Required="true"
+                                Min="0"
+                                Class="mb-4" />
+
+                <MudSelect @bind-Value="tankModbusRegisterType"
+                          Label="Register Type"
+                          Required="true"
+                          Class="mb-4">
+                    <MudSelectItem Value="@("InputRegister")">Input Register (Read Only)</MudSelectItem>
+                    <MudSelectItem Value="@("HoldingRegister")">Holding Register</MudSelectItem>
+                </MudSelect>
+            }
+            else if (tankProviderType == "Analog")
+            {
+                <MudNumericField @bind-Value="analogPin"
+                                Label="Analog Pin Number"
+                                Required="true"
+                                Min="0"
+                                Class="mb-4" />
+
+                <MudNumericField @bind-Value="analogMinVoltage"
+                                Label="Minimum Voltage (Empty)"
+                                Required="true"
+                                Min="0"
+                                Step="0.1"
+                                Class="mb-4" />
+
+                <MudNumericField @bind-Value="analogMaxVoltage"
+                                Label="Maximum Voltage (Full)"
+                                Required="true"
+                                Min="0"
+                                Step="0.1"
+                                Class="mb-4" />
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseTankDialog">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="SaveTank" Variant="Variant.Filled">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- Control Add/Edit Dialog -->
+<MudDialog @bind-IsVisible="controlDialogVisible" Options="controlDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@(editingControl?.Id == Guid.Empty ? "Add New Switch" : "Edit Switch")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="controlForm">
+            <MudTextField @bind-Value="editingControl.Name"
+                         Label="Switch Name"
+                         Required="true"
+                         RequiredError="Name is required"
+                         Class="mb-4" />
+
+            <MudSelect @bind-Value="editingControl.Type"
+                      Label="Control Type"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="@("Toggle")">On/Off Switch</MudSelectItem>
+                <MudSelectItem Value="@("Dimmer")">Dimmable / Slider</MudSelectItem>
+                <MudSelectItem Value="@("ColorChooser")">Color Chooser (RGB)</MudSelectItem>
+                <MudSelectItem Value="@("Momentary")">Momentary Button</MudSelectItem>
+                <MudSelectItem Value="@("Selector")">Selector</MudSelectItem>
+            </MudSelect>
+
+            <MudSelect @bind-Value="editingControl.IconName"
+                      Label="Icon"
+                      Class="mb-4">
+                <MudSelectItem Value="@("lightbulb")">💡 Lightbulb</MudSelectItem>
+                <MudSelectItem Value="@("light_mode")">☀️ Light Mode</MudSelectItem>
+                <MudSelectItem Value="@("water_drop")">💧 Water Pump</MudSelectItem>
+                <MudSelectItem Value="@("thermostat")">🌡️ Thermostat</MudSelectItem>
+                <MudSelectItem Value="@("power")">⚡ Power</MudSelectItem>
+                <MudSelectItem Value="@("fan")">🌀 Fan/Ventilation</MudSelectItem>
+                <MudSelectItem Value="@("heating")">🔥 Heating</MudSelectItem>
+                <MudSelectItem Value="@("air_conditioner")">❄️ Air Conditioner</MudSelectItem>
+                <MudSelectItem Value="@("outlet")">🔌 Outlet/Socket</MudSelectItem>
+                <MudSelectItem Value="@("nightlight")">🌙 Night Light</MudSelectItem>
+            </MudSelect>
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6" Class="mb-3">Provider Configuration</MudText>
+
+            <MudSelect @bind-Value="controlProviderType"
+                      Label="Control Provider"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="@("Simulated")">Simulated (Testing)</MudSelectItem>
+                <MudSelectItem Value="@("GPIO")">GPIO Pin</MudSelectItem>
+                <MudSelectItem Value="@("Modbus")">Modbus Device</MudSelectItem>
+            </MudSelect>
+
+            @if (controlProviderType == "GPIO")
+            {
+                <MudNumericField @bind-Value="gpioPin"
+                                Label="GPIO Pin Number"
+                                Required="true"
+                                Min="0"
+                                Max="40"
+                                Class="mb-4" />
+
+                <MudSwitch @bind-Checked="gpioActiveLow"
+                          Label="Active Low (Inverted)"
+                          Color="Color.Primary"
+                          Class="mb-4" />
+            }
+            else if (controlProviderType == "Modbus")
+            {
+                <MudSelect @bind-Value="modbusDeviceType"
+                          Label="Device Type (Optional Preset)"
+                          Class="mb-4"
+                          Clearable="true">
+                    <MudSelectItem Value="@("")">None (Manual Configuration)</MudSelectItem>
+                    <MudSelectItem Value="@("Waveshare8Relay")">Waveshare 8-Channel PoE Relay</MudSelectItem>
+                </MudSelect>
+
+                <MudTextField @bind-Value="controlModbusAddress"
+                             Label="Modbus Address (e.g., 192.168.1.100:502)"
+                             Required="true"
+                             Class="mb-4" />
+
+                @if (modbusDeviceType == "Waveshare8Relay")
+                {
+                    <MudSelect @bind-Value="controlModbusRegister"
+                              Label="Relay Channel"
+                              Required="true"
+                              Class="mb-4">
+                        <MudSelectItem Value="0">Relay 1 (Register 0)</MudSelectItem>
+                        <MudSelectItem Value="1">Relay 2 (Register 1)</MudSelectItem>
+                        <MudSelectItem Value="2">Relay 3 (Register 2)</MudSelectItem>
+                        <MudSelectItem Value="3">Relay 4 (Register 3)</MudSelectItem>
+                        <MudSelectItem Value="4">Relay 5 (Register 4)</MudSelectItem>
+                        <MudSelectItem Value="5">Relay 6 (Register 5)</MudSelectItem>
+                        <MudSelectItem Value="6">Relay 7 (Register 6)</MudSelectItem>
+                        <MudSelectItem Value="7">Relay 8 (Register 7)</MudSelectItem>
+                    </MudSelect>
+                }
+                else
+                {
+                    <MudNumericField @bind-Value="controlModbusRegister"
+                                    Label="Register Address"
+                                    Required="true"
+                                    Min="0"
+                                    Class="mb-4" />
+
+                    <MudSelect @bind-Value="controlModbusRegisterType"
+                              Label="Register Type"
+                              Required="true"
+                              Class="mb-4">
+                        <MudSelectItem Value="@("Coil")">Coil (Read/Write)</MudSelectItem>
+                        <MudSelectItem Value="@("HoldingRegister")">Holding Register</MudSelectItem>
+                    </MudSelect>
+                }
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseControlDialog">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="SaveControl" Variant="Variant.Filled">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- Electrical Device Add/Edit Dialog -->
+<MudDialog @bind-IsVisible="deviceDialogVisible" Options="deviceDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@(editingDevice?.Id == Guid.Empty ? "Add New Device" : "Edit Device")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="deviceForm">
+            <MudTextField @bind-Value="editingDevice.Name"
+                         Label="Device Name"
+                         Required="true"
+                         RequiredError="Name is required"
+                         Class="mb-4" />
+
+            <MudSelect @bind-Value="editingDevice.DeviceType"
+                      Label="Device Type"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="ElectricalDeviceType.Battery">🔋 Battery</MudSelectItem>
+                <MudSelectItem Value="ElectricalDeviceType.SolarMPPT">☀️ Solar MPPT</MudSelectItem>
+                <MudSelectItem Value="ElectricalDeviceType.DCDCCharger">🔌 DC-DC Charger</MudSelectItem>
+                <MudSelectItem Value="ElectricalDeviceType.Inverter">⚡ Inverter</MudSelectItem>
+                <MudSelectItem Value="ElectricalDeviceType.ShoreCharger">🏠 Shore Charger</MudSelectItem>
+                <MudSelectItem Value="ElectricalDeviceType.LoadOutput">💡 Load Output</MudSelectItem>
+                <MudSelectItem Value="ElectricalDeviceType.Controller">⚙️ Controller</MudSelectItem>
+            </MudSelect>
+
+            <MudAlert Severity="Severity.Info" Class="my-4" Dense="true">
+                Device will be auto-positioned on creation to avoid overlaps. You can drag and drop it on the Electrical diagram.
+            </MudAlert>
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6" Class="mb-3">Data Source Configuration</MudText>
+
+            <MudSelect @bind-Value="editingDevice.DataSourcePlugin"
+                      Label="Data Source Plugin"
+                      Required="true"
+                      Class="mb-4">
+                <MudSelectItem Value="@("Simulated")">Simulated (Testing)</MudSelectItem>
+                <MudSelectItem Value="@("Victron")">Victron Cerbo GX</MudSelectItem>
+                <MudSelectItem Value="@("Modbus")">Modbus Device</MudSelectItem>
+            </MudSelect>
+
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Secondary"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="AddDefaultPorts"
+                       Class="mb-4">
+                Add Default Ports for @editingDevice.DeviceType
+            </MudButton>
+
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Device Ports: @editingDevice.Ports.Count configured</MudText>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDeviceDialog">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="SaveDevice" Variant="Variant.Filled">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- Connection Add/Edit Dialog -->
+<MudDialog @bind-IsVisible="connectionDialogVisible" Options="connectionDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@(editingConnection?.Id == Guid.Empty ? "Add New Connection" : "Edit Connection")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="connectionForm">
+            <MudTextField @bind-Value="editingConnection.Name"
+                         Label="Connection Name"
+                         Required="true"
+                         RequiredError="Name is required"
+                         Class="mb-4" />
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6" Class="mb-3">Source (Power From)</MudText>
+
+            <MudSelect @bind-Value="editingConnection.SourceDeviceId"
+                      Label="Source Device"
+                      Required="true"
+                      Class="mb-4">
+                @foreach (var device in electricalDevices ?? new List<ElectricalDeviceDto>())
+                {
+                    <MudSelectItem Value="@device.Id">@device.Name (@device.DeviceType)</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect @bind-Value="editingConnection.SourcePortId"
+                      Label="Source Port"
+                      Required="true"
+                      Class="mb-4"
+                      Disabled="@(editingConnection.SourceDeviceId == Guid.Empty)">
+                @foreach (var port in GetDevicePorts(editingConnection.SourceDeviceId))
+                {
+                    <MudSelectItem Value="@port.PortId">@port.Label (@port.PortType)</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6" Class="mb-3">Target (Power To)</MudText>
+
+            <MudSelect @bind-Value="editingConnection.TargetDeviceId"
+                      Label="Target Device"
+                      Required="true"
+                      Class="mb-4">
+                @foreach (var device in electricalDevices ?? new List<ElectricalDeviceDto>())
+                {
+                    <MudSelectItem Value="@device.Id">@device.Name (@device.DeviceType)</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect @bind-Value="editingConnection.TargetPortId"
+                      Label="Target Port"
+                      Required="true"
+                      Class="mb-4"
+                      Disabled="@(editingConnection.TargetDeviceId == Guid.Empty)">
+                @foreach (var port in GetDevicePorts(editingConnection.TargetDeviceId))
+                {
+                    <MudSelectItem Value="@port.PortId">@port.Label (@port.PortType)</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6" Class="mb-3">Visual Style</MudText>
+
+            <MudColorPicker @bind-Value="connectionColor"
+                           Label="Line Color"
+                           ColorPickerMode="ColorPickerMode.RGB"
+                           Class="mb-4" />
+
+            <MudNumericField @bind-Value="editingConnection.LineWidth"
+                            Label="Line Width"
+                            Min="1"
+                            Max="10"
+                            Class="mb-4" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseConnectionDialog">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="SaveConnection" Variant="Variant.Filled">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+</div>
+
+@code {
+    // Tank-related fields
+    private List<TankDto>? tanks;
+    private bool tankDialogVisible = false;
+    private DialogOptions tankDialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private MudForm? tankForm;
+    private TankDto editingTank = new();
+    private string tankProviderType = "Simulated";
+    private string i2cAddress = "0x48";
+    private int i2cChannel = 0;
+    private string tankModbusAddress = "";
+    private int tankModbusRegister = 0;
+    private string tankModbusRegisterType = "InputRegister";
+    private int analogPin = 0;
+    private double analogMinVoltage = 0.0;
+    private double analogMaxVoltage = 5.0;
+
+    // Control-related fields
+    private List<ControlDto>? controls;
+    private bool controlDialogVisible = false;
+    private DialogOptions controlDialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private MudForm? controlForm;
+    private ControlDto editingControl = new();
+    private string controlProviderType = "Simulated";
+    private int gpioPin = 0;
+    private bool gpioActiveLow = false;
+    private string controlModbusAddress = "";
+    private int controlModbusRegister = 0;
+    private string controlModbusRegisterType = "Coil";
+    private string modbusDeviceType = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTanks();
+        await LoadControls();
+        await LoadElectricalDevices();
+        await LoadElectricalConnections();
+    }
+
+    // ===== TANK METHODS =====
+    private async Task LoadTanks()
+    {
+        try
+        {
+            var jsonOptions = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
+            };
+            tanks = await Http.GetFromJsonAsync<List<TankDto>>("api/tanks", jsonOptions);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading tanks: {ex.Message}");
+            Snackbar.Add("Failed to load tanks", Severity.Error);
+        }
+    }
+
+    private async Task RefreshAllTanks()
+    {
+        try
+        {
+            var response = await Http.PostAsync("api/tanks/refresh", null);
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadTanks();
+                Snackbar.Add("All tank levels refreshed", Severity.Success);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error refreshing tanks: {ex.Message}");
+            Snackbar.Add("Failed to refresh tanks", Severity.Error);
+        }
+    }
+
+    private void OpenAddTankDialog()
+    {
+        editingTank = new TankDto
+        {
+            Id = Guid.Empty,
+            Name = "",
+            Type = TankType.FreshWater,
+            Capacity = 100,
+            AlertLevel = 20.0,
+            AlertWhenOver = false,
+            CurrentLevel = 0
+        };
+        tankProviderType = "Simulated";
+        i2cAddress = "0x48";
+        i2cChannel = 0;
+        tankModbusAddress = "";
+        tankModbusRegister = 0;
+        tankModbusRegisterType = "InputRegister";
+        analogPin = 0;
+        analogMinVoltage = 0.0;
+        analogMaxVoltage = 5.0;
+        tankDialogVisible = true;
+    }
+
+    private void OpenEditTankDialog(TankDto tank)
+    {
+        editingTank = new TankDto
+        {
+            Id = tank.Id,
+            Name = tank.Name,
+            Type = tank.Type,
+            Capacity = tank.Capacity,
+            AlertLevel = tank.AlertLevel,
+            AlertWhenOver = tank.AlertWhenOver,
+            CurrentLevel = tank.CurrentLevel,
+            SensorPlugin = tank.SensorPlugin,
+            SensorConfiguration = tank.SensorConfiguration != null
+                ? new Dictionary<string, object>(tank.SensorConfiguration)
+                : new Dictionary<string, object>()
+        };
+
+        LoadTankProviderConfiguration();
+        tankDialogVisible = true;
+    }
+
+    private void LoadTankProviderConfiguration()
+    {
+        if (editingTank.SensorPlugin == "I2C" ||
+            editingTank.SensorConfiguration?.ContainsKey("I2CAddress") == true)
+        {
+            tankProviderType = "I2C";
+            if (editingTank.SensorConfiguration.TryGetValue("I2CAddress", out var addr))
+                i2cAddress = addr?.ToString() ?? "0x48";
+            if (editingTank.SensorConfiguration.TryGetValue("Channel", out var ch))
+                i2cChannel = Convert.ToInt32(ch);
+        }
+        else if (editingTank.SensorPlugin == "Modbus" ||
+                 editingTank.SensorConfiguration?.ContainsKey("ModbusAddress") == true)
+        {
+            tankProviderType = "Modbus";
+            if (editingTank.SensorConfiguration.TryGetValue("ModbusAddress", out var addr))
+                tankModbusAddress = addr?.ToString() ?? "";
+            if (editingTank.SensorConfiguration.TryGetValue("Register", out var reg))
+                tankModbusRegister = Convert.ToInt32(reg);
+            if (editingTank.SensorConfiguration.TryGetValue("RegisterType", out var regType))
+                tankModbusRegisterType = regType?.ToString() ?? "InputRegister";
+        }
+        else if (editingTank.SensorPlugin == "Analog" ||
+                 editingTank.SensorConfiguration?.ContainsKey("AnalogPin") == true)
+        {
+            tankProviderType = "Analog";
+            if (editingTank.SensorConfiguration.TryGetValue("AnalogPin", out var pin))
+                analogPin = Convert.ToInt32(pin);
+            if (editingTank.SensorConfiguration.TryGetValue("MinVoltage", out var minV))
+                analogMinVoltage = Convert.ToDouble(minV);
+            if (editingTank.SensorConfiguration.TryGetValue("MaxVoltage", out var maxV))
+                analogMaxVoltage = Convert.ToDouble(maxV);
+        }
+        else
+        {
+            tankProviderType = "Simulated";
+        }
+    }
+
+    private void CloseTankDialog()
+    {
+        tankDialogVisible = false;
+    }
+
+    private async Task SaveTank()
+    {
+        await tankForm!.Validate();
+        if (!tankForm.IsValid) return;
+
+        try
+        {
+            editingTank.SensorPlugin = tankProviderType;
+            editingTank.SensorConfiguration = new Dictionary<string, object>();
+
+            if (tankProviderType == "I2C")
+            {
+                editingTank.SensorConfiguration["I2CAddress"] = i2cAddress;
+                editingTank.SensorConfiguration["Channel"] = i2cChannel;
+            }
+            else if (tankProviderType == "Modbus")
+            {
+                editingTank.SensorConfiguration["ModbusAddress"] = tankModbusAddress;
+                editingTank.SensorConfiguration["Register"] = tankModbusRegister;
+                editingTank.SensorConfiguration["RegisterType"] = tankModbusRegisterType;
+            }
+            else if (tankProviderType == "Analog")
+            {
+                editingTank.SensorConfiguration["AnalogPin"] = analogPin;
+                editingTank.SensorConfiguration["MinVoltage"] = analogMinVoltage;
+                editingTank.SensorConfiguration["MaxVoltage"] = analogMaxVoltage;
+            }
+
+            HttpResponseMessage response;
+            if (editingTank.Id == Guid.Empty)
+            {
+                response = await Http.PostAsJsonAsync("api/tanks", editingTank);
+            }
+            else
+            {
+                response = await Http.PutAsJsonAsync($"api/tanks/{editingTank.Id}", editingTank);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Tank {(editingTank.Id == Guid.Empty ? "created" : "updated")} successfully", Severity.Success);
+                await LoadTanks();
+                CloseTankDialog();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save tank: {response.StatusCode}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving tank: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DeleteTank(TankDto tank)
+    {
+        bool? confirm = await DialogService.ShowMessageBox(
+            "Delete Tank",
+            $"Are you sure you want to delete '{tank.Name}'?",
+            yesText:"Delete", cancelText:"Cancel");
+
+        if (confirm == true)
+        {
+            try
+            {
+                var response = await Http.DeleteAsync($"api/tanks/{tank.Id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add($"Tank '{tank.Name}' deleted successfully", Severity.Success);
+                    await LoadTanks();
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to delete tank: {response.StatusCode}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting tank: {ex.Message}");
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private Color GetTankProgressColor(TankDto tank)
+    {
+        bool inAlertState = tank.AlertWhenOver
+            ? tank.CurrentLevel > tank.AlertLevel
+            : tank.CurrentLevel < tank.AlertLevel;
+
+        if (!inAlertState)
+            return Color.Success;
+
+        if (tank.AlertWhenOver)
+        {
+            return tank.CurrentLevel >= 95 ? Color.Error : Color.Warning;
+        }
+        else
+        {
+            return tank.CurrentLevel <= 10 ? Color.Error : Color.Warning;
+        }
+    }
+
+    private Color GetTankTypeColor(TankType type)
+    {
+        return type switch
+        {
+            TankType.FreshWater => Color.Info,
+            TankType.WasteWater => Color.Warning,
+            TankType.LPG => Color.Secondary,
+            TankType.Fuel => Color.Dark,
+            TankType.Battery => Color.Success,
+            _ => Color.Default
+        };
+    }
+
+    private string GetTankIcon(TankType type)
+    {
+        return type switch
+        {
+            TankType.FreshWater => Icons.Material.Filled.WaterDrop,
+            TankType.WasteWater => Icons.Material.Filled.Delete,
+            TankType.LPG => Icons.Material.Filled.Propane,
+            TankType.Fuel => Icons.Material.Filled.LocalGasStation,
+            TankType.Battery => Icons.Material.Filled.BatteryFull,
+            _ => Icons.Material.Filled.Opacity
+        };
+    }
+
+    private bool IsTankInWarningState(TankDto tank)
+    {
+        return tank.AlertWhenOver
+            ? tank.CurrentLevel >= tank.AlertLevel
+            : tank.CurrentLevel <= tank.AlertLevel;
+    }
+
+    private Severity GetAlertSeverity(TankDto tank)
+    {
+        if (tank.AlertWhenOver)
+        {
+            return tank.CurrentLevel >= 95 ? Severity.Error : Severity.Warning;
+        }
+        else
+        {
+            return tank.CurrentLevel <= 10 ? Severity.Error : Severity.Warning;
+        }
+    }
+
+    private string GetWarningMessage(TankDto tank)
+    {
+        if (tank.AlertWhenOver)
+        {
+            return tank.CurrentLevel >= 95
+                ? $"Tank almost full! ({tank.CurrentLevel:F1}%)"
+                : $"Tank level high ({tank.CurrentLevel:F1}% > {tank.AlertLevel}%)";
+        }
+        else
+        {
+            return tank.CurrentLevel <= 10
+                ? $"Tank critically low! ({tank.CurrentLevel:F1}%)"
+                : $"Tank level low ({tank.CurrentLevel:F1}% < {tank.AlertLevel}%)";
+        }
+    }
+
+    // ===== CONTROL METHODS =====
+    private async Task LoadControls()
+    {
+        try
+        {
+            controls = await Http.GetFromJsonAsync<List<ControlDto>>("api/controls");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading controls: {ex.Message}");
+            Snackbar.Add("Failed to load controls", Severity.Error);
+        }
+    }
+
+    private void OpenAddControlDialog()
+    {
+        editingControl = new ControlDto
+        {
+            Id = Guid.Empty,
+            Name = "",
+            Type = "Toggle",
+            IconName = "lightbulb",
+            State = false
+        };
+        controlProviderType = "Simulated";
+        gpioPin = 0;
+        gpioActiveLow = false;
+        controlModbusAddress = "";
+        controlModbusRegister = 0;
+        controlModbusRegisterType = "Coil";
+        modbusDeviceType = "";
+        controlDialogVisible = true;
+    }
+
+    private void OpenEditControlDialog(ControlDto control)
+    {
+        editingControl = new ControlDto
+        {
+            Id = control.Id,
+            Name = control.Name,
+            Type = control.Type,
+            IconName = control.IconName,
+            State = control.State,
+            ControlPlugin = control.ControlPlugin,
+            ControlConfiguration = control.ControlConfiguration != null
+                ? new Dictionary<string, object>(control.ControlConfiguration)
+                : new Dictionary<string, object>()
+        };
+
+        LoadControlProviderConfiguration();
+        controlDialogVisible = true;
+    }
+
+    private void LoadControlProviderConfiguration()
+    {
+        if (editingControl.ControlPlugin == "GPIO" ||
+            editingControl.ControlConfiguration?.ContainsKey("GpioPin") == true)
+        {
+            controlProviderType = "GPIO";
+            if (editingControl.ControlConfiguration.TryGetValue("GpioPin", out var pin))
+                gpioPin = Convert.ToInt32(pin);
+            if (editingControl.ControlConfiguration.TryGetValue("ActiveLow", out var activeLow))
+                gpioActiveLow = Convert.ToBoolean(activeLow);
+        }
+        else if (editingControl.ControlPlugin == "Modbus" ||
+                 editingControl.ControlConfiguration?.ContainsKey("ModbusAddress") == true)
+        {
+            controlProviderType = "Modbus";
+            if (editingControl.ControlConfiguration.TryGetValue("ModbusAddress", out var addr))
+                controlModbusAddress = addr?.ToString() ?? "";
+            if (editingControl.ControlConfiguration.TryGetValue("Register", out var reg))
+                controlModbusRegister = Convert.ToInt32(reg);
+            if (editingControl.ControlConfiguration.TryGetValue("RegisterType", out var regType))
+                controlModbusRegisterType = regType?.ToString() ?? "Coil";
+            if (editingControl.ControlConfiguration.TryGetValue("DeviceType", out var deviceType))
+                modbusDeviceType = deviceType?.ToString() ?? "";
+        }
+        else
+        {
+            controlProviderType = "Simulated";
+        }
+    }
+
+    private void CloseControlDialog()
+    {
+        controlDialogVisible = false;
+    }
+
+    private async Task SaveControl()
+    {
+        await controlForm!.Validate();
+        if (!controlForm.IsValid) return;
+
+        try
+        {
+            editingControl.ControlPlugin = controlProviderType;
+            editingControl.ControlConfiguration = new Dictionary<string, object>();
+
+            if (controlProviderType == "GPIO")
+            {
+                editingControl.ControlConfiguration["GpioPin"] = gpioPin;
+                editingControl.ControlConfiguration["ActiveLow"] = gpioActiveLow;
+            }
+            else if (controlProviderType == "Modbus")
+            {
+                editingControl.ControlConfiguration["ModbusAddress"] = controlModbusAddress;
+                editingControl.ControlConfiguration["Register"] = controlModbusRegister;
+                editingControl.ControlConfiguration["RegisterType"] = controlModbusRegisterType;
+
+                if (!string.IsNullOrEmpty(modbusDeviceType))
+                {
+                    editingControl.ControlConfiguration["DeviceType"] = modbusDeviceType;
+                }
+            }
+
+            HttpResponseMessage response;
+            if (editingControl.Id == Guid.Empty)
+            {
+                response = await Http.PostAsJsonAsync("api/controls", editingControl);
+            }
+            else
+            {
+                response = await Http.PutAsJsonAsync($"api/controls/{editingControl.Id}", editingControl);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Switch {(editingControl.Id == Guid.Empty ? "created" : "updated")} successfully", Severity.Success);
+                await LoadControls();
+                CloseControlDialog();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save switch: {response.StatusCode}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving control: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DeleteControl(ControlDto control)
+    {
+        bool? confirm = await DialogService.ShowMessageBox(
+            "Delete Switch",
+            $"Are you sure you want to delete '{control.Name}'?",
+            yesText:"Delete", cancelText:"Cancel");
+
+        if (confirm == true)
+        {
+            try
+            {
+                var response = await Http.DeleteAsync($"api/controls/{control.Id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add($"Switch '{control.Name}' deleted successfully", Severity.Success);
+                    await LoadControls();
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to delete switch: {response.StatusCode}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting control: {ex.Message}");
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private bool GetToggleState(ControlDto control)
+    {
+        if (control.State is bool boolState)
+            return boolState;
+        if (control.State is System.Text.Json.JsonElement jsonElement && jsonElement.ValueKind == System.Text.Json.JsonValueKind.True)
+            return true;
+        return false;
+    }
+
+    private int GetDimmerValue(ControlDto control)
+    {
+        if (control.State is int intState)
+            return intState;
+        if (control.State is System.Text.Json.JsonElement jsonElement && jsonElement.ValueKind == System.Text.Json.JsonValueKind.Number)
+            return jsonElement.GetInt32();
+        return 0;
+    }
+
+    private async Task OnToggleChanged(ControlDto control, bool value)
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"api/controls/{control.Id}/state", new { state = value });
+            if (response.IsSuccessStatusCode)
+            {
+                control.State = value;
+                Snackbar.Add($"{control.Name} turned {(value ? "on" : "off")}", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add($"Failed to control {control.Name}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error controlling {control.Name}: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task OnDimmerChanged(ControlDto control, int value)
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"api/controls/{control.Id}/state", new { state = value });
+            if (response.IsSuccessStatusCode)
+            {
+                control.State = value;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error controlling {control.Name}: {ex.Message}");
+        }
+    }
+
+    private string GetControlIcon(string iconName)
+    {
+        return iconName switch
+        {
+            "lightbulb" => Icons.Material.Filled.Lightbulb,
+            "light_mode" => Icons.Material.Filled.LightMode,
+            "water_drop" => Icons.Material.Filled.WaterDrop,
+            "thermostat" => Icons.Material.Filled.Thermostat,
+            "power" => Icons.Material.Filled.Power,
+            "fan" => Icons.Material.Filled.Air,
+            "heating" => Icons.Material.Filled.LocalFireDepartment,
+            "air_conditioner" => Icons.Material.Filled.AcUnit,
+            "outlet" => Icons.Material.Filled.PowerSettingsNew,
+            "nightlight" => Icons.Material.Filled.Nightlight,
+            _ => Icons.Material.Filled.SettingsInputComponent
+        };
+    }
+
+    // ===== DTOs =====
+    public enum TankType
+    {
+        FreshWater,
+        WasteWater,
+        LPG,
+        Fuel,
+        Battery
+    }
+
+    public class TankDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public TankType Type { get; set; }
+        public double CurrentLevel { get; set; }
+        public double Capacity { get; set; }
+        public double AlertLevel { get; set; } = 20.0;
+        public bool AlertWhenOver { get; set; } = false;
+        public string SensorPlugin { get; set; } = "Simulated";
+        public Dictionary<string, object>? SensorConfiguration { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+
+    public class ControlDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public object State { get; set; } = false;
+        public string IconName { get; set; } = string.Empty;
+        public string ControlPlugin { get; set; } = "Simulated";
+        public Dictionary<string, object>? ControlConfiguration { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+
+    // ===== ELECTRICAL DEVICE METHODS =====
+    private List<ElectricalDeviceDto>? electricalDevices;
+    private List<ElectricalConnectionDto>? electricalConnections;
+    private bool deviceDialogVisible = false;
+    private bool connectionDialogVisible = false;
+    private DialogOptions deviceDialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private DialogOptions connectionDialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private MudForm? deviceForm;
+    private MudForm? connectionForm;
+    private ElectricalDeviceDto editingDevice = new();
+    private ElectricalConnectionDto editingConnection = new();
+    private MudBlazor.Utilities.MudColor connectionColor = new MudBlazor.Utilities.MudColor("#2196F3");
+
+    private async Task LoadElectricalDevices()
+    {
+        try
+        {
+            electricalDevices = await Http.GetFromJsonAsync<List<ElectricalDeviceDto>>("api/electrical-devices");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading electrical devices: {ex.Message}");
+            Snackbar.Add("Failed to load electrical devices", Severity.Error);
+        }
+    }
+
+    private async Task LoadElectricalConnections()
+    {
+        try
+        {
+            electricalConnections = await Http.GetFromJsonAsync<List<ElectricalConnectionDto>>("api/electrical-devices/connections");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading electrical connections: {ex.Message}");
+            Snackbar.Add("Failed to load electrical connections", Severity.Error);
+        }
+    }
+
+    private void OpenAddElectricalDeviceDialog()
+    {
+        editingDevice = new ElectricalDeviceDto
+        {
+            Id = Guid.Empty,
+            Name = "",
+            DeviceType = ElectricalDeviceType.Battery,
+            DataSourcePlugin = "Simulated",
+            Ports = new List<DevicePortDto>()
+        };
+        deviceDialogVisible = true;
+    }
+
+    private void OpenEditElectricalDeviceDialog(ElectricalDeviceDto device)
+    {
+        editingDevice = new ElectricalDeviceDto
+        {
+            Id = device.Id,
+            Name = device.Name,
+            DeviceType = device.DeviceType,
+            DataSourcePlugin = device.DataSourcePlugin,
+            DataSourceConfiguration = device.DataSourceConfiguration != null
+                ? new Dictionary<string, object>(device.DataSourceConfiguration)
+                : new Dictionary<string, object>(),
+            Ports = device.Ports.Select(p => new DevicePortDto
+            {
+                PortId = p.PortId,
+                Label = p.Label,
+                PortType = p.PortType,
+                EnergyType = p.EnergyType,
+                RelativeX = p.RelativeX,
+                RelativeY = p.RelativeY
+            }).ToList()
+        };
+        deviceDialogVisible = true;
+    }
+
+    private void CloseDeviceDialog()
+    {
+        deviceDialogVisible = false;
+    }
+
+    private void AddDefaultPorts()
+    {
+        editingDevice.Ports.Clear();
+
+        switch (editingDevice.DeviceType)
+        {
+            case ElectricalDeviceType.Battery:
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "positive", Label = "Positive", PortType = PortType.Bidirectional, EnergyType = EnergyType.DC, RelativeX = 1, RelativeY = 0.3 });
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "negative", Label = "Negative", PortType = PortType.Bidirectional, EnergyType = EnergyType.DC, RelativeX = 1, RelativeY = 0.7 });
+                break;
+
+            case ElectricalDeviceType.SolarMPPT:
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "solar_in", Label = "Solar In", PortType = PortType.Input, EnergyType = EnergyType.DC, RelativeX = 0, RelativeY = 0.5 });
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "battery_out", Label = "Battery Out", PortType = PortType.Output, EnergyType = EnergyType.DC, RelativeX = 1, RelativeY = 0.5 });
+                break;
+
+            case ElectricalDeviceType.DCDCCharger:
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "alternator_in", Label = "Alternator In", PortType = PortType.Input, EnergyType = EnergyType.DC, RelativeX = 0, RelativeY = 0.5 });
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "battery_out", Label = "Battery Out", PortType = PortType.Output, EnergyType = EnergyType.DC, RelativeX = 1, RelativeY = 0.5 });
+                break;
+
+            case ElectricalDeviceType.Inverter:
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "dc_in", Label = "DC In", PortType = PortType.Input, EnergyType = EnergyType.DC, RelativeX = 0, RelativeY = 0.3 });
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "ac_out", Label = "AC Out", PortType = PortType.Output, EnergyType = EnergyType.AC, RelativeX = 1, RelativeY = 0.3 });
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "ac_in", Label = "AC In (Shore)", PortType = PortType.Input, EnergyType = EnergyType.AC, RelativeX = 0, RelativeY = 0.7 });
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "dc_charge", Label = "DC Charge", PortType = PortType.Output, EnergyType = EnergyType.DC, RelativeX = 1, RelativeY = 0.7 });
+                break;
+
+            case ElectricalDeviceType.ShoreCharger:
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "ac_in", Label = "AC In", PortType = PortType.Input, EnergyType = EnergyType.AC, RelativeX = 0, RelativeY = 0.5 });
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "dc_out", Label = "DC Out", PortType = PortType.Output, EnergyType = EnergyType.DC, RelativeX = 1, RelativeY = 0.5 });
+                break;
+
+            case ElectricalDeviceType.LoadOutput:
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "power_in", Label = "Power In", PortType = PortType.Input, EnergyType = EnergyType.DC, RelativeX = 0, RelativeY = 0.5 });
+                break;
+
+            case ElectricalDeviceType.Controller:
+                // Controllers like Cerbo GX typically have data/network connections but no power flow
+                editingDevice.Ports.Add(new DevicePortDto { PortId = "data_bus", Label = "Data Bus", PortType = PortType.Bidirectional, EnergyType = EnergyType.DC, RelativeX = 0.5, RelativeY = 1 });
+                break;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task SaveDevice()
+    {
+        await deviceForm!.Validate();
+        if (!deviceForm.IsValid) return;
+
+        try
+        {
+            HttpResponseMessage response;
+            if (editingDevice.Id == Guid.Empty)
+            {
+                response = await Http.PostAsJsonAsync("api/electrical-devices", editingDevice);
+            }
+            else
+            {
+                response = await Http.PutAsJsonAsync($"api/electrical-devices/{editingDevice.Id}", editingDevice);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Device {(editingDevice.Id == Guid.Empty ? "created" : "updated")} successfully", Severity.Success);
+                await LoadElectricalDevices();
+                CloseDeviceDialog();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save device: {response.StatusCode}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving device: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DeleteElectricalDevice(ElectricalDeviceDto device)
+    {
+        bool? confirm = await DialogService.ShowMessageBox(
+            "Delete Device",
+            $"Are you sure you want to delete '{device.Name}'? This will also delete all connections to this device.",
+            yesText:"Delete", cancelText:"Cancel");
+
+        if (confirm == true)
+        {
+            try
+            {
+                var response = await Http.DeleteAsync($"api/electrical-devices/{device.Id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add($"Device '{device.Name}' deleted successfully", Severity.Success);
+                    await LoadElectricalDevices();
+                    await LoadElectricalConnections();
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to delete device: {response.StatusCode}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting device: {ex.Message}");
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    // Connection methods
+    private void OpenAddConnectionDialog()
+    {
+        editingConnection = new ElectricalConnectionDto
+        {
+            Id = Guid.Empty,
+            Name = "",
+            SourceDeviceId = Guid.Empty,
+            SourcePortId = "",
+            TargetDeviceId = Guid.Empty,
+            TargetPortId = "",
+            Color = "#2196F3",
+            LineWidth = 2.0
+        };
+        connectionColor = new MudBlazor.Utilities.MudColor("#2196F3");
+        connectionDialogVisible = true;
+    }
+
+    private void OpenEditConnectionDialog(ElectricalConnectionDto connection)
+    {
+        editingConnection = new ElectricalConnectionDto
+        {
+            Id = connection.Id,
+            Name = connection.Name,
+            SourceDeviceId = connection.SourceDeviceId,
+            SourcePortId = connection.SourcePortId,
+            TargetDeviceId = connection.TargetDeviceId,
+            TargetPortId = connection.TargetPortId,
+            Color = connection.Color,
+            LineWidth = connection.LineWidth
+        };
+        connectionColor = new MudBlazor.Utilities.MudColor(connection.Color);
+        connectionDialogVisible = true;
+    }
+
+    private void CloseConnectionDialog()
+    {
+        connectionDialogVisible = false;
+    }
+
+    private async Task SaveConnection()
+    {
+        await connectionForm!.Validate();
+        if (!connectionForm.IsValid) return;
+
+        try
+        {
+            editingConnection.Color = connectionColor.ToString();
+
+            HttpResponseMessage response;
+            if (editingConnection.Id == Guid.Empty)
+            {
+                response = await Http.PostAsJsonAsync("api/electrical-devices/connections", editingConnection);
+            }
+            else
+            {
+                response = await Http.PutAsJsonAsync($"api/electrical-devices/connections/{editingConnection.Id}", editingConnection);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add($"Connection {(editingConnection.Id == Guid.Empty ? "created" : "updated")} successfully", Severity.Success);
+                await LoadElectricalConnections();
+                CloseConnectionDialog();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to save connection: {response.StatusCode}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving connection: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DeleteConnection(ElectricalConnectionDto connection)
+    {
+        bool? confirm = await DialogService.ShowMessageBox(
+            "Delete Connection",
+            $"Are you sure you want to delete '{connection.Name}'?",
+            yesText:"Delete", cancelText:"Cancel");
+
+        if (confirm == true)
+        {
+            try
+            {
+                var response = await Http.DeleteAsync($"api/electrical-devices/connections/{connection.Id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add($"Connection '{connection.Name}' deleted successfully", Severity.Success);
+                    await LoadElectricalConnections();
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to delete connection: {response.StatusCode}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting connection: {ex.Message}");
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private string GetDeviceName(Guid deviceId)
+    {
+        var device = electricalDevices?.FirstOrDefault(d => d.Id == deviceId);
+        return device?.Name ?? "Unknown Device";
+    }
+
+    private List<DevicePortDto> GetDevicePorts(Guid deviceId)
+    {
+        var device = electricalDevices?.FirstOrDefault(d => d.Id == deviceId);
+        return device?.Ports ?? new List<DevicePortDto>();
+    }
+
+    // ===== ELECTRICAL DTOs =====
+    public enum ElectricalDeviceType
+    {
+        Battery,
+        SolarMPPT,
+        DCDCCharger,
+        Inverter,
+        ShoreCharger,
+        LoadOutput,
+        Controller
+    }
+
+    public enum PortType
+    {
+        Input,
+        Output,
+        Bidirectional
+    }
+
+    public enum EnergyType
+    {
+        DC,
+        AC
+    }
+
+    public class DevicePortDto
+    {
+        public string PortId { get; set; } = string.Empty;
+        public string Label { get; set; } = string.Empty;
+        public PortType PortType { get; set; }
+        public EnergyType EnergyType { get; set; }
+        public double RelativeX { get; set; }
+        public double RelativeY { get; set; }
+    }
+
+    public class ElectricalDeviceDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public ElectricalDeviceType DeviceType { get; set; }
+        public Dictionary<string, object> Configuration { get; set; } = new();
+        public List<DevicePortDto> Ports { get; set; } = new();
+        public string DataSourcePlugin { get; set; } = "Simulated";
+        public Dictionary<string, object> DataSourceConfiguration { get; set; } = new();
+        public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+
+    public class ElectricalConnectionDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public Guid SourceDeviceId { get; set; }
+        public string SourcePortId { get; set; } = string.Empty;
+        public Guid TargetDeviceId { get; set; }
+        public string TargetPortId { get; set; } = string.Empty;
+        public string Color { get; set; } = "#2196F3";
+        public double LineWidth { get; set; } = 2.0;
+        public DateTime LastUpdated { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+}

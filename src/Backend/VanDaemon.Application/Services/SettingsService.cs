@@ -24,7 +24,7 @@ public class SettingsService : ISettingsService
         {
             Id = Guid.NewGuid(),
             VanModel = "Mercedes Sprinter LWB",
-            VanDiagramPath = "/diagrams/sprinter-lwb.svg",
+            VanDiagramPath = "/images/Mercedes_Sprinter_LWB_Camper.png",
             ToolbarPosition = ToolbarPosition.Left,
             AlertSettings = new AlertSettings
             {
@@ -54,16 +54,15 @@ public class SettingsService : ISettingsService
 
     public Task<IEnumerable<string>> GetAvailableVanDiagramsAsync(CancellationToken cancellationToken = default)
     {
-        // In a real implementation, this would scan the diagrams directory
+        // Scan the wwwroot/images directory for available diagram images
+        // In production, this would be the actual wwwroot/images path
+        // For now, return the available image paths
         var diagrams = new[]
         {
-            "Mercedes Sprinter LWB",
-            "Mercedes Sprinter MWB",
-            "Ford Transit Custom",
-            "VW Crafter",
-            "Fiat Ducato"
+            "/images/Mercedes_Sprinter_LWB_Camper.png"
         };
 
+        _logger.LogInformation("Found {Count} available van diagram(s)", diagrams.Length);
         return Task.FromResult<IEnumerable<string>>(diagrams);
     }
 }

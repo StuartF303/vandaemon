@@ -23,7 +23,12 @@
       "Bash(git pull:*)",
       "WebSearch",
       "WebFetch(domain:github.com)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(pwsh -Command:*)",
+      "Bash(where:*)",
+      "Bash($null)",
+      "Bash(python:*)",
+      "Bash(csc:*)"
     ],
     "deny": [],
     "ask": []
