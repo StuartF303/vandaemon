@@ -1,0 +1,407 @@
+(kicad_sch (version 20230121) (generator eeschema)
+
+  (uuid "a1b2c3d4-e5f6-7890-abcd-ef1234567890")
+
+  (paper "A3")
+
+  (title_block
+    (title "8-Channel LED Dimmer")
+    (date "2025-01-01")
+    (rev "2.0")
+    (comment 1 "ESP32 PWM Controller")
+    (comment 2 "8x 1.4A MOSFET Channels")
+  )
+
+  (lib_symbols
+    (symbol "ESP32-WROOM-32:ESP32-WROOM-32" (in_bom yes) (on_board yes)
+      (property "Reference" "U" (at 0 26.67 0) (effects (font (size 1.27 1.27))))
+      (property "Value" "ESP32-WROOM-32" (at 0 -26.67 0) (effects (font (size 1.27 1.27))))
+      (property "Footprint" "RF_Module:ESP32-WROOM-32" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (symbol "ESP32-WROOM-32_0_1"
+        (rectangle (start -12.7 25.4) (end 12.7 -25.4) (stroke (width 0.254)) (fill (type background)))
+      )
+      (symbol "ESP32-WROOM-32_1_1"
+        (pin power_in line (at -15.24 22.86 0) (length 2.54) (name "3V3" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+        (pin input line (at -15.24 20.32 0) (length 2.54) (name "EN" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 17.78 0) (length 2.54) (name "GPIO36" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 15.24 0) (length 2.54) (name "GPIO39" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 12.7 0) (length 2.54) (name "GPIO34" (effects (font (size 1.27 1.27)))) (number "5" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 10.16 0) (length 2.54) (name "GPIO35" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 7.62 0) (length 2.54) (name "GPIO32" (effects (font (size 1.27 1.27)))) (number "7" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 5.08 0) (length 2.54) (name "GPIO33" (effects (font (size 1.27 1.27)))) (number "8" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 2.54 0) (length 2.54) (name "GPIO25" (effects (font (size 1.27 1.27)))) (number "9" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 0 0) (length 2.54) (name "GPIO26" (effects (font (size 1.27 1.27)))) (number "10" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 -2.54 0) (length 2.54) (name "GPIO27" (effects (font (size 1.27 1.27)))) (number "11" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 -5.08 0) (length 2.54) (name "GPIO14" (effects (font (size 1.27 1.27)))) (number "12" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 -7.62 0) (length 2.54) (name "GPIO12" (effects (font (size 1.27 1.27)))) (number "13" (effects (font (size 1.27 1.27)))))
+        (pin power_in line (at -15.24 -10.16 0) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "14" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at -15.24 -12.7 0) (length 2.54) (name "GPIO13" (effects (font (size 1.27 1.27)))) (number "15" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 -12.7 180) (length 2.54) (name "GPIO9" (effects (font (size 1.27 1.27)))) (number "16" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 -10.16 180) (length 2.54) (name "GPIO10" (effects (font (size 1.27 1.27)))) (number "17" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 -7.62 180) (length 2.54) (name "GPIO11" (effects (font (size 1.27 1.27)))) (number "18" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 -5.08 180) (length 2.54) (name "GPIO6" (effects (font (size 1.27 1.27)))) (number "19" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 -2.54 180) (length 2.54) (name "GPIO7" (effects (font (size 1.27 1.27)))) (number "20" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 0 180) (length 2.54) (name "GPIO8" (effects (font (size 1.27 1.27)))) (number "21" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 2.54 180) (length 2.54) (name "GPIO15" (effects (font (size 1.27 1.27)))) (number "22" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 5.08 180) (length 2.54) (name "GPIO2" (effects (font (size 1.27 1.27)))) (number "23" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 7.62 180) (length 2.54) (name "GPIO0" (effects (font (size 1.27 1.27)))) (number "24" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 10.16 180) (length 2.54) (name "GPIO4" (effects (font (size 1.27 1.27)))) (number "25" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 12.7 180) (length 2.54) (name "GPIO16" (effects (font (size 1.27 1.27)))) (number "26" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 15.24 180) (length 2.54) (name "GPIO17" (effects (font (size 1.27 1.27)))) (number "27" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 17.78 180) (length 2.54) (name "GPIO5" (effects (font (size 1.27 1.27)))) (number "28" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 20.32 180) (length 2.54) (name "GPIO18" (effects (font (size 1.27 1.27)))) (number "29" (effects (font (size 1.27 1.27)))))
+        (pin bidirectional line (at 15.24 22.86 180) (length 2.54) (name "GPIO19" (effects (font (size 1.27 1.27)))) (number "30" (effects (font (size 1.27 1.27)))))
+        (pin power_in line (at 0 -27.94 90) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "39" (effects (font (size 1.27 1.27)))))
+      )
+    )
+  )
+
+  ; ===== POWER INPUT =====
+  (text "POWER INPUT 12-24V" (at 25.4 152.4 0) (effects (font (size 2 2))))
+  
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 30.48 165.1 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "pwr-conn-001")
+    (property "Reference" "J1" (at 30.48 158.75 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "PWR_IN" (at 30.48 170.18 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== ESP32 MODULE =====
+  (text "ESP32 CONTROLLER" (at 88.9 127 0) (effects (font (size 2 2))))
+  
+  (symbol (lib_id "RF_Module:ESP32-WROOM-32") (at 88.9 152.4 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "esp32-001")
+    (property "Reference" "U1" (at 88.9 121.92 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "ESP32-WROOM-32" (at 88.9 124.46 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== DECOUPLING CAPACITORS =====
+  (symbol (lib_id "Device:C") (at 55.88 139.7 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "cap-100n-001")
+    (property "Reference" "C1" (at 58.42 138.43 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "100nF" (at 58.42 140.97 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Device:CP") (at 48.26 139.7 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "cap-10u-001")
+    (property "Reference" "C2" (at 50.8 138.43 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "10uF" (at 50.8 140.97 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  ; ===== 3.3V REGULATOR =====
+  (text "3.3V REGULATOR" (at 45.72 114.3 0) (effects (font (size 2 2))))
+  
+  (symbol (lib_id "Regulator_Linear:AMS1117-3.3") (at 45.72 129.54 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "reg-001")
+    (property "Reference" "U2" (at 45.72 121.92 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "AMS1117-3.3" (at 45.72 124.46 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== MOSFET CHANNEL 1 =====
+  (text "CH1 - GPIO25" (at 152.4 30.48 0) (effects (font (size 1.5 1.5))))
+  
+  (symbol (lib_id "Device:R") (at 139.7 43.18 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-gate-1")
+    (property "Reference" "R1" (at 142.24 43.18 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100R" (at 142.24 45.72 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 152.4 35.56 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pulldown-1")
+    (property "Reference" "R9" (at 152.4 33.02 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 152.4 38.1 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Transistor_FET:IRLZ44N") (at 162.56 43.18 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "q1")
+    (property "Reference" "Q1" (at 168.91 41.91 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "IRLZ44N" (at 168.91 44.45 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 180.34 40.64 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-led-1")
+    (property "Reference" "J2" (at 180.34 33.02 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "LED_CH1" (at 180.34 45.72 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== MOSFET CHANNEL 2 =====
+  (text "CH2 - GPIO26" (at 152.4 53.34 0) (effects (font (size 1.5 1.5))))
+  
+  (symbol (lib_id "Device:R") (at 139.7 66.04 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-gate-2")
+    (property "Reference" "R2" (at 142.24 66.04 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100R" (at 142.24 68.58 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 152.4 58.42 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pulldown-2")
+    (property "Reference" "R10" (at 152.4 55.88 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 152.4 60.96 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Transistor_FET:IRLZ44N") (at 162.56 66.04 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "q2")
+    (property "Reference" "Q2" (at 168.91 64.77 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "IRLZ44N" (at 168.91 67.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 180.34 63.5 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-led-2")
+    (property "Reference" "J3" (at 180.34 55.88 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "LED_CH2" (at 180.34 68.58 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== MOSFET CHANNEL 3 =====
+  (text "CH3 - GPIO27" (at 152.4 76.2 0) (effects (font (size 1.5 1.5))))
+  
+  (symbol (lib_id "Device:R") (at 139.7 88.9 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-gate-3")
+    (property "Reference" "R3" (at 142.24 88.9 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100R" (at 142.24 91.44 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 152.4 81.28 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pulldown-3")
+    (property "Reference" "R11" (at 152.4 78.74 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 152.4 83.82 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Transistor_FET:IRLZ44N") (at 162.56 88.9 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "q3")
+    (property "Reference" "Q3" (at 168.91 87.63 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "IRLZ44N" (at 168.91 90.17 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 180.34 86.36 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-led-3")
+    (property "Reference" "J4" (at 180.34 78.74 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "LED_CH3" (at 180.34 91.44 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== MOSFET CHANNEL 4 =====
+  (text "CH4 - GPIO14" (at 152.4 99.06 0) (effects (font (size 1.5 1.5))))
+  
+  (symbol (lib_id "Device:R") (at 139.7 111.76 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-gate-4")
+    (property "Reference" "R4" (at 142.24 111.76 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100R" (at 142.24 114.3 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 152.4 104.14 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pulldown-4")
+    (property "Reference" "R12" (at 152.4 101.6 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 152.4 106.68 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Transistor_FET:IRLZ44N") (at 162.56 111.76 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "q4")
+    (property "Reference" "Q4" (at 168.91 110.49 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "IRLZ44N" (at 168.91 113.03 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 180.34 109.22 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-led-4")
+    (property "Reference" "J5" (at 180.34 101.6 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "LED_CH4" (at 180.34 114.3 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== MOSFET CHANNEL 5 =====
+  (text "CH5 - GPIO4" (at 220 30.48 0) (effects (font (size 1.5 1.5))))
+  
+  (symbol (lib_id "Device:R") (at 207.26 43.18 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-gate-5")
+    (property "Reference" "R5" (at 209.8 43.18 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100R" (at 209.8 45.72 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 220 35.56 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pulldown-5")
+    (property "Reference" "R13" (at 220 33.02 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 220 38.1 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Transistor_FET:IRLZ44N") (at 230.12 43.18 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "q5")
+    (property "Reference" "Q5" (at 236.47 41.91 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "IRLZ44N" (at 236.47 44.45 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 247.9 40.64 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-led-5")
+    (property "Reference" "J8" (at 247.9 33.02 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "LED_CH5" (at 247.9 45.72 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== MOSFET CHANNEL 6 =====
+  (text "CH6 - GPIO5" (at 220 53.34 0) (effects (font (size 1.5 1.5))))
+  
+  (symbol (lib_id "Device:R") (at 207.26 66.04 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-gate-6")
+    (property "Reference" "R6" (at 209.8 66.04 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100R" (at 209.8 68.58 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 220 58.42 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pulldown-6")
+    (property "Reference" "R14" (at 220 55.88 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 220 60.96 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Transistor_FET:IRLZ44N") (at 230.12 66.04 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "q6")
+    (property "Reference" "Q6" (at 236.47 64.77 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "IRLZ44N" (at 236.47 67.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 247.9 63.5 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-led-6")
+    (property "Reference" "J9" (at 247.9 55.88 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "LED_CH6" (at 247.9 68.58 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== MOSFET CHANNEL 7 =====
+  (text "CH7 - GPIO18" (at 220 76.2 0) (effects (font (size 1.5 1.5))))
+  
+  (symbol (lib_id "Device:R") (at 207.26 88.9 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-gate-7")
+    (property "Reference" "R7" (at 209.8 88.9 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100R" (at 209.8 91.44 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 220 81.28 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pulldown-7")
+    (property "Reference" "R15" (at 220 78.74 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 220 83.82 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Transistor_FET:IRLZ44N") (at 230.12 88.9 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "q7")
+    (property "Reference" "Q7" (at 236.47 87.63 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "IRLZ44N" (at 236.47 90.17 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 247.9 86.36 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-led-7")
+    (property "Reference" "J10" (at 247.9 78.74 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "LED_CH7" (at 247.9 91.44 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== MOSFET CHANNEL 8 =====
+  (text "CH8 - GPIO19" (at 220 99.06 0) (effects (font (size 1.5 1.5))))
+  
+  (symbol (lib_id "Device:R") (at 207.26 111.76 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-gate-8")
+    (property "Reference" "R8" (at 209.8 111.76 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "100R" (at 209.8 114.3 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:R") (at 220 104.14 90) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pulldown-8")
+    (property "Reference" "R16" (at 220 101.6 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 220 106.68 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Transistor_FET:IRLZ44N") (at 230.12 111.76 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "q8")
+    (property "Reference" "Q8" (at 236.47 110.49 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "IRLZ44N" (at 236.47 113.03 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  (symbol (lib_id "Connector:Screw_Terminal_01x02") (at 247.9 109.22 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-led-8")
+    (property "Reference" "J11" (at 247.9 101.6 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "LED_CH8" (at 247.9 114.3 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== WS2812 STATUS LED =====
+  (text "STATUS LED - GPIO16" (at 25.4 50.8 0) (effects (font (size 2 2))))
+  
+  (symbol (lib_id "LED:WS2812B") (at 38.1 68.58 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "ws2812-001")
+    (property "Reference" "D1" (at 38.1 58.42 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "WS2812B" (at 38.1 60.96 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Device:C") (at 50.8 68.58 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "cap-ws2812")
+    (property "Reference" "C3" (at 53.34 67.31 0) (effects (font (size 1.27 1.27)) (justify left)))
+    (property "Value" "100nF" (at 53.34 69.85 0) (effects (font (size 1.27 1.27)) (justify left)))
+  )
+
+  ; ===== DIGITAL INPUTS =====
+  (text "DIGITAL INPUTS - GPIO32, GPIO33" (at 25.4 177.8 0) (effects (font (size 2 2))))
+  
+  ; Input 1 - GPIO32
+  (symbol (lib_id "Device:R") (at 30.48 193.04 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pullup-1")
+    (property "Reference" "R17" (at 33.02 193.04 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 33.02 195.58 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Connector:Conn_01x02_Socket") (at 30.48 208.28 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-btn-1")
+    (property "Reference" "J6" (at 30.48 200.66 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "BTN1" (at 30.48 213.36 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; Input 2 - GPIO33
+  (symbol (lib_id "Device:R") (at 45.72 193.04 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "r-pullup-2")
+    (property "Reference" "R18" (at 48.26 193.04 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "10K" (at 48.26 195.58 0) (effects (font (size 1.27 1.27))))
+  )
+
+  (symbol (lib_id "Connector:Conn_01x02_Socket") (at 45.72 208.28 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no)
+    (uuid "j-btn-2")
+    (property "Reference" "J7" (at 45.72 200.66 0) (effects (font (size 1.27 1.27))))
+    (property "Value" "BTN2" (at 45.72 213.36 0) (effects (font (size 1.27 1.27))))
+  )
+
+  ; ===== POWER LABELS =====
+  (global_label "VIN" (shape input) (at 35.56 162.56 0) (effects (font (size 1.27 1.27)) (justify left)))
+  (global_label "GND" (shape input) (at 35.56 167.64 0) (effects (font (size 1.27 1.27)) (justify left)))
+  (global_label "3V3" (shape output) (at 55.88 129.54 0) (effects (font (size 1.27 1.27)) (justify left)))
+
+)
