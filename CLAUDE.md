@@ -357,3 +357,4 @@ await _hubContext.Clients.Group("tanks").SendAsync(
 - **Async Naming:** All async methods end with `Async` suffix
 - **Null Handling:** Nullable reference types enabled (`<Nullable>enable</Nullable>`) - use `?` appropriately
 - **Configuration Dictionaries:** Use `Dictionary<string, object>` for plugin configuration (JSON-serializable types only)
+- there is a subproject in this repository in hw\LEDDimmer which is an electronic circuit based on an esp32

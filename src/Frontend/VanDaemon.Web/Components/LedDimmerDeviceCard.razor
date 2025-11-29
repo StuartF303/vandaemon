@@ -1,0 +1,180 @@
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudCard Elevation="2" Class="led-dimmer-device-card">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <MudIcon Icon="@Icons.Material.Filled.Lightbulb" Size="Size.Large" Color="Color.Primary" />
+                <div>
+                    <MudText Typo="Typo.h6">@DeviceName</MudText>
+                    <MudText Typo="Typo.caption">@ChannelControls.Count Channels</MudText>
+                </div>
+            </div>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudChip Size="Size.Small" Color="Color.Success">Auto-Discovered</MudChip>
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudGrid Spacing="2">
+            @foreach (var control in ChannelControls.OrderBy(c => GetChannelNumber(c)))
+            {
+                <MudItem xs="12" sm="6" md="3">
+                    <div class="channel-control">
+                        <MudText Typo="Typo.body2" Class="mb-2" Style="font-weight: 600;">
+                            Channel @(GetChannelNumber(control) + 1)
+                        </MudText>
+                        <MudSlider Value="@GetDimmerValue(control)"
+                                  Color="Color.Primary"
+                                  Min="0"
+                                  Max="100"
+                                  Step="1"
+                                  Size="Size.Medium"
+                                  ValueChanged="@((int value) => OnChannelChanged(control, value))" />
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <MudText Typo="Typo.caption" Style="font-weight: 600;">@GetDimmerValue(control)%</MudText>
+                            <div style="display: flex; gap: 4px;">
+                                <MudIconButton Icon="@Icons.Material.Outlined.Lightbulb"
+                                             Size="Size.Small"
+                                             Color="Color.Default"
+                                             OnClick="@(() => SetChannelValue(control, 0))"
+                                             Title="Off" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Lightbulb"
+                                             Size="Size.Small"
+                                             Color="Color.Warning"
+                                             OnClick="@(() => SetChannelValue(control, 100))"
+                                             Title="Full" />
+                            </div>
+                        </div>
+                    </div>
+                </MudItem>
+            }
+        </MudGrid>
+
+        <MudDivider Class="my-3" />
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+            <div style="display: flex; gap: 8px;">
+                <MudButton Variant="Variant.Outlined"
+                          Size="Size.Small"
+                          Color="Color.Default"
+                          StartIcon="@Icons.Material.Outlined.Lightbulb"
+                          OnClick="TurnAllOff">
+                    All Off
+                </MudButton>
+                <MudButton Variant="Variant.Outlined"
+                          Size="Size.Small"
+                          Color="Color.Warning"
+                          StartIcon="@Icons.Material.Filled.Lightbulb"
+                          OnClick="TurnAllOn">
+                    All On
+                </MudButton>
+            </div>
+            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                Last updated: @GetLatestUpdate().ToLocalTime().ToString("HH:mm:ss")
+            </MudText>
+        </div>
+    </MudCardContent>
+</MudCard>
+
+<style>
+    .led-dimmer-device-card {
+        margin-bottom: 24px;
+    }
+
+    .channel-control {
+        padding: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .mud-theme-dark .channel-control {
+        border-color: rgba(255, 255, 255, 0.12);
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+</style>
+
+@code {
+    [Parameter]
+    public string DeviceName { get; set; } = string.Empty;
+
+    [Parameter]
+    public List<Pages.Controls.ControlDto> ChannelControls { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnStateChanged { get; set; }
+
+    private int GetChannelNumber(Pages.Controls.ControlDto control)
+    {
+        if (control.ControlConfiguration?.TryGetValue("Channel", out var channelObj) == true)
+        {
+            return Convert.ToInt32(channelObj);
+        }
+        return 0;
+    }
+
+    private int GetDimmerValue(Pages.Controls.ControlDto control)
+    {
+        if (control.State is int intState)
+            return intState;
+        if (control.State is System.Text.Json.JsonElement jsonElement &&
+            jsonElement.ValueKind == System.Text.Json.JsonValueKind.Number)
+            return jsonElement.GetInt32();
+        return 0;
+    }
+
+    private DateTime GetLatestUpdate()
+    {
+        return ChannelControls.Any()
+            ? ChannelControls.Max(c => c.LastUpdated)
+            : DateTime.UtcNow;
+    }
+
+    private async Task OnChannelChanged(Pages.Controls.ControlDto control, int value)
+    {
+        await SetChannelValue(control, value);
+    }
+
+    private async Task SetChannelValue(Pages.Controls.ControlDto control, int value)
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"api/controls/{control.Id}/state", new { state = value });
+            if (response.IsSuccessStatusCode)
+            {
+                control.State = value;
+                control.LastUpdated = DateTime.UtcNow;
+                await OnStateChanged.InvokeAsync();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to control channel", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error controlling channel: {ex.Message}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task TurnAllOff()
+    {
+        foreach (var control in ChannelControls)
+        {
+            await SetChannelValue(control, 0);
+        }
+        Snackbar.Add($"All channels turned off", Severity.Success);
+    }
+
+    private async Task TurnAllOn()
+    {
+        foreach (var control in ChannelControls)
+        {
+            await SetChannelValue(control, 100);
+        }
+        Snackbar.Add($"All channels turned on", Severity.Success);
+    }
+}

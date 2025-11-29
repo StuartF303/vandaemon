@@ -1,0 +1,38 @@
+# Mosquitto ACL (Access Control List) Configuration Example
+#
+# Format:
+#   user <username>
+#   topic [read|write|readwrite] <topic>
+#
+# Wildcards:
+#   + matches single level
+#   # matches multiple levels
+#
+# To use:
+# 1. Copy to 'acl.conf' (remove .example)
+# 2. Uncomment acl_file line in mosquitto.conf
+# 3. Restart broker
+
+# ==============================================
+# VanDaemon Backend Service
+# ==============================================
+user vandaemon
+topic readwrite vandaemon/#
+
+# ==============================================
+# LED Dimmer Devices
+# ==============================================
+user leddimmer
+topic read vandaemon/leddimmer/+/channel/+/set
+topic read vandaemon/leddimmer/+/all/set
+topic write vandaemon/leddimmer/+/channel/+/state
+topic write vandaemon/leddimmer/+/status
+topic write vandaemon/leddimmer/+/config
+topic write vandaemon/leddimmer/+/heartbeat
+
+# ==============================================
+# Anonymous Users (if allow_anonymous is true)
+# ==============================================
+# Allow read-only access to state topics
+user anonymous
+topic read vandaemon/#

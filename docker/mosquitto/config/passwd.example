@@ -1,0 +1,16 @@
+# Mosquitto Password File Example
+#
+# To create a password file:
+# 1. Copy this file to 'passwd' (remove .example extension)
+# 2. Run: docker exec vandaemon-mqtt mosquitto_passwd -c /mosquitto/config/passwd username
+# 3. Enter password when prompted
+# 4. Uncomment password_file line in mosquitto.conf
+# 5. Set allow_anonymous to false
+# 6. Restart MQTT broker: docker restart vandaemon-mqtt
+#
+# To add more users:
+# docker exec vandaemon-mqtt mosquitto_passwd -b /mosquitto/config/passwd username password
+#
+# Example users (DO NOT use these passwords in production!):
+# vandaemon:passwordhash
+# leddimmer:passwordhash

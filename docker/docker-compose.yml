@@ -31,9 +31,26 @@ services:
     networks:
       - vandaemon
 
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: vandaemon-mqtt
+    ports:
+      - "1883:1883"      # MQTT
+      - "9001:9001"      # WebSocket
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - mqtt-data:/mosquitto/data
+      - mqtt-logs:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - vandaemon
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
+
 volumes:
   api-data:
   api-logs:
+  mqtt-data:
+  mqtt-logs:
 
 networks:
   vandaemon:

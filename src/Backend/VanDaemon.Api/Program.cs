@@ -8,6 +8,7 @@ using VanDaemon.Application.Services;
 using VanDaemon.Plugins.Abstractions;
 using VanDaemon.Plugins.Simulated;
 using VanDaemon.Plugins.Modbus;
+using VanDaemon.Plugins.MqttLedDimmer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +76,8 @@ builder.Services.AddSingleton<ISensorPlugin, SimulatedSensorPlugin>();
 builder.Services.AddSingleton<IControlPlugin, SimulatedControlPlugin>();
 builder.Services.AddSingleton<IControlPlugin, SimulatedSyncPlugin>();
 builder.Services.AddSingleton<IControlPlugin, ModbusControlPlugin>();
+builder.Services.AddSingleton<MqttLedDimmerPlugin>();
+builder.Services.AddSingleton<IControlPlugin>(sp => sp.GetRequiredService<MqttLedDimmerPlugin>());
 
 // Register application services
 builder.Services.AddSingleton<ITankService, TankService>();
@@ -86,6 +89,7 @@ builder.Services.AddSingleton<IElectricalDeviceService, ElectricalDeviceService>
 
 // Register background services
 builder.Services.AddHostedService<TelemetryBackgroundService>();
+builder.Services.AddHostedService<MqttLedDimmerService>();
 
 // Initialize plugins
 var app = builder.Build();
@@ -101,7 +105,26 @@ foreach (var plugin in sensorPlugins)
 var controlPlugins = app.Services.GetServices<IControlPlugin>();
 foreach (var plugin in controlPlugins)
 {
-    await plugin.InitializeAsync(new Dictionary<string, object>());
+    // Load plugin-specific configuration if available
+    var config = new Dictionary<string, object>();
+
+    if (plugin is MqttLedDimmerPlugin)
+    {
+        // Load MQTT LED Dimmer configuration from appsettings.json
+        var section = app.Configuration.GetSection("MqttLedDimmer");
+        if (section.Exists())
+        {
+            config["MqttBroker"] = section["MqttBroker"] ?? "localhost";
+            config["MqttPort"] = int.Parse(section["MqttPort"] ?? "1883");
+            config["MqttUsername"] = section["MqttUsername"] ?? "";
+            config["MqttPassword"] = section["MqttPassword"] ?? "";
+            config["BaseTopic"] = section["BaseTopic"] ?? "vandaemon/leddimmer";
+            config["AutoDiscovery"] = bool.Parse(section["AutoDiscovery"] ?? "true");
+            config["Devices"] = new List<object>(); // Empty list for now, populated via auto-discovery
+        }
+    }
+
+    await plugin.InitializeAsync(config);
 }
 
 // Configure the HTTP request pipeline

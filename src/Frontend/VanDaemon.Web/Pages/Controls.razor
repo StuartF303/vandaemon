@@ -1,4 +1,5 @@
 @page "/controls"
+@using VanDaemon.Web.Components
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -72,61 +73,96 @@
 }
 else
 {
-    <MudGrid>
-        @foreach (var control in controls)
-        {
-            <MudItem xs="12" sm="6" md="4">
-                <MudCard Elevation="2" Class="control-card">
-                    <MudCardContent>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <MudIcon Icon="@GetControlIcon(control.IconName)" Size="Size.Large" Color="Color.Primary" />
-                                <MudText Typo="Typo.h6">@control.Name</MudText>
-                            </div>
-                            <div style="display: flex; gap: 4px;">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                             Color="Color.Info"
-                                             Size="Size.Small"
-                                             OnClick="() => OpenEditDialog(control)" />
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                             Color="Color.Error"
-                                             Size="Size.Small"
-                                             OnClick="() => DeleteControl(control)" />
-                            </div>
-                        </div>
+    @* LED Dimmer Devices Section *@
+    @if (ledDimmerDevices.Any())
+    {
+        <div class="mb-4">
+            <MudText Typo="Typo.h5" GutterBottom="true" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Lightbulb" Class="mr-2" />
+                LED Dimmers
+            </MudText>
+            @foreach (var deviceGroup in ledDimmerDevices)
+            {
+                <LedDimmerDeviceCard DeviceName="@deviceGroup.Key"
+                                    ChannelControls="@deviceGroup.Value"
+                                    OnStateChanged="@LoadControls" />
+            }
+        </div>
+    }
 
-                        @if (control.Type == "Toggle")
-                        {
-                            <div class="control-switch">
-                                <MudSwitch Checked="@GetToggleState(control)"
-                                          Color="Color.Success"
-                                          Label="@(GetToggleState(control) ? "On" : "Off")"
-                                          T="bool"
-                                          CheckedChanged="@((bool value) => OnToggleChanged(control, value))" />
+    @* Manual Controls Section *@
+    @if (manualControls.Any())
+    {
+        <MudText Typo="Typo.h5" GutterBottom="true" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.SettingsInputComponent" Class="mr-2" />
+            Manual Controls
+        </MudText>
+        <MudGrid>
+            @foreach (var control in manualControls)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Elevation="2" Class="control-card">
+                        <MudCardContent>
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <MudIcon Icon="@GetControlIcon(control.IconName)" Size="Size.Large" Color="Color.Primary" />
+                                    <MudText Typo="Typo.h6">@control.Name</MudText>
+                                </div>
+                                <div style="display: flex; gap: 4px;">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                 Color="Color.Info"
+                                                 Size="Size.Small"
+                                                 OnClick="() => OpenEditDialog(control)" />
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                 Color="Color.Error"
+                                                 Size="Size.Small"
+                                                 OnClick="() => DeleteControl(control)" />
+                                </div>
                             </div>
-                        }
-                        else if (control.Type == "Dimmer")
-                        {
-                            <div class="control-slider">
-                                <MudSlider Value="@GetDimmerValue(control)"
-                                          Color="Color.Primary"
-                                          Min="0"
-                                          Max="100"
-                                          Step="5"
-                                          Size="Size.Large"
-                                          ValueChanged="@((int value) => OnDimmerChanged(control, value))" />
-                                <MudText Typo="Typo.body2" Align="Align.Center" Style="font-weight: 600;">@GetDimmerValue(control)%</MudText>
-                            </div>
-                        }
 
-                        <MudText Typo="Typo.caption" Class="mt-2">
-                            Last updated: @control.LastUpdated.ToLocalTime().ToString("HH:mm:ss")
-                        </MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-        }
-    </MudGrid>
+                            @if (control.Type == "Toggle")
+                            {
+                                <div class="control-switch">
+                                    <MudSwitch Checked="@GetToggleState(control)"
+                                              Color="Color.Success"
+                                              Label="@(GetToggleState(control) ? "On" : "Off")"
+                                              T="bool"
+                                              CheckedChanged="@((bool value) => OnToggleChanged(control, value))" />
+                                </div>
+                            }
+                            else if (control.Type == "Dimmer")
+                            {
+                                <div class="control-slider">
+                                    <MudSlider Value="@GetDimmerValue(control)"
+                                              Color="Color.Primary"
+                                              Min="0"
+                                              Max="100"
+                                              Step="5"
+                                              Size="Size.Large"
+                                              ValueChanged="@((int value) => OnDimmerChanged(control, value))" />
+                                    <MudText Typo="Typo.body2" Align="Align.Center" Style="font-weight: 600;">@GetDimmerValue(control)%</MudText>
+                                </div>
+                            }
+
+                            <MudText Typo="Typo.caption" Class="mt-2">
+                                Last updated: @control.LastUpdated.ToLocalTime().ToString("HH:mm:ss")
+                            </MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+
+    @* Empty state message *@
+    @if (!controls.Any())
+    {
+        <MudPaper Elevation="0" Class="pa-8" Style="text-align: center;">
+            <MudIcon Icon="@Icons.Material.Filled.SettingsInputComponent" Size="Size.Large" Color="Color.Secondary" Class="mb-4" />
+            <MudText Typo="Typo.h6" Color="Color.Secondary" GutterBottom="true">No controls configured</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">Get started by adding your first control or connecting an LED dimmer device</MudText>
+        </MudPaper>
+    }
 }
 
 <!-- Add/Edit Dialog -->
@@ -254,6 +290,8 @@ else
 
 @code {
     private List<ControlDto>? controls;
+    private Dictionary<string, List<ControlDto>> ledDimmerDevices = new();
+    private List<ControlDto> manualControls = new();
     private bool dialogVisible = false;
     private DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
     private MudForm? form;
@@ -273,11 +311,47 @@ else
         await LoadControls();
     }
 
+    private void GroupControls()
+    {
+        if (controls == null) return;
+
+        ledDimmerDevices.Clear();
+        manualControls.Clear();
+
+        foreach (var control in controls.Where(c => c.IsActive))
+        {
+            if (control.ControlPlugin == "MqttLedDimmer" &&
+                control.ControlConfiguration?.TryGetValue("DeviceId", out var deviceIdObj) == true)
+            {
+                var deviceId = deviceIdObj.ToString() ?? "";
+                var deviceName = ExtractDeviceName(control.Name);
+
+                if (!ledDimmerDevices.ContainsKey(deviceName))
+                {
+                    ledDimmerDevices[deviceName] = new List<ControlDto>();
+                }
+                ledDimmerDevices[deviceName].Add(control);
+            }
+            else
+            {
+                manualControls.Add(control);
+            }
+        }
+    }
+
+    private string ExtractDeviceName(string controlName)
+    {
+        // Extract device name from "Device Name - Channel N" format
+        var parts = controlName.Split(" - ");
+        return parts.Length > 0 ? parts[0] : controlName;
+    }
+
     private async Task LoadControls()
     {
         try
         {
             controls = await Http.GetFromJsonAsync<List<ControlDto>>("api/controls");
+            GroupControls();
         }
         catch (Exception ex)
         {

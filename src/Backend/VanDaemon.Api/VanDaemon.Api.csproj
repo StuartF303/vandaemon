@@ -14,6 +14,7 @@
     <ProjectReference Include="..\VanDaemon.Plugins\VanDaemon.Plugins.Abstractions\VanDaemon.Plugins.Abstractions.csproj" />
     <ProjectReference Include="..\VanDaemon.Plugins\VanDaemon.Plugins.Simulated\VanDaemon.Plugins.Simulated.csproj" />
     <ProjectReference Include="..\VanDaemon.Plugins\VanDaemon.Plugins.Modbus\VanDaemon.Plugins.Modbus.csproj" />
+    <ProjectReference Include="..\VanDaemon.Plugins\VanDaemon.Plugins.MqttLedDimmer\VanDaemon.Plugins.MqttLedDimmer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

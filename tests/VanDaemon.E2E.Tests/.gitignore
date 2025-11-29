@@ -1,0 +1,8 @@
+# Playwright test artifacts
+screenshots/
+traces/
+videos/
+*.zip
+
+# Test results
+TestResults/

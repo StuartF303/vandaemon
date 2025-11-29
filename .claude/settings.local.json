@@ -28,7 +28,13 @@
       "Bash(where:*)",
       "Bash($null)",
       "Bash(python:*)",
-      "Bash(csc:*)"
+      "Bash(csc:*)",
+      "Bash(tree:*)",
+      "Bash(mkdir:*)",
+      "Bash(pwsh:*)",
+      "Bash(del run-e2e-tests.sh)",
+      "Bash(Select-String -Pattern \"error|warning CS86|Build succeeded|Build FAILED\")",
+      "Bash(Select-Object -Last 10)"
     ],
     "deny": [],
     "ask": []
