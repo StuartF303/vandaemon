@@ -281,6 +281,9 @@
         CreateOverlaysFromTanks();
         CreateOverlaysFromControls();
 
+        // Force re-render after settings load
+        StateHasChanged();
+
         // Subscribe to SignalR events
         Telemetry.TankLevelUpdated += OnTankLevelUpdated;
         Telemetry.ControlStateChanged += OnControlStateChanged;
@@ -342,10 +345,13 @@
 
                 // Load toolbar position from DrivingSide setting
                 toolbarPosition = response.DrivingSide.ToString();
+                Console.WriteLine($"Dashboard: Toolbar position set to '{toolbarPosition}' from DrivingSide: {response.DrivingSide}");
             }
             else
             {
                 backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
+                toolbarPosition = "Left"; // Ensure default if response is null
+                Console.WriteLine("Dashboard: Response null, using default toolbar position 'Left'");
             }
         }
         catch (Exception ex)
@@ -353,6 +359,7 @@
             Console.WriteLine($"Error loading settings: {ex.Message}");
             // Fallback to default image on error
             backgroundImage = "/images/Mercedes_Sprinter_LWB_Camper.png";
+            toolbarPosition = "Left"; // Ensure default on error
         }
     }
 

@@ -8,11 +8,13 @@
     }
 
     .dashboard-menu.menu-left {
-        left: 16px;
+        left: 16px !important;
+        right: auto !important;
     }
 
     .dashboard-menu.menu-right {
-        right: 16px;
+        right: 16px !important;
+        left: auto !important;
     }
 
     .menu-button {
@@ -56,7 +58,7 @@
     }
 </style>
 
-<div class="dashboard-menu @GetMenuPositionClass()">
+<div class="dashboard-menu @GetMenuPositionClass()" data-toolbar-position="@ToolbarPosition" data-menu-class="@GetMenuPositionClass()">
     <MudMenu Icon="@Icons.Material.Filled.MoreVert"
              Size="Size.Large"
              AnchorOrigin="Origin.BottomRight"
@@ -116,6 +118,13 @@
     private string GetMenuPositionClass()
     {
         // Position hamburger menu on opposite side of the toolbar
-        return ToolbarPosition == "Right" ? "menu-left" : "menu-right";
+        // Case-insensitive comparison to be defensive
+        var isToolbarRight = string.Equals(ToolbarPosition, "Right", StringComparison.OrdinalIgnoreCase);
+        var menuClass = isToolbarRight ? "menu-left" : "menu-right";
+
+        // Debug logging
+        Console.WriteLine($"DashboardMenu: ToolbarPosition='{ToolbarPosition}', isRight={isToolbarRight}, menuClass='{menuClass}'");
+
+        return menuClass;
     }
 }

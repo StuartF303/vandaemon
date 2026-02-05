@@ -1,3 +1,5 @@
+using VanDaemon.Core.Enums;
+
 namespace VanDaemon.Core.Entities;
 
 /// <summary>
@@ -29,7 +31,39 @@ public class SystemConfiguration
     public string VanDiagramPath { get; set; } = "/diagrams/sprinter-lwb.svg";
     public ToolbarPosition ToolbarPosition { get; set; } = ToolbarPosition.Left;
     public DrivingSide DrivingSide { get; set; } = DrivingSide.Left;
-    public string Theme { get; set; } = "Light";
+
+    /// <summary>
+    /// How the theme should be determined
+    /// </summary>
+    public Enums.ThemeMode ThemeMode { get; set; } = Enums.ThemeMode.Manual;
+
+    /// <summary>
+    /// The manually selected theme (only used when ThemeMode = Manual)
+    /// </summary>
+    public Enums.Theme ManualTheme { get; set; } = Enums.Theme.Light;
+
+    /// <summary>
+    /// DEPRECATED: Old theme property for backward compatibility
+    /// Automatically migrates to ThemeMode = Manual and ManualTheme on load
+    /// </summary>
+    [Obsolete("Use ThemeMode and ManualTheme instead")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public string? Theme
+    {
+        get => null;
+        set
+        {
+            // Migration: Convert old Theme string to new properties
+            if (!string.IsNullOrEmpty(value))
+            {
+                ThemeMode = Enums.ThemeMode.Manual;
+                ManualTheme = value.Equals("Dark", StringComparison.OrdinalIgnoreCase)
+                    ? Enums.Theme.Dark
+                    : Enums.Theme.Light;
+            }
+        }
+    }
+
     public bool EnableFullscreenOnStartup { get; set; } = true;
     public bool ShowFullscreenToggle { get; set; } = true;
     public AlertSettings AlertSettings { get; set; } = new();

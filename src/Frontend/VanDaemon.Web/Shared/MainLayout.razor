@@ -367,7 +367,6 @@ else
     private bool isLoading = true;
     private string toolbarPosition = "toolbar-left";
     private string currentPath = "/";
-    private string currentTheme = "Light";
     private bool isFullscreen = false;
     private bool showFullscreenToggle = true;
     private bool enableFullscreenOnStartup = true;
@@ -420,10 +419,10 @@ else
             if (config != null)
             {
                 // Use driving side to control toolbar position (bottom only on phone mode via CSS)
-                toolbarPosition = config.DrivingSide == "Right" ? "toolbar-right" : "toolbar-left";
+                toolbarPosition = config.DrivingSide == Core.Entities.DrivingSide.Right ? "toolbar-right" : "toolbar-left";
 
-                currentTheme = config.Theme ?? "Light";
-                SettingsState.IsDarkMode = currentTheme == "Dark";
+                // Initialize theme system with new ThemeMode
+                await SettingsState.InitializeThemeModeAsync(config.ThemeMode, config.ManualTheme);
 
                 showFullscreenToggle = config.ShowFullscreenToggle;
                 enableFullscreenOnStartup = config.EnableFullscreenOnStartup;
@@ -433,8 +432,7 @@ else
         {
             Console.WriteLine($"Error loading settings: {ex.Message}");
             toolbarPosition = "toolbar-left";
-            currentTheme = "Light";
-            SettingsState.IsDarkMode = false;
+            await SettingsState.InitializeThemeModeAsync(Core.Enums.ThemeMode.Manual, Core.Enums.Theme.Light);
             showFullscreenToggle = true;
             enableFullscreenOnStartup = true;
         }
@@ -531,9 +529,10 @@ else
         public Guid Id { get; set; }
         public string VanModel { get; set; } = string.Empty;
         public string VanDiagramPath { get; set; } = string.Empty;
-        public string ToolbarPosition { get; set; } = "Left";
-        public string DrivingSide { get; set; } = "Left";
-        public string Theme { get; set; } = "Light";
+        public Core.Entities.ToolbarPosition ToolbarPosition { get; set; }
+        public Core.Entities.DrivingSide DrivingSide { get; set; }
+        public Core.Enums.ThemeMode ThemeMode { get; set; }
+        public Core.Enums.Theme ManualTheme { get; set; }
         public bool EnableFullscreenOnStartup { get; set; } = true;
         public bool ShowFullscreenToggle { get; set; } = true;
         public AlertSettingsDto AlertSettings { get; set; } = new();

@@ -172,4 +172,74 @@ public class DashboardTests : PlaywrightTestBase
         var menuButton = await Page.QuerySelectorAsync("button[aria-label*='menu'], .mud-icon-button");
         menuButton.Should().NotBeNull("Mobile menu button should be visible");
     }
+
+    [Fact]
+    public async Task Dashboard_HamburgerMenu_ShouldBeOnOppositeSideOfNavBar()
+    {
+        // Arrange & Act
+        await NavigateToAppAsync("/");
+        await Task.Delay(1000); // Wait for page to fully load and settings to be applied
+
+        // Get the layout container to determine toolbar position
+        var layoutContainer = await Page!.QuerySelectorAsync(".layout-container");
+        layoutContainer.Should().NotBeNull("Layout container should exist");
+
+        var layoutClasses = await layoutContainer!.GetAttributeAsync("class");
+        layoutClasses.Should().NotBeNullOrEmpty("Layout container should have classes");
+
+        // Determine toolbar position (left or right)
+        var isToolbarLeft = layoutClasses!.Contains("toolbar-left");
+        var isToolbarRight = layoutClasses.Contains("toolbar-right");
+
+        (isToolbarLeft || isToolbarRight).Should().BeTrue(
+            "Toolbar should be positioned either left or right, found classes: " + layoutClasses);
+
+        // Get the hamburger menu to determine its position
+        var hamburgerMenu = await Page.QuerySelectorAsync(".dashboard-menu");
+        hamburgerMenu.Should().NotBeNull("Dashboard hamburger menu should exist");
+
+        var menuClasses = await hamburgerMenu!.GetAttributeAsync("class");
+        menuClasses.Should().NotBeNullOrEmpty("Menu should have classes");
+
+        var isMenuLeft = menuClasses!.Contains("menu-left");
+        var isMenuRight = menuClasses.Contains("menu-right");
+
+        (isMenuLeft || isMenuRight).Should().BeTrue(
+            "Menu should be positioned either left or right, found classes: " + menuClasses);
+
+        // Assert - menu should be on opposite side of toolbar
+        if (isToolbarLeft)
+        {
+            isMenuRight.Should().BeTrue(
+                "When toolbar is on LEFT, hamburger menu should be on RIGHT to avoid accidental clicks. " +
+                $"Layout classes: {layoutClasses}, Menu classes: {menuClasses}");
+        }
+        else if (isToolbarRight)
+        {
+            isMenuLeft.Should().BeTrue(
+                "When toolbar is on RIGHT, hamburger menu should be on LEFT to avoid accidental clicks. " +
+                $"Layout classes: {layoutClasses}, Menu classes: {menuClasses}");
+        }
+
+        // Also verify the actual position in pixels
+        var layoutBox = await layoutContainer.BoundingBoxAsync();
+        var menuBox = await hamburgerMenu.BoundingBoxAsync();
+
+        layoutBox.Should().NotBeNull("Layout should have bounding box");
+        menuBox.Should().NotBeNull("Menu should have bounding box");
+
+        var layoutCenterX = layoutBox!.X + (layoutBox.Width / 2);
+        var menuCenterX = menuBox!.X + (menuBox.Width / 2);
+
+        if (isToolbarLeft)
+        {
+            menuCenterX.Should().BeGreaterThan(layoutCenterX,
+                $"Menu should be on right side (center X > layout center). Menu X: {menuCenterX}, Layout Center X: {layoutCenterX}");
+        }
+        else if (isToolbarRight)
+        {
+            menuCenterX.Should().BeLessThan(layoutCenterX,
+                $"Menu should be on left side (center X < layout center). Menu X: {menuCenterX}, Layout Center X: {layoutCenterX}");
+        }
+    }
 }

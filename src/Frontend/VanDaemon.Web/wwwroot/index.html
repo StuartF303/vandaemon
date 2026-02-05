@@ -37,32 +37,7 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker registered successfully:', registration.scope);
-
-                        // Handle updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('New service worker available. Refresh to update.');
-                                    // Optionally show update notification to user
-                                }
-                            });
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Service Worker registration failed:', error);
-                    });
-            });
-        }
-    </script>
+    <script src="/js/theme.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,122 @@
+LED DIMMER v2.0 - WIRING GUIDE
+================================
+
+Use this as a reference when wiring components in KiCad schematic editor.
+
+POWER CONNECTIONS:
+==================
+J1 Pin 1 (+12V) → VIN rail → All MOSFET Drains (Q1-Q8 pin 1) → All LED connector Pin 1 (J2-J11)
+J1 Pin 2 (GND)  → GND rail → All MOSFET Sources (Q1-Q8 pin 3) → U1 pins 14,39 → U2 pin 1
+U2 Pin 2 (VIN)  → VIN rail
+U2 Pin 3 (3V3)  → U1 Pin 1 → C1 Pin 1 → R17 Pin 1 → R18 Pin 1 → D1 Pin 1
+C1 Pin 2 → GND
+C2 Pin 1 → VIN
+C2 Pin 2 → GND
+C3 Pin 1 → D1 Pin 1 (3V3)
+C3 Pin 2 → GND
+D1 Pin 4 → GND
+
+CHANNEL 1 (LEFT BANK):
+======================
+U1 Pin 9 (GPIO25) → R1 Pin 1
+R1 Pin 2 → Q1 Pin 2 (Gate) + R9 Pin 1
+R9 Pin 2 → GND
+Q1 Pin 1 (Drain) → VIN
+Q1 Pin 3 (Source) → J2 Pin 2 (LED-)
+J2 Pin 1 → VIN (LED+)
+
+CHANNEL 2 (LEFT BANK):
+======================
+U1 Pin 10 (GPIO26) → R2 Pin 1
+R2 Pin 2 → Q2 Pin 2 (Gate) + R10 Pin 1
+R10 Pin 2 → GND
+Q2 Pin 1 (Drain) → VIN
+Q2 Pin 3 (Source) → J3 Pin 2 (LED-)
+J3 Pin 1 → VIN (LED+)
+
+CHANNEL 3 (LEFT BANK):
+======================
+U1 Pin 11 (GPIO27) → R3 Pin 1
+R3 Pin 2 → Q3 Pin 2 (Gate) + R11 Pin 1
+R11 Pin 2 → GND
+Q3 Pin 1 (Drain) → VIN
+Q3 Pin 3 (Source) → J4 Pin 2 (LED-)
+J4 Pin 1 → VIN (LED+)
+
+CHANNEL 4 (LEFT BANK):
+======================
+U1 Pin 12 (GPIO14) → R4 Pin 1
+R4 Pin 2 → Q4 Pin 2 (Gate) + R12 Pin 1
+R12 Pin 2 → GND
+Q4 Pin 1 (Drain) → VIN
+Q4 Pin 3 (Source) → J5 Pin 2 (LED-)
+J5 Pin 1 → VIN (LED+)
+
+CHANNEL 5 (RIGHT BANK):
+=======================
+U1 Pin 25 (GPIO4) → R5 Pin 1
+R5 Pin 2 → Q5 Pin 2 (Gate) + R13 Pin 1
+R13 Pin 2 → GND
+Q5 Pin 1 (Drain) → VIN
+Q5 Pin 3 (Source) → J8 Pin 2 (LED-)
+J8 Pin 1 → VIN (LED+)
+
+CHANNEL 6 (RIGHT BANK):
+=======================
+U1 Pin 28 (GPIO5) → R6 Pin 1
+R6 Pin 2 → Q6 Pin 2 (Gate) + R14 Pin 1
+R14 Pin 2 → GND
+Q6 Pin 1 (Drain) → VIN
+Q6 Pin 3 (Source) → J9 Pin 2 (LED-)
+J9 Pin 1 → VIN (LED+)
+
+CHANNEL 7 (RIGHT BANK):
+=======================
+U1 Pin 29 (GPIO18) → R7 Pin 1
+R7 Pin 2 → Q7 Pin 2 (Gate) + R15 Pin 1
+R15 Pin 2 → GND
+Q7 Pin 1 (Drain) → VIN
+Q7 Pin 3 (Source) → J10 Pin 2 (LED-)
+J10 Pin 1 → VIN (LED+)
+
+CHANNEL 8 (RIGHT BANK):
+=======================
+U1 Pin 30 (GPIO19) → R8 Pin 1
+R8 Pin 2 → Q8 Pin 2 (Gate) + R16 Pin 1
+R16 Pin 2 → GND
+Q8 Pin 1 (Drain) → VIN
+Q8 Pin 3 (Source) → J11 Pin 2 (LED-)
+J11 Pin 1 → VIN (LED+)
+
+STATUS LED:
+===========
+U1 Pin 26 (GPIO16) → D1 Pin 2 (Data In)
+D1 Pin 1 (VCC) → 3V3
+D1 Pin 4 (GND) → GND
+
+BUTTONS:
+========
+SW1 Pin 1 → U1 Pin 7 (GPIO32) + R17 Pin 2
+SW1 Pin 2 → GND
+R17 Pin 1 → 3V3
+
+SW2 Pin 1 → U1 Pin 8 (GPIO33) + R18 Pin 2
+SW2 Pin 2 → GND
+R18 Pin 1 → 3V3
+
+ESP32 PIN MAPPING:
+==================
+Pin 1:  3V3
+Pin 7:  GPIO32 (Button 1)
+Pin 8:  GPIO33 (Button 2)
+Pin 9:  GPIO25 (CH1 PWM)
+Pin 10: GPIO26 (CH2 PWM)
+Pin 11: GPIO27 (CH3 PWM)
+Pin 12: GPIO14 (CH4 PWM)
+Pin 14: GND
+Pin 25: GPIO4  (CH5 PWM)
+Pin 26: GPIO16 (WS2812 Data)
+Pin 28: GPIO5  (CH6 PWM)
+Pin 29: GPIO18 (CH7 PWM)
+Pin 30: GPIO19 (CH8 PWM)
+Pin 39: GND

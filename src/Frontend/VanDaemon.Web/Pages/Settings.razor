@@ -83,15 +83,15 @@ else
                 }
             </MudSelect>
 
-            <MudSelect T="string"
+            <MudSelect T="Core.Entities.DrivingSide"
                       Value="@configuration.DrivingSide"
                       Label="Driving Side"
                       Variant="Variant.Outlined"
                       Class="mb-4"
                       HelperText="Determines toolbar position - driver side for easy reach. Portrait phones automatically use bottom toolbar."
-                      ValueChanged="@((string value) => OnDrivingSideChanged(value))">
-                <MudSelectItem Value="@("Left")">Left-hand drive (Toolbar on left)</MudSelectItem>
-                <MudSelectItem Value="@("Right")">Right-hand drive (Toolbar on right)</MudSelectItem>
+                      ValueChanged="@((Core.Entities.DrivingSide value) => OnDrivingSideChanged(value))">
+                <MudSelectItem Value="@(Core.Entities.DrivingSide.Left)">Left-hand drive (Toolbar on left)</MudSelectItem>
+                <MudSelectItem Value="@(Core.Entities.DrivingSide.Right)">Right-hand drive (Toolbar on right)</MudSelectItem>
             </MudSelect>
 
             <MudDivider Class="my-4" />
@@ -105,7 +105,7 @@ else
                               Variant="Variant.Filled"
                               Color="Color.Primary"
                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                              for="@context">
+                              For="@context.Id">
                         Upload Image
                     </MudButton>
                 </ButtonTemplate>
@@ -132,16 +132,31 @@ else
                 Configure appearance and fullscreen behavior for vehicle touchscreen use
             </MudText>
 
-            <MudSelect T="string"
-                      Value="@configuration.Theme"
-                      Label="Theme"
+            <MudSelect T="Core.Enums.ThemeMode"
+                      Value="@configuration.ThemeMode"
+                      Label="Theme Mode"
                       Variant="Variant.Outlined"
                       Class="mb-4"
-                      HelperText="Choose between light and dark mode"
-                      ValueChanged="@((string value) => OnThemeChanged(value))">
-                <MudSelectItem Value="@("Light")">Light Mode</MudSelectItem>
-                <MudSelectItem Value="@("Dark")">Dark Mode</MudSelectItem>
+                      HelperText="How should the theme be determined?"
+                      ValueChanged="@((Core.Enums.ThemeMode value) => OnThemeModeChanged(value))">
+                <MudSelectItem Value="@(Core.Enums.ThemeMode.Manual)">Manual - Choose theme yourself</MudSelectItem>
+                <MudSelectItem Value="@(Core.Enums.ThemeMode.BrowserAuto)">Browser Auto - Follow system dark mode</MudSelectItem>
+                <MudSelectItem Value="@(Core.Enums.ThemeMode.HeadlightsAuto)">Headlights Auto - Based on vehicle lights</MudSelectItem>
             </MudSelect>
+
+            @if (configuration.ThemeMode == Core.Enums.ThemeMode.Manual)
+            {
+                <MudSelect T="Core.Enums.Theme"
+                          Value="@configuration.ManualTheme"
+                          Label="Manual Theme"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          HelperText="Choose your preferred theme"
+                          ValueChanged="@((Core.Enums.Theme value) => OnManualThemeChanged(value))">
+                    <MudSelectItem Value="@(Core.Enums.Theme.Light)">Light Mode</MudSelectItem>
+                    <MudSelectItem Value="@(Core.Enums.Theme.Dark)">Dark Mode</MudSelectItem>
+                </MudSelect>
+            }
 
             <MudSwitch Checked="@configuration.EnableFullscreenOnStartup"
                       Label="Enable Fullscreen on Startup"
@@ -201,9 +216,16 @@ else
                         <td>@configuration.DrivingSide-hand drive</td>
                     </tr>
                     <tr>
-                        <td><strong>Theme</strong></td>
-                        <td>@configuration.Theme Mode</td>
+                        <td><strong>Theme Mode</strong></td>
+                        <td>@configuration.ThemeMode</td>
                     </tr>
+                    @if (configuration.ThemeMode == Core.Enums.ThemeMode.Manual)
+                    {
+                        <tr>
+                            <td><strong>Manual Theme</strong></td>
+                            <td>@configuration.ManualTheme</td>
+                        </tr>
+                    }
                 </tbody>
             </MudSimpleTable>
         </MudTabPanel>
@@ -241,17 +263,24 @@ else
         AutoSave();
     }
 
-    private void OnDrivingSideChanged(string value)
+    private void OnDrivingSideChanged(Core.Entities.DrivingSide value)
     {
         if (configuration == null) return;
         configuration.DrivingSide = value;
         AutoSave();
     }
 
-    private void OnThemeChanged(string value)
+    private void OnThemeModeChanged(Core.Enums.ThemeMode value)
     {
         if (configuration == null) return;
-        configuration.Theme = value;
+        configuration.ThemeMode = value;
+        AutoSave();
+    }
+
+    private void OnManualThemeChanged(Core.Enums.Theme value)
+    {
+        if (configuration == null) return;
+        configuration.ManualTheme = value;
         AutoSave();
     }
 
@@ -415,9 +444,10 @@ else
         public Guid Id { get; set; }
         public string VanModel { get; set; } = string.Empty;
         public string VanDiagramPath { get; set; } = string.Empty;
-        public string ToolbarPosition { get; set; } = "Left";
-        public string DrivingSide { get; set; } = "Left";
-        public string Theme { get; set; } = "Light";
+        public Core.Entities.ToolbarPosition ToolbarPosition { get; set; }
+        public Core.Entities.DrivingSide DrivingSide { get; set; }
+        public Core.Enums.ThemeMode ThemeMode { get; set; }
+        public Core.Enums.Theme ManualTheme { get; set; }
         public bool EnableFullscreenOnStartup { get; set; } = true;
         public bool ShowFullscreenToggle { get; set; } = true;
         public AlertSettingsDto AlertSettings { get; set; } = new();
