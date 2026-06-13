@@ -1,0 +1,45 @@
+@using VanDaemon.Plugins.Ui.Abstractions
+@using VanDaemon.Plugins.Ui.Api
+@inject IVanDaemonApiClient Api
+@inject INativeBridge Bridge
+
+@* Reference UI plugin (Tier-2). Depends ONLY on the API client and the native bridge contract —
+   no direct hardware/native/filesystem access. Its job is to exercise the seam, not to be feature-rich. *@
+
+<MudPaper Class="pa-3" data-testid="system-status-tile">
+    <MudText Typo="Typo.subtitle1">System Status</MudText>
+
+    @if (_loading)
+    {
+        <MudText Typo="Typo.body2" data-testid="status-loading">Loading…</MudText>
+    }
+    else if (_firstTank is null)
+    {
+        <MudText Typo="Typo.body2" data-testid="status-empty">No tanks available.</MudText>
+    }
+    else
+    {
+        <MudText Typo="Typo.body2" data-testid="status-tank">
+            @_firstTank.Name: @_firstTank.CurrentLevel.ToString("0")%
+        </MudText>
+    }
+
+    <MudText Typo="Typo.caption" data-testid="status-reversing">Reversing: @_reversing</MudText>
+</MudPaper>
+
+@code {
+    private bool _loading = true;
+    private bool _reversing;
+    private TankDto? _firstTank;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Native capability reached ONLY through the bridge contract (Constitution §VI.2).
+        _reversing = await Bridge.GetReversingStateAsync();
+
+        var tanks = await Api.GetTanksAsync();
+        _firstTank = tanks.Count > 0 ? tanks[0] : null;
+
+        _loading = false;
+    }
+}
