@@ -426,3 +426,8 @@ When working on tasks involving these technologies, invoke the corresponding ski
 | kicad | Designs PCB schematics and circuit layouts for hardware projects |
 | docker | Configures containerization with Docker and Docker Compose |
 | frontend-design | Applies UI design with Material Design components and SVG diagrams |
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
