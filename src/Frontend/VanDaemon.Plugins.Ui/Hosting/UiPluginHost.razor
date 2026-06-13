@@ -1,0 +1,16 @@
+@using VanDaemon.Plugins.Ui.Abstractions
+@inject IUiPluginRegistry Registry
+
+@if (Registry.Plugins.Count == 0)
+{
+    <MudText Typo="Typo.body2" Class="pa-2">No UI plugins registered.</MudText>
+}
+else
+{
+    @foreach (var plugin in Registry.Plugins)
+    {
+        <div class="vd-ui-plugin" data-plugin-id="@plugin.Id">
+            <DynamicComponent Type="plugin.ComponentType" />
+        </div>
+    }
+}

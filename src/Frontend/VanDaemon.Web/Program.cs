@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using VanDaemon.Plugins.Ui;
 using VanDaemon.Web;
 using VanDaemon.Web.Services;
 
@@ -48,6 +49,10 @@ builder.Services.AddSingleton(sp => new TelemetryService($"{apiBaseUrl}/hubs/tel
 
 // Add Settings State Service for dynamic settings updates
 builder.Services.AddSingleton<SettingsStateService>();
+
+// Register the Tier-2 UI plugin seam: registry, no-op native bridge stub, API client,
+// and the compiled-in reference plugin (feature 004-plugin-architecture).
+builder.Services.AddVanDaemonUiPlugins();
 
 await builder.Build().RunAsync();
 
