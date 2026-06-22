@@ -30,7 +30,19 @@
       "Bash(python:*)",
       "Bash(csc:*)",
       "Bash(git restore *)",
-      "Bash(git config *)"
+      "Bash(git config *)",
+      "Bash(ls MEMORY.md)",
+      "Bash(tail -3 MEMORY.md)",
+      "Bash(bash .specify/extensions/git/scripts/bash/initialize-repo.sh)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(grep -nE '\\\\[[A-Z_]{3,}\\\\]' .specify/memory/constitution.md)",
+      "Bash(mkdir -p .claude/commands)",
+      "Bash(cp .spec-drafts/run-feature.command.md .claude/commands/run-feature.md)",
+      "Bash(cd *)",
+      "Bash(bash .specify/scripts/bash/setup-plan.sh --json)",
+      "Bash(bash .specify/extensions/agent-context/scripts/bash/update-agent-context.sh claude)",
+      "Bash(bash .specify/scripts/bash/check-prerequisites.sh --json)",
+      "Bash(git check-ignore *)"
     ],
     "deny": [],
     "ask": []
