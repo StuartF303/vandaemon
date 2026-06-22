@@ -25,11 +25,11 @@ description: "Task list for 005-launcher-shell implementation"
 
 **Purpose**: Stand up the new `app/` Android module and the documented build pipeline. (FR-001, FR-013, FR-014)
 
-- [ ] T001 Create the `app/` Android Gradle module skeleton (FR-013): `app/settings.gradle.kts`, `app/build.gradle.kts` (Android application plugin, AGP current stable, Kotlin, JDK 17 toolchain, `minSdk 29` provisional, `compileSdk`/`targetSdk` current), `app/gradle/`, `app/gradlew`, `app/gradlew.bat`, `app/gradle/wrapper/*`.
-- [ ] T002 [P] Add the AndroidX `webkit` (`WebViewAssetLoader`) + core dependencies and the test deps (JUnit4, AndroidX Test, Espresso/UiAutomator) to `app/build.gradle.kts`.
-- [ ] T003 [P] Create `app/src/main/AndroidManifest.xml` declaring an **ordinary LAUNCHER** activity (`MAIN` + `LAUNCHER` only) — explicitly **NO** `android.intent.category.HOME` or `DEFAULT` (FR-009, §X). Add `usesCleartextTraffic=false`; no vehicle/hardware permissions.
-- [ ] T004 [P] Add `.gitignore` entry for generated assets `app/src/main/assets/www/` (generated output, not source — FR-014) and Android build outputs (`app/build/`, `.gradle/`).
-- [ ] T005 Create the documented two-step build script `build/publish-wasm-to-assets.ps1` (FR-014): (1) `dotnet publish src/Frontend/VanDaemon.Web -c Release`, (2) copy the published `wwwroot` into `app/src/main/assets/www/` (clean-copy). Script must fail loudly per stage; it must **NOT** call Gradle (Gradle stays decoupled).
+- [x] T001 Create the `app/` Android Gradle module skeleton (FR-013): `app/settings.gradle.kts`, `app/build.gradle.kts` (Android application plugin, AGP current stable, Kotlin, JDK 17 toolchain, `minSdk 29` provisional, `compileSdk`/`targetSdk` current), `app/gradle/`, `app/gradlew`, `app/gradlew.bat`, `app/gradle/wrapper/*`.
+- [x] T002 [P] Add the AndroidX `webkit` (`WebViewAssetLoader`) + core dependencies and the test deps (JUnit4, AndroidX Test, Espresso/UiAutomator) to `app/build.gradle.kts`.
+- [x] T003 [P] Create `app/src/main/AndroidManifest.xml` declaring an **ordinary LAUNCHER** activity (`MAIN` + `LAUNCHER` only) — explicitly **NO** `android.intent.category.HOME` or `DEFAULT` (FR-009, §X). Add `usesCleartextTraffic=false`; no vehicle/hardware permissions.
+- [x] T004 [P] Add `.gitignore` entry for generated assets `app/src/main/assets/www/` (generated output, not source — FR-014) and Android build outputs (`app/build/`, `.gradle/`).
+- [x] T005 Create the documented two-step build script `build/publish-wasm-to-assets.ps1` (FR-014): (1) `dotnet publish src/Frontend/VanDaemon.Web -c Release`, (2) copy the published `wwwroot` into `app/src/main/assets/www/` (clean-copy). Script must fail loudly per stage; it must **NOT** call Gradle (Gradle stays decoupled).
 
 **Checkpoint**: `app/` module configures and `./gradlew tasks` runs; build script exists.
 
@@ -41,9 +41,9 @@ description: "Task list for 005-launcher-shell implementation"
 
 **⚠️ CRITICAL**: No user-story work begins until this phase is complete.
 
-- [ ] T006 [P] Create `app/src/main/kotlin/com/vandaemon/shell/bridge/BridgeContract.kt` — canonical Kotlin mirror of the 004 surface (data-model.md): enums `AccState{Unknown,Off,On}`, `WheelKey{Unknown,VolumeUp,VolumeDown,Next,Previous,Voice,ModeSwitch}`, data class `WheelKeyEvent(key: WheelKey, timestampUtc: String /*ISO-8601 UTC*/)`. Names/order must match 004 exactly (FR-006). No behaviour — declarations only.
-- [ ] T007 Create `app/src/main/kotlin/com/vandaemon/shell/WebAppHost.kt` — configures `WebViewAssetLoader` mapping `/assets/` to `app/src/main/assets/www/` on the virtual same-origin origin (`https://appassets.androidplatform.net/...`), wires `shouldInterceptRequest`, enables JS + WASM, computes the start URL (`index.html`). Correct MIME for `.wasm`/framework files (FR-002, FR-003). No app logic.
-- [ ] T008 Create `app/src/main/kotlin/com/vandaemon/shell/MainActivity.kt` — hosts the WebView via `WebAppHost`, loads the start URL on create, manages lifecycle (FR-002). Thin: create → load → destroy only.
+- [x] T006 [P] Create `app/src/main/kotlin/com/vandaemon/shell/bridge/BridgeContract.kt` — canonical Kotlin mirror of the 004 surface (data-model.md): enums `AccState{Unknown,Off,On}`, `WheelKey{Unknown,VolumeUp,VolumeDown,Next,Previous,Voice,ModeSwitch}`, data class `WheelKeyEvent(key: WheelKey, timestampUtc: String /*ISO-8601 UTC*/)`. Names/order must match 004 exactly (FR-006). No behaviour — declarations only.
+- [x] T007 Create `app/src/main/kotlin/com/vandaemon/shell/WebAppHost.kt` — configures `WebViewAssetLoader` mapping `/assets/` to `app/src/main/assets/www/` on the virtual same-origin origin (`https://appassets.androidplatform.net/...`), wires `shouldInterceptRequest`, enables JS + WASM, computes the start URL (`index.html`). Correct MIME for `.wasm`/framework files (FR-002, FR-003). No app logic.
+- [x] T008 Create `app/src/main/kotlin/com/vandaemon/shell/MainActivity.kt` — hosts the WebView via `WebAppHost`, loads the start URL on create, manages lifecycle (FR-002). Thin: create → load → destroy only.
 
 **Checkpoint**: App builds and launches to a WebView pointed at the virtual origin (UI assets staged by the build script).
 
@@ -57,12 +57,12 @@ description: "Task list for 005-launcher-shell implementation"
 
 ### Tests for User Story 1 ⚠️ (write first, must fail before impl)
 
-- [ ] T009 [US1] Instrumented test `app/src/androidTest/kotlin/com/vandaemon/shell/AssetLoadTest.kt` (SC-002, FR-002/003): launch `MainActivity`, wait for page load, assert the document title / a known VanDaemon root DOM element is present, and that assets are served from the virtual app-assets origin. Runs with no network.
+- [x] T009 [US1] Instrumented test `app/src/androidTest/kotlin/com/vandaemon/shell/AssetLoadTest.kt` (SC-002, FR-002/003): launch `MainActivity`, wait for page load, assert the document title / a known VanDaemon root DOM element is present, and that assets are served from the virtual app-assets origin. Runs with no network.
 
 ### Implementation for User Story 1
 
-- [ ] T010 [US1] Run `build/publish-wasm-to-assets.ps1` to stage the real published `wwwroot` into `app/src/main/assets/www/`; confirm `index.html` + `_framework/*.wasm` present (FR-002). (Generated content; not committed.)
-- [ ] T011 [US1] Finalize `WebAppHost`/`MainActivity` asset-loader + WebView settings so `AssetLoadTest` passes (correct MIME, same-origin, JS/WASM enabled) (FR-003). Iterate until T009 is green.
+- [x] T010 [US1] Run `build/publish-wasm-to-assets.ps1` to stage the real published `wwwroot` into `app/src/main/assets/www/`; confirm `index.html` + `_framework/*.wasm` present (FR-002). (Generated content; not committed.)
+- [x] T011 [US1] Finalize `WebAppHost`/`MainActivity` asset-loader + WebView settings so `AssetLoadTest` passes (correct MIME, same-origin, JS/WASM enabled) (FR-003). Iterate until T009 is green.
 
 **Checkpoint**: SC-001 (APK builds) + SC-002 (renders on emulator) hold. MVP demonstrable off-vehicle.
 
@@ -76,15 +76,15 @@ description: "Task list for 005-launcher-shell implementation"
 
 ### Tests for User Story 2 ⚠️ (write first, must fail before impl)
 
-- [ ] T012 [P] [US2] Unit test `app/src/test/kotlin/com/vandaemon/shell/bridge/NativeBridgeStubTest.kt` (FR-005, SC-003 logic): `getReversingState`→`false`, `getAccState`→`"Unknown"`, `openDsp`→no-op/completes, and the wheel-key push serializes the expected JSON payload.
-- [ ] T013 [P] [US2] Unit test `app/src/test/kotlin/com/vandaemon/shell/bridge/BridgeContractDriftTest.kt` (FR-006, SC-004): assert the Kotlin surface (members + `AccState`/`WheelKey` names + `WheelKeyEvent` shape) matches the authoritative 004 list (from `specs/004-plugin-architecture/contracts/INativeBridge.md`). Fails on any add/remove/rename. Must also assert **no extra** member exists (FR-007/§XI.4, contract G4).
-- [ ] T014 [US2] Instrumented test `app/src/androidTest/kotlin/com/vandaemon/shell/BridgeRoundTripTest.kt` (FR-004/012, SC-003): from the loaded page, call `window.VanDaemonNativeBridge.getReversingState()` etc. and assert stub values cross the JS-interop boundary; push `onWheelKey` from the shell and assert `window.VanDaemonBridgeEvents.onWheelKey` receives the payload (per contracts/js-interop-bridge.md).
+- [x] T012 [P] [US2] Unit test `app/src/test/kotlin/com/vandaemon/shell/bridge/NativeBridgeStubTest.kt` (FR-005, SC-003 logic): `getReversingState`→`false`, `getAccState`→`"Unknown"`, `openDsp`→no-op/completes, and the wheel-key push serializes the expected JSON payload.
+- [x] T013 [P] [US2] Unit test `app/src/test/kotlin/com/vandaemon/shell/bridge/BridgeContractDriftTest.kt` (FR-006, SC-004): assert the Kotlin surface (members + `AccState`/`WheelKey` names + `WheelKeyEvent` shape) matches the authoritative 004 list (from `specs/004-plugin-architecture/contracts/INativeBridge.md`). Fails on any add/remove/rename. Must also assert **no extra** member exists (FR-007/§XI.4, contract G4).
+- [x] T014 [US2] Instrumented test `app/src/androidTest/kotlin/com/vandaemon/shell/BridgeRoundTripTest.kt` (FR-004/012, SC-003): from the loaded page, call `window.VanDaemonNativeBridge.getReversingState()` etc. and assert stub values cross the JS-interop boundary; push `onWheelKey` from the shell and assert `window.VanDaemonBridgeEvents.onWheelKey` receives the payload (per contracts/js-interop-bridge.md).
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Create `app/src/main/kotlin/com/vandaemon/shell/bridge/NativeBridge.kt` — `@JavascriptInterface` object exposing exactly `getReversingState(): Boolean`, `getAccState(): String`, `openDsp()` returning the `StubNativeBridge`-equivalent defaults (FR-004/005). Uses `BridgeContract` types. No hardware/native access beyond a no-op `openDsp` (§XI.2). Make T012/T013 pass.
-- [ ] T016 [US2] Create `app/src/main/kotlin/com/vandaemon/shell/bridge/WheelKeyPush.kt` — shell→UI event push via `WebView.evaluateJavascript("window.VanDaemonBridgeEvents.onWheelKey(<json>)")` with `WheelKeyEvent` serialized per contract; raised only when explicitly invoked (FR-005). 
-- [ ] T017 [US2] Inject the bridge in `MainActivity`/`WebAppHost` (`addJavascriptInterface(NativeBridge, "VanDaemonNativeBridge")`) after page-ready; ensure calls before readiness fail safe (contract G5). Iterate until T014 is green.
+- [x] T015 [US2] Create `app/src/main/kotlin/com/vandaemon/shell/bridge/NativeBridge.kt` — `@JavascriptInterface` object exposing exactly `getReversingState(): Boolean`, `getAccState(): String`, `openDsp()` returning the `StubNativeBridge`-equivalent defaults (FR-004/005). Uses `BridgeContract` types. No hardware/native access beyond a no-op `openDsp` (§XI.2). Make T012/T013 pass.
+- [x] T016 [US2] Create `app/src/main/kotlin/com/vandaemon/shell/bridge/WheelKeyPush.kt` — shell→UI event push via `WebView.evaluateJavascript("window.VanDaemonBridgeEvents.onWheelKey(<json>)")` with `WheelKeyEvent` serialized per contract; raised only when explicitly invoked (FR-005). 
+- [x] T017 [US2] Inject the bridge in `MainActivity`/`WebAppHost` (`addJavascriptInterface(NativeBridge, "VanDaemonNativeBridge")`) after page-ready; ensure calls before readiness fail safe (contract G5). Iterate until T014 is green.
 
 **Checkpoint**: SC-003 (round-trip + event push) + SC-004 (contract parity) hold. The full seam is proven on a current WebView.
 
@@ -96,8 +96,8 @@ description: "Task list for 005-launcher-shell implementation"
 
 **Independent Test**: A LOC measurement + manifest inspection confirm the thin-shell budget and the absence of any HOME/DEFAULT category.
 
-- [ ] T018 [P] [US3] Add a thin-shell guard: a script/test `app/scripts/check-thin-shell.ps1` (or a Gradle verification task) that counts Kotlin LOC under `app/src/main/kotlin` and fails if > ~500, and greps `app/src/main/AndroidManifest.xml` to assert **no** `android.intent.category.(HOME|DEFAULT)` (FR-008/009, SC-005). Document the budget rationale (§XII.4).
-- [ ] T019 [US3] Review/refactor the Kotlin sources to confirm **no application/business logic** and **no direct hardware/filesystem access for the UI** (§XI.2, §XII.4); move any stray logic out (there should be none). Confirm T018 passes.
+- [x] T018 [P] [US3] Add a thin-shell guard: a script/test `app/scripts/check-thin-shell.ps1` (or a Gradle verification task) that counts Kotlin LOC under `app/src/main/kotlin` and fails if > ~500, and greps `app/src/main/AndroidManifest.xml` to assert **no** `android.intent.category.(HOME|DEFAULT)` (FR-008/009, SC-005). Document the budget rationale (§XII.4).
+- [x] T019 [US3] Review/refactor the Kotlin sources to confirm **no application/business logic** and **no direct hardware/filesystem access for the UI** (§XI.2, §XII.4); move any stray logic out (there should be none). Confirm T018 passes.
 
 **Checkpoint**: SC-005 holds. All Class-B criteria (SC-001–SC-005) met.
 
@@ -107,9 +107,9 @@ description: "Task list for 005-launcher-shell implementation"
 
 **Purpose**: Documentation + the off-vehicle exit gate. (Constitution §XIII.2)
 
-- [ ] T020 [P] Write `app/README.md`: documents the two-step build, the thin-shell intent, the no-HOME/coexistence stance, and that on-device verification is human-run (links spec §On-Hardware Checklist).
-- [ ] T021 Run the full off-vehicle gate per quickstart.md: `build/publish-wasm-to-assets.ps1` → `./gradlew assembleDebug` → `./gradlew testDebugUnitTest` → `./gradlew connectedDebugAndroidTest` → thin-shell check (T018). All green = **Class-B exit**: a tested, installable `app-debug.apk`.
-- [ ] T022 Assemble the **deliverable bundle**: the `app-debug.apk` path + the spec's On-Hardware Verification Checklist, ready to hand to Stuart. **Do NOT self-merge; do NOT claim on-device success** (§XIII.3–5).
+- [x] T020 [P] Write `app/README.md`: documents the two-step build, the thin-shell intent, the no-HOME/coexistence stance, and that on-device verification is human-run (links spec §On-Hardware Checklist).
+- [x] T021 Run the full off-vehicle gate per quickstart.md: `build/publish-wasm-to-assets.ps1` → `./gradlew assembleDebug` → `./gradlew testDebugUnitTest` → `./gradlew connectedDebugAndroidTest` → thin-shell check (T018). All green = **Class-B exit**: a tested, installable `app-debug.apk`.
+- [x] T022 Assemble the **deliverable bundle**: the `app-debug.apk` path + the spec's On-Hardware Verification Checklist, ready to hand to Stuart. **Do NOT self-merge; do NOT claim on-device success** (§XIII.3–5).
 
 **Checkpoint**: Loop exit reached. STOP here for off-vehicle work.
 

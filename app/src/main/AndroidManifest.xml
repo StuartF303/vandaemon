@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  First-pass VanDaemon launcher shell: an ORDINARY sideloaded app.
+  Deliberately NO android.intent.category.HOME / DEFAULT (FR-009, Constitution §X) —
+  this is not the launcher yet and must not replace the stock Teyes launcher (§VII.3).
+  No vehicle/hardware permissions: the UI reaches native only via the bridge (§XI.2).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="true"
+        android:label="VanDaemon"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

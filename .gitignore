@@ -399,3 +399,13 @@ FodyWeavers.xsd
 
 # Spec Kit working drafts (local-only, not checked in)
 .spec-drafts/
+
+# Launcher shell (app/) — Android build + generated artifacts
+app/build/
+app/.gradle/
+app/local.properties
+app/.cxx/
+# Generated: published Blazor WASM staged into APK assets by build/publish-wasm-to-assets.ps1
+app/src/main/assets/www/
+# Intermediate WASM publish output
+artifacts/wasm-publish/
