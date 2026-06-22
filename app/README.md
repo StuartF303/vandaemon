@@ -47,6 +47,12 @@ pwsh scripts/check-thin-shell.ps1    # LOC budget + no-HOME-category guard
 Green here proves the seam on a **current** WebView. It does **not** prove the FYT unit's
 (older) WebView — that is human-run.
 
+## Installing on the head unit
+
+See the **[Head-Unit Installation Guide](../docs/head-unit/installation.md)** — the basic user
+guide for building, sideloading (`adb install` or file manager), launching, and verifying the app
+on a Teyes FYT unit. No root required.
+
 ## On-hardware verification (Class C — human-run, blocked-on-hardware)
 
 The unit's WebView rendering (SC-006) and the on-unit bridge round-trip (SC-007) can only be
