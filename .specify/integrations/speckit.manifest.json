@@ -12,9 +12,18 @@
     ".specify/scripts/bash/create-new-feature.sh": "bcf4964ca0c6c78717bb42d9e66b8c7e5ee82779cd96afc5aa7b08b75abe5790",
     ".specify/scripts/bash/setup-plan.sh": "b23cca3d769a217ab812a6059adb549622471f6893af234cf98ca2019ac4e1a1",
     ".specify/scripts/bash/setup-tasks.sh": "7aeee15192a5ab3ba9ff3c3ae450d9994043bf0493c1eabc840da72a9742fc87",
-    ".specify/templates/constitution-template.md": "ce7549540fa45543cca797a150201d868e64495fdff39dc38246fb17bd4024b3"
+    ".specify/templates/constitution-template.md": "ce7549540fa45543cca797a150201d868e64495fdff39dc38246fb17bd4024b3",
+    ".specify/scripts/powershell/check-prerequisites.ps1": "bcb37804b0757c37799b65a9321c1d3fb7b7ddcab6703c55c5b9a142c9166bf1",
+    ".specify/scripts/powershell/common.ps1": "f17e2c63b17bf4f96ec0613910601dd42a123e91cf2c58c38111eb0a65f4f410",
+    ".specify/scripts/powershell/create-new-feature.ps1": "191d6efd4611fc09bb06b8d49ecf51a52e8913da22321287ed52a269101cc471",
+    ".specify/scripts/powershell/setup-plan.ps1": "6ff38121d4ce3fca7de41dda9be27543bfc7bf8f63e11e6d2855fce1d91be30a",
+    ".specify/scripts/powershell/setup-tasks.ps1": "76f14accb3782530bc0b813374e2363334c3ad2969c208b57613521591879fff"
   },
   "recovered_files": [
+    ".specify/scripts/powershell/check-prerequisites.ps1",
+    ".specify/scripts/powershell/common.ps1",
+    ".specify/scripts/powershell/create-new-feature.ps1",
+    ".specify/scripts/powershell/setup-plan.ps1",
     ".specify/templates/checklist-template.md",
     ".specify/templates/plan-template.md",
     ".specify/templates/spec-template.md",

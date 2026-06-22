@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Spec Kit working drafts (local-only, not checked in)
+.spec-drafts/
