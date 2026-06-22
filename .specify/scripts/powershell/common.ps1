@@ -92,6 +92,39 @@ function Get-FeatureDir {
     Join-Path $RepoRoot "specs/$Branch"
 }
 
+function Test-FeatureJsonMatchesFeatureDir {
+    # Returns $true when .specify/feature.json pins a feature_directory that
+    # resolves to the same path as the active feature directory. When it matches,
+    # callers may skip branch-name validation (the feature is pinned explicitly).
+    param([string]$RepoRoot, [string]$ActiveFeatureDir)
+
+    $featureJson = Join-Path $RepoRoot '.specify/feature.json'
+    if (-not (Test-Path -LiteralPath $featureJson -PathType Leaf)) {
+        return $false
+    }
+
+    try {
+        $pinned = (Get-Content -LiteralPath $featureJson -Raw | ConvertFrom-Json).feature_directory
+    } catch {
+        return $false
+    }
+    if ([string]::IsNullOrWhiteSpace($pinned)) {
+        return $false
+    }
+
+    if (-not [System.IO.Path]::IsPathRooted($pinned)) {
+        $pinned = Join-Path $RepoRoot $pinned
+    }
+
+    $normalize = {
+        param($p)
+        try { return (Resolve-Path -LiteralPath $p -ErrorAction Stop).Path.TrimEnd('\', '/') }
+        catch { return $p.TrimEnd('\', '/') }
+    }
+
+    return ((& $normalize $pinned) -ieq (& $normalize $ActiveFeatureDir))
+}
+
 function Get-FeaturePathsEnv {
     $repoRoot = Get-RepoRoot
     $currentBranch = Get-CurrentBranch
@@ -111,6 +144,24 @@ function Get-FeaturePathsEnv {
         QUICKSTART    = Join-Path $featureDir 'quickstart.md'
         CONTRACTS_DIR = Join-Path $featureDir 'contracts'
     }
+}
+
+function Resolve-Template {
+    # Resolve a template by name through the override stack, falling back to the
+    # shared/core template at .specify/templates/<name>.md. Returns the first
+    # existing path, or $null if none found.
+    param([string]$TemplateName, [string]$RepoRoot)
+
+    $candidates = @(
+        Join-Path $RepoRoot ".specify/templates/overrides/$TemplateName.md"
+        Join-Path $RepoRoot ".specify/templates/$TemplateName.md"
+    )
+    foreach ($candidate in $candidates) {
+        if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+            return $candidate
+        }
+    }
+    return $null
 }
 
 function Test-FileExists {
