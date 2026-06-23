@@ -182,7 +182,23 @@ flyctl deploy
 flyctl logs --app vandaemon
 ```
 
-See the **docker** skill for container configuration details.
+### arm64 / Raspberry Pi appliance builds
+
+The Pi-5 appliance targets `linux/arm64`. The .NET base images
+(`mcr.microsoft.com/dotnet/{sdk,aspnet}:10.0`) are multi-arch, so **no Dockerfile change** is needed —
+buildx picks the arch:
+
+```bash
+docker buildx build --platform linux/arm64 -f docker/Dockerfile.api .
+```
+
+- Cross-building arm64 on an amd64 host needs QEMU binfmt registered (lost on reboot):
+  `docker run --privileged --rm tonistiigi/binfmt --install arm64`.
+- A full .NET restore+build+publish under QEMU emulation is **slow (~15–20 min/image)** — fine for a
+  one-off sanity check; CI publishes the real multi-arch images to GHCR.
+
+See the **docker** skill ([ci-cd reference](../../docker/references/ci-cd.md)) for the GHCR multi-arch
+publish workflow and the full set of arm64/appliance build-pipeline lessons.
 
 ## Troubleshooting
 

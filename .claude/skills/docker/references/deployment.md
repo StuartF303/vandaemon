@@ -11,9 +11,13 @@
 
 | Target | Container Setup | Use Case |
 |--------|-----------------|----------|
-| Local dev | docker-compose (2 containers) | Development and testing |
-| Raspberry Pi | docker-compose (2 containers) | Offline van deployment |
+| Local dev | root `docker-compose.yml` (3 containers: api + web + mqtt) | Development and testing |
+| Raspberry Pi (generic) | same root `docker-compose.yml` (3 containers) | Offline van deployment |
+| Pi-5 appliance (ADR-001) | flashable arm64 pi-gen image baking the same stack + prebuilt GHCR images | Near-zero-touch headless controller — see `docs/deployment/pi-appliance-setup.md` |
 | Fly.io | Single combined container | Cloud/remote access |
+
+> One authoritative compose at the repo root (feature 006); the old `docker/docker-compose.yml` was
+> removed. The `mqtt` (Mosquitto) service is now part of the standard stack (owned broker, ADR-001).
 
 ## Docker Compose (Local/Raspberry Pi)
 

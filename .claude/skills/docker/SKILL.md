@@ -8,7 +8,20 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash
 
 # Docker Skill
 
-VanDaemon uses a multi-container architecture with separate API and Web containers for local development, plus a combined single-container deployment for Fly.io. The API runs on .NET 10, the Web frontend uses nginx to serve Blazor WASM static files and proxy API/WebSocket requests. Data persists via Docker volumes for JSON file storage.
+VanDaemon uses a multi-container architecture. There is **one authoritative stack** in the repo-root
+`docker-compose.yml` — `api` + `web` + `mqtt` (Mosquitto) — used for **both** local dev and the
+Raspberry Pi appliance (feature 006). A separate combined single-container image exists for Fly.io. The
+API runs on .NET 10; the Web frontend uses nginx to serve Blazor WASM static files and proxy
+API/WebSocket requests. Data persists via Docker volumes for JSON file storage and MQTT retained state.
+
+> **There is only ONE compose file (repo root).** The old `docker/docker-compose.yml` was removed in
+> feature 006 — do not reintroduce a second stack. The API reaches the broker by the `mqtt` service
+> name via the `MqttLedDimmer__MqttBroker` env var; the committed `appsettings.json` default stays
+> `localhost` so bare-metal `dotnet run` is unaffected.
+
+> **Pi-5 appliance**: a flashable arm64 image (pi-gen) bakes this same stack + prebuilt GHCR images for
+> a near-zero-touch headless controller. See `deploy/pi/` and `docs/deployment/pi-appliance-setup.md`.
+> Multi-arch / appliance build pipeline lessons are in [ci-cd](references/ci-cd.md).
 
 ## Quick Start
 
