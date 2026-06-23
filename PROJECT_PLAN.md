@@ -127,11 +127,12 @@ VanDaemon/
 │       ├── plugin-development.md             # Plugin development guide
 │       ├── raspberry-pi-setup.md             # Raspberry Pi deployment
 │       └── fly-io-deployment.md              # Cloud deployment guide
+├── docker-compose.yml                        # Single authoritative stack (api + web + mqtt) — dev & Pi appliance
 ├── docker/
 │   ├── Dockerfile.api                        # Backend API container
 │   ├── Dockerfile.web                        # Frontend nginx container
 │   ├── Dockerfile.combined                   # Fly.io single-container deployment
-│   ├── docker-compose.yml                    # Local development orchestration
+│   ├── mosquitto/                            # Mosquitto broker config (owned broker, ADR-001)
 │   ├── nginx.conf                            # Nginx configuration
 │   └── supervisord.conf                      # Process manager for combined container
 ├── .github/
@@ -436,6 +437,15 @@ public interface IControlPlugin : IHardwarePlugin
 
 ## Deployment
 
+### Controller hardware (decided — ADR-001)
+
+The always-on headless **controller** is a **Raspberry Pi 5 (4 GB) booting from NVMe — never microSD** —
+and it **hosts the Mosquitto MQTT broker locally**. This is a recorded decision
+([ADR-001](docs/deployment/adr/ADR-001-controller-soc.md)), not a bare default. The near-zero-touch
+flashable-image deployment of this controller is feature **006-pi-appliance-deploy** — see the operator
+guide [docs/deployment/pi-appliance-setup.md](docs/deployment/pi-appliance-setup.md). The Pi 4 notes
+below remain valid for a generic Docker-on-Pi install.
+
 ### Raspberry Pi Setup (Local Deployment)
 1. **Prerequisites**
    - Raspberry Pi 4 (minimum 2GB RAM recommended)
@@ -645,6 +655,8 @@ See `DEPLOYMENT.md` and `docs/deployment/fly-io-deployment.md` for detailed inst
 - **API Reference**: `docs/api/api-reference.md` - REST API documentation
 - **Architecture Deep-Dive**: `docs/deployment/ARCHITECTURE.md` - Detailed architecture
 - **Plugin Development**: `docs/deployment/plugin-development.md` - Creating custom plugins
+- **Controller decision**: `docs/deployment/adr/ADR-001-controller-soc.md` - Pi 5 / NVMe / hosted broker (ADR-001)
+- **Pi-5 appliance**: `docs/deployment/pi-appliance-setup.md` - Headless flashable-image controller deployment (feature 006)
 
 ## Conclusion
 

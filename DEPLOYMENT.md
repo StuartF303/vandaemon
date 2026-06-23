@@ -7,8 +7,9 @@ Quick deployment guide for VanDaemon Camper Van Control System.
 VanDaemon supports multiple deployment methods:
 
 1. **Fly.io** (Recommended for cloud hosting) - See below
-2. **Docker Compose** (For local/Raspberry Pi) - See [docker/docker-compose.yml](docker/docker-compose.yml)
-3. **Kubernetes** - Coming soon
+2. **Docker Compose** (For local/Raspberry Pi) - See [docker-compose.yml](docker-compose.yml)
+3. **Headless Pi-5 appliance** (flashable NVMe image) - See [docs/deployment/pi-appliance-setup.md](docs/deployment/pi-appliance-setup.md)
+4. **Kubernetes** - Coming soon
 
 ## Fly.io Deployment (Cloud)
 
@@ -84,7 +85,7 @@ For running on a Raspberry Pi:
 
 3. **Start Services**
    ```bash
-   docker compose -f docker/docker-compose.yml up -d
+   docker compose up -d
    ```
 
 4. **Access Locally**
@@ -93,13 +94,23 @@ For running on a Raspberry Pi:
 
 See [docs/deployment/raspberry-pi-setup.md](docs/deployment/raspberry-pi-setup.md) for detailed setup.
 
+## Headless Pi-5 Appliance (flashable NVMe image)
+
+The recommended **controller** deployment (ADR-001): a Raspberry Pi 5 booting from **NVMe** with a
+prebuilt, flashable image that comes up running the full stack (API + web + local Mosquitto broker) on
+the van LAN — no keyboard, monitor, or interactive setup. Build the image with `deploy/pi/build.sh`
+(Linux/WSL2/Docker), flash the NVMe on a bench machine, edit one config file, boot.
+
+See **[docs/deployment/pi-appliance-setup.md](docs/deployment/pi-appliance-setup.md)** for the full
+guide and the on-hardware verification checklist.
+
 ## Configuration Files
 
 - `fly.toml` - Fly.io configuration for combined deployment
 - `docker/Dockerfile.combined` - Production Docker image
 - `docker/nginx.combined.conf` - Nginx configuration
 - `docker/supervisord.conf` - Process management
-- `docker/docker-compose.yml` - Local Docker Compose deployment
+- `docker-compose.yml` - Single authoritative stack (api + web + mqtt), used for local dev and the Pi appliance
 
 ## Environment Variables
 
@@ -130,10 +141,10 @@ flyctl dashboard --app vandaemon
 ### Docker Compose
 ```bash
 # View logs
-docker compose -f docker/docker-compose.yml logs -f
+docker compose logs -f
 
 # Check status
-docker compose -f docker/docker-compose.yml ps
+docker compose ps
 ```
 
 ## Troubleshooting

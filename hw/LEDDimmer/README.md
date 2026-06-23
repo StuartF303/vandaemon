@@ -194,7 +194,7 @@ When a device is discovered, the service automatically creates Control entities:
 The MQTT broker is included in the Docker Compose setup:
 
 ```yaml
-# docker/docker-compose.yml
+# docker-compose.yml (repo root — single authoritative stack)
 mqtt:
   image: eclipse-mosquitto:2.0
   ports:
@@ -205,9 +205,8 @@ mqtt:
     - mqtt-data:/mosquitto/data
 ```
 
-Start services:
+Start services (from the repo root):
 ```bash
-cd docker
 docker compose up -d
 ```
 
