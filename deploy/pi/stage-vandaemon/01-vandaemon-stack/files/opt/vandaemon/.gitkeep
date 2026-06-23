@@ -1,0 +1,3 @@
+# Placeholder. deploy/pi/build.sh populates this directory at build time with:
+#   docker-compose.yml, docker/mosquitto/config/*, images/*.tar, .env
+# Nothing here is committed (the staged stack + saved images are build artifacts).

@@ -1,0 +1,29 @@
+# pi-gen top-level config for the VanDaemon appliance image.
+# Copy to `pi-gen-config` and edit. Consumed by build.sh (passed to pi-gen as its `config`).
+# NO SECRETS HERE — first-boot secrets live in the boot-partition vandaemon-config.txt.
+#
+# Reference: https://github.com/RPi-Distro/pi-gen#config
+
+# Image / hostname identity (hostname can be overridden at first boot via the boot config file).
+IMG_NAME='vandaemon-appliance'
+# arm64 (64-bit) is REQUIRED — the appliance and the baked images are arm64.
+ARCH='arm64'
+
+# Locale / keyboard / timezone (adjust to taste; these are not secrets).
+TIMEZONE_DEFAULT='Europe/London'
+FIRST_USER_NAME='vandaemon'
+# Leave the first-user password UNSET here: build.sh enables key-based SSH via the
+# boot-config SSH_PUBKEY and disables password login by default. Set only if you must.
+# FIRST_USER_PASS=''
+DISABLE_FIRST_BOOT_USER_RENAME='0'
+
+# Headless: do NOT install the desktop. We only build through stage2 (Lite) + our stage
+# (STAGE_LIST is set by build.sh). Enable SSH; first boot installs the authorized key.
+ENABLE_SSH='1'
+
+# WiFi (OPTIONAL — usually left blank; the boot-config file configures WiFi at first boot).
+# WPA_COUNTRY='GB'
+
+# Compression of the final image (zip keeps the artifact small for flashing tools).
+DEPLOY_COMPRESSION='zip'
+DEPLOY_ZIP='1'

@@ -49,7 +49,5 @@ jobs:
     - name: Build Web Docker image
       run: docker build -f docker/Dockerfile.web -t vandaemon-web:latest .
 
-    - name: Test Docker Compose
-      run: |
-        cd docker
-        docker compose config
+    - name: Validate Docker Compose (single authoritative root stack)
+      run: docker compose config -q

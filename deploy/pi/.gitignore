@@ -1,0 +1,13 @@
+# pi-gen clone and build outputs — never committed.
+/pi-gen/
+
+# Build-time staged artifacts (populated by build.sh from the repo + GHCR).
+/config/pi-gen-config
+stage-vandaemon/01-vandaemon-stack/files/opt/vandaemon/docker-compose.yml
+stage-vandaemon/01-vandaemon-stack/files/opt/vandaemon/.env
+stage-vandaemon/01-vandaemon-stack/files/opt/vandaemon/docker/
+stage-vandaemon/01-vandaemon-stack/files/opt/vandaemon/images/
+stage-vandaemon/02-firstboot/files/boot/firmware/vandaemon-config.txt.example
+
+# Operator's real config (if ever placed here) must never be committed.
+boot/vandaemon-config.txt

@@ -1,5 +1,17 @@
+# VanDaemon — single authoritative stack (dev + appliance).
+# Feature 006 (specs/006-pi-appliance-deploy): consolidated from the former root
+# (api+web) and docker/docker-compose.yml (api+web+mqtt) into ONE file.
+#
+# Dev:        docker compose up --build      (builds api/web locally from docker/Dockerfile.*)
+# Appliance:  docker compose pull && up -d   (pulls prebuilt arm64 images from GHCR)
+#
+# Image vs build: each app service declares BOTH `image:` (the pull/run name) and
+# `build:` (used by `docker compose build` / `up --build`). Pin a tag with VANDAEMON_TAG.
+# Override the GHCR owner with VANDAEMON_REGISTRY (default: ghcr.io/stuartf303).
+
 services:
   api:
+    image: ${VANDAEMON_REGISTRY:-ghcr.io/stuartf303}/vandaemon-api:${VANDAEMON_TAG:-latest}
     build:
       context: .
       dockerfile: docker/Dockerfile.api
@@ -7,11 +19,18 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
+      # api -> local broker over the compose network (overrides appsettings.json
+      # default of "localhost"; bare-metal `dotnet run` is unaffected).
+      - MqttLedDimmer__MqttBroker=mqtt
+      - MqttLedDimmer__MqttPort=1883
     ports:
       - "5000:80"
     volumes:
       - api-data:/app/data
       - api-logs:/app/logs
+    depends_on:
+      mqtt:
+        condition: service_started
     restart: unless-stopped
     networks:
       - vandaemon
@@ -23,6 +42,7 @@ services:
       start_period: 40s
 
   web:
+    image: ${VANDAEMON_REGISTRY:-ghcr.io/stuartf303}/vandaemon-web:${VANDAEMON_TAG:-latest}
     build:
       context: .
       dockerfile: docker/Dockerfile.web
@@ -38,10 +58,36 @@ services:
     networks:
       - vandaemon
 
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: vandaemon-mqtt
+    ports:
+      - "1883:1883"      # MQTT
+      - "9001:9001"      # WebSocket
+    volumes:
+      - ./docker/mosquitto/config:/mosquitto/config
+      - mqtt-data:/mosquitto/data
+      - mqtt-logs:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - vandaemon
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
+    healthcheck:
+      # Self-probe: a successful subscribe to $SYS proves the broker is accepting connections.
+      test: ["CMD-SHELL", "mosquitto_sub -p 1883 -t '$$SYS/#' -C 1 -W 3 >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
 volumes:
   api-data:
     driver: local
   api-logs:
+    driver: local
+  mqtt-data:
+    driver: local
+  mqtt-logs:
     driver: local
 
 networks:
