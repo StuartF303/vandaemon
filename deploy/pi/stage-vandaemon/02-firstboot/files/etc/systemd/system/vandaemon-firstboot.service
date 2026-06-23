@@ -1,0 +1,16 @@
+[Unit]
+Description=VanDaemon first-boot configurator (one-shot)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+Before=vandaemon.service
+# Skip once first boot has completed (firstboot.sh writes this marker).
+ConditionPathExists=!/var/lib/vandaemon/firstboot-done
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/vandaemon-firstboot.sh
+
+[Install]
+WantedBy=multi-user.target

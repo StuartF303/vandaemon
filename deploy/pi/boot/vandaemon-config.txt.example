@@ -1,0 +1,33 @@
+# VanDaemon appliance — first-boot config.
+# Copy/rename to `vandaemon-config.txt` on the FAT boot partition (editable on the
+# bench after flashing) and fill in the values you need. Lines are KEY=VALUE; '#' = comment.
+# ALL fields are optional — a missing file or blank field uses the documented default.
+# This file may contain secrets (WiFi/MQTT passwords): it lives ONLY on your flashed
+# media, never in the repo. The repo ships only this .example.
+#
+# Field reference: specs/006-pi-appliance-deploy/contracts/boot-config.md
+
+# --- Identity ---
+# DNS-safe hostname; also the mDNS name (<HOSTNAME>.local). Default: vandaemon
+HOSTNAME=vandaemon
+
+# --- Network (optional; omit entirely for wired Ethernet + DHCP) ---
+# If WIFI_SSID is set, WiFi is configured at first boot.
+WIFI_SSID=
+WIFI_PASSWORD=
+# Regulatory country code (required by the WiFi stack when WiFi is used). Default: GB
+WIFI_COUNTRY=GB
+
+# --- Access ---
+# SSH public key installed for the 'vandaemon' user (key-based login).
+# If blank, no key is added and SSH password login stays disabled.
+SSH_PUBKEY=
+
+# --- MQTT broker auth ---
+# Default false = anonymous, acceptable ONLY on a trusted private van LAN.
+# Set true to enable password + ACL auth at first boot (uses the broker's example files).
+MQTT_AUTH=false
+MQTT_USERNAME=vandaemon
+# If MQTT_AUTH=true and this is blank, a strong password is generated and stored
+# 0600 at /var/lib/vandaemon/mqtt-credentials on the appliance (never committed).
+MQTT_PASSWORD=
