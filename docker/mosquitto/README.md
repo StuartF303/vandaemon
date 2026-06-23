@@ -2,12 +2,30 @@
 
 Eclipse Mosquitto MQTT broker for VanDaemon LED dimmer communication and IoT device integration.
 
+## The controller owns this broker (ADR-001)
+
+Per [ADR-001](../../docs/deployment/adr/ADR-001-controller-soc.md), the VanDaemon controller (Raspberry
+Pi 5) **hosts** this broker rather than only acting as a client of external brokers. This means the
+messaging fabric — LED dimmers, the future Victron bridge, and the .NET app — keeps running even when
+the .NET app restarts. Consequences baked into `config/mosquitto.conf`:
+
+- **Persistence on** (`persistence true` + `autosave_interval`): retained messages and persistent
+  sessions survive a broker restart / van power-cycle (ACC-off).
+- **Cerbo bridge, disabled by default**: a commented `connection cerbo-bridge` stanza is ready to pull
+  the Victron Cerbo's broker into ours (Victron draft 0003). It is inert until you fill in the Cerbo
+  IP/credentials and uncomment it — a fresh appliance never dials a non-existent Cerbo.
+- **Single-flag auth**: anonymous access is acceptable **only** on a trusted private van LAN (the
+  default). The "Production Security" steps below are the single documented switch to password + ACL
+  auth using the committed `passwd.example` / `acl.conf.example` templates.
+
+The broker is defined in the single authoritative root `docker-compose.yml` (service `mqtt`).
+
 ## Quick Start
 
 ### Start MQTT Broker
 
 ```bash
-cd docker
+# from the repo root (single authoritative docker-compose.yml)
 docker compose up -d mqtt
 ```
 
@@ -84,7 +102,7 @@ docker restart vandaemon-mqtt
 mosquitto_sub -h localhost -t 'vandaemon/#' -v
 
 # Or using Docker
-docker run --rm -it --network docker_vandaemon eclipse-mosquitto:2.0 \
+docker run --rm -it --network vandaemon_vandaemon eclipse-mosquitto:2.0 \
   mosquitto_sub -h mqtt -t 'vandaemon/#' -v
 ```
 
@@ -95,7 +113,7 @@ docker run --rm -it --network docker_vandaemon eclipse-mosquitto:2.0 \
 mosquitto_pub -h localhost -t 'vandaemon/leddimmer/test-device/channel/0/set' -m '128'
 
 # Or using Docker
-docker run --rm -it --network docker_vandaemon eclipse-mosquitto:2.0 \
+docker run --rm -it --network vandaemon_vandaemon eclipse-mosquitto:2.0 \
   mosquitto_pub -h mqtt -t 'vandaemon/leddimmer/test-device/channel/0/set' -m '128'
 ```
 
@@ -190,14 +208,14 @@ MQTT messages and client sessions are persisted in Docker volumes:
 ### Backup Data
 
 ```bash
-docker run --rm -v docker_mqtt-data:/data -v $(pwd):/backup alpine \
+docker run --rm -v vandaemon_mqtt-data:/data -v $(pwd):/backup alpine \
   tar czf /backup/mqtt-data-backup.tar.gz -C /data .
 ```
 
 ### Restore Data
 
 ```bash
-docker run --rm -v docker_mqtt-data:/data -v $(pwd):/backup alpine \
+docker run --rm -v vandaemon_mqtt-data:/data -v $(pwd):/backup alpine \
   tar xzf /backup/mqtt-data-backup.tar.gz -C /data
 ```
 
