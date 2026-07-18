@@ -11,6 +11,12 @@
 - ✅ **005 launcher shell (first pass) — merged.** Class-B green off-vehicle: builds to a debug
   APK, unit + instrumented tests pass, the Blazor/WASM UI renders in a modern emulator WebView,
   and the 004 `INativeBridge` contract round-trips over JS-interop with stub values.
+- ✅ **008 native-bridge transport — C# half wired.** The 004 `INativeBridge` now has a JS-interop
+  implementation that calls the shell's injected `window.VanDaemonNativeBridge` (via the
+  `vandaemon-bridge.js` shim), selected at DI time with the **choice logged** (`… JsInteropNativeBridge`
+  vs `… StubNativeBridge`). This makes 005 **SC-007 observable** on the unit (see §1). Class-A green
+  (`dotnet test`); the Android APK + emulator/on-device run remain to be built/verified on a networked
+  machine (the sandbox that produced this had no Gradle distribution).
 - ⏳ **On-hardware verification is still OUTSTANDING.** Merging integrated the code; it did **not**
   prove the app works on the FYT unit. SC-006 / SC-007 remain open (see below). No on-device
   success is claimed (Constitution §XIII.5).
@@ -23,6 +29,10 @@ capture:
 - [ ] Exact model / SoC / Android / build fingerprint (`getprop`) and **stock WebView version**.
 - [ ] **SC-006** — the unit's WebView renders the VanDaemon UI (resolves the §VII.5 old-WebView risk).
 - [ ] **SC-007** — a bridge call from the running UI round-trips through the unit's WebView.
+  Now observable (008): open **Devices → Extensions** (renders the reference tile, which calls the
+  bridge) and read `adb logcat -s VanDaemonShell:*` — `… JsInteropNativeBridge` = native round-trip
+  succeeded; `… StubNativeBridge` = the native injection didn't take (capture the WebView version +
+  console errors alongside SC-006).
 - [ ] Stock Teyes launcher / vehicle settings untouched by install/run.
 
 The outcome of SC-006 decides which branch of the backlog we take next.

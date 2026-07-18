@@ -126,7 +126,10 @@ Verification Checklist*. In short:
 - [ ] Record model / SoC / Android / fingerprint and stock WebView version (§7).
 - [ ] APK installs and launches as an ordinary app (not the home screen).
 - [ ] The WebView **renders** the VanDaemon UI on the unit.
-- [ ] A native bridge call from the UI round-trips through the unit's WebView.
+- [ ] A native bridge call from the UI round-trips through the unit's WebView. Open **Devices →
+  Extensions** (this renders the reference tile, which calls the bridge) and watch
+  `adb logcat -s VanDaemonShell:*`: `… JsInteropNativeBridge` selected = the round-trip reached the
+  native object; `… StubNativeBridge` = the injection didn't take (record the WebView version + errors).
 - [ ] The stock Teyes launcher / vehicle settings are untouched by installing or running the app.
 
 ## 9. Troubleshooting _(basic — to be expanded as we test on hardware)_
