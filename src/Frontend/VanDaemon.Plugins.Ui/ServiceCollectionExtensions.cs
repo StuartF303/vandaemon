@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using VanDaemon.Plugins.Ui.Abstractions;
 using VanDaemon.Plugins.Ui.Api;
 using VanDaemon.Plugins.Ui.Bridge;
@@ -21,7 +23,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddVanDaemonUiPlugins(this IServiceCollection services)
     {
         services.AddScoped<IVanDaemonApiClient, HttpVanDaemonApiClient>();
-        services.AddSingleton<INativeBridge, StubNativeBridge>();
+        // Resolved lazily (first injection into a component), by which point the Blazor WASM JS
+        // runtime is up — so NativeBridgeFactory can synchronously probe for the native transport and
+        // log which implementation it selected. Off-device this yields the no-op StubNativeBridge.
+        services.AddSingleton<INativeBridge>(sp => NativeBridgeFactory.Create(
+            sp.GetRequiredService<IJSRuntime>(),
+            sp.GetRequiredService<ILoggerFactory>()));
         services.AddSingleton<IUiPlugin, SystemStatusUiPlugin>();
         services.AddSingleton<IUiPluginRegistry, UiPluginRegistry>();
         return services;

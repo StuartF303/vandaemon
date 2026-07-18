@@ -13,6 +13,10 @@
     {
         <MudText Typo="Typo.body2" data-testid="status-loading">Loading…</MudText>
     }
+    else if (_offline)
+    {
+        <MudText Typo="Typo.body2" data-testid="status-offline">Backend offline — no VanDaemon controller reachable.</MudText>
+    }
     else if (_firstTank is null)
     {
         <MudText Typo="Typo.body2" data-testid="status-empty">No tanks available.</MudText>
@@ -29,16 +33,35 @@
 
 @code {
     private bool _loading = true;
+    private bool _offline;
     private bool _reversing;
     private TankDto? _firstTank;
 
     protected override async Task OnInitializedAsync()
     {
-        // Native capability reached ONLY through the bridge contract (Constitution §VI.2).
-        _reversing = await Bridge.GetReversingStateAsync();
+        // Native capability reached ONLY through the bridge contract (Constitution §VI.2). The bridge
+        // implementations are fail-safe, but guard anyway: no init path may trip Blazor's error
+        // boundary on the unit, which the head-unit install guide reads as "WebView too old" (008).
+        try
+        {
+            _reversing = await Bridge.GetReversingStateAsync();
+        }
+        catch
+        {
+            _reversing = false;
+        }
 
-        var tanks = await Api.GetTanksAsync();
-        _firstTank = tanks.Count > 0 ? tanks[0] : null;
+        // On the head unit there is no VanDaemon backend in this pass; a failed fetch must render an
+        // offline line, not an unhandled exception (protects the SC-006 render signal).
+        try
+        {
+            var tanks = await Api.GetTanksAsync();
+            _firstTank = tanks.Count > 0 ? tanks[0] : null;
+        }
+        catch
+        {
+            _offline = true;
+        }
 
         _loading = false;
     }
