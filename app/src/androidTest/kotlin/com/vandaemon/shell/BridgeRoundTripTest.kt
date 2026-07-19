@@ -49,6 +49,30 @@ class BridgeRoundTripTest {
         }
     }
 
+    /**
+     * 008 / SC-004 support: the `window.vandaemonBridge` transport shim (the exact layer the C#
+     * `JsInteropNativeBridge` drives) is present in the unit's WebView and forwards to the injected
+     * native object. Proving the shim on-device is what makes 005 SC-007 observable; the C# selection
+     * log then distinguishes native from stub. Requires the WASM assets to have been re-staged
+     * (`build/publish-wasm-to-assets.ps1`) so `index.html` loads `js/vandaemon-bridge.js`.
+     */
+    @Test
+    fun transportShim_isPresent_andForwardsToNative() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            WebViewProbe.waitUntilTrue(scenario, "document.readyState === 'complete'")
+            assertTrue(
+                "vandaemon-bridge.js transport shim was not loaded",
+                WebViewProbe.waitUntilTrue(scenario, "typeof window.vandaemonBridge !== 'undefined'"),
+            )
+
+            // hasNative() true -> the injected native object is reachable through the shim.
+            assertEquals("true", WebViewProbe.eval(scenario, "window.vandaemonBridge.hasNative()"))
+            // Forwarded stub values match the contract (js-interop-bridge.md).
+            assertEquals("false", WebViewProbe.eval(scenario, "window.vandaemonBridge.getReversingState()"))
+            assertEquals("\"Unknown\"", WebViewProbe.eval(scenario, "window.vandaemonBridge.getAccState()"))
+        }
+    }
+
     @Test
     fun nativeToUi_wheelKeyEvent_isDeliveredToThePage() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
