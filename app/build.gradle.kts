@@ -14,14 +14,14 @@ val keystoreProps = Properties().apply {
 
 android {
     namespace = "com.vandaemon.shell"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         // Head-unit (005) keeps its sideload id; the tablet flavor overrides it below.
         applicationId = "com.vandaemon.shell"
         minSdk = 29          // provisional — confirm against the §8 on-hardware fingerprint (FR-013)
-        targetSdk = 34
-        versionCode = 1
+        targetSdk = 35      // Google Play requires new-app submissions to target API 35 (Android 15)
+        versionCode = 2
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
