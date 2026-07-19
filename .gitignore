@@ -409,3 +409,7 @@ app/.cxx/
 app/src/main/assets/www/
 # Intermediate WASM publish output
 artifacts/wasm-publish/
+# Release signing secrets — NEVER commit (upload keystore + its passwords). See keystore.properties.example
+app/keystore.properties
+*.jks
+*.keystore

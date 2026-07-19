@@ -1,24 +1,66 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application") version "8.7.3"
     id("org.jetbrains.kotlin.android") version "1.9.25"
 }
 
+// Release signing is driven by a gitignored app/keystore.properties (see keystore.properties.example).
+// Absent (fresh clone, debug-only work), the release build simply carries no signing config.
+val keystorePropsFile = rootProject.file("keystore.properties")
+val keystoreProps = Properties().apply {
+    if (keystorePropsFile.exists()) keystorePropsFile.inputStream().use { load(it) }
+}
+
 android {
     namespace = "com.vandaemon.shell"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
+        // Head-unit (005) keeps its sideload id; the tablet flavor overrides it below.
         applicationId = "com.vandaemon.shell"
         minSdk = 29          // provisional — confirm against the §8 on-hardware fingerprint (FR-013)
-        targetSdk = 34
-        versionCode = 1
+        targetSdk = 35      // Google Play requires new-app submissions to target API 35 (Android 15)
+        versionCode = 2
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("release") {
+            if (keystorePropsFile.exists()) {
+                storeFile = file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+            }
+        }
+    }
+
+    // One dimension: which VanDaemon device this build targets.
+    flavorDimensions += "target"
+    productFlavors {
+        // Existing 005 launcher shell: bundled UI + vehicle bridge, sideloaded.
+        create("headunit") {
+            dimension = "target"
+        }
+        // v1 tablet UI-launcher: loads the live Pi UI over LAN, no bridge. Play Store target.
+        create("tablet") {
+            dimension = "target"
+            applicationId = "dev.vandaemon.ui"
+            versionName = "0.1.0"
+        }
     }
 
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
+        }
+        getByName("release") {
+            isMinifyEnabled = false
+            if (keystorePropsFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
@@ -49,6 +91,7 @@ android {
         getByName("main") { java.srcDirs("src/main/kotlin") }
         getByName("test") { java.srcDirs("src/test/kotlin") }
         getByName("androidTest") { java.srcDirs("src/androidTest/kotlin") }
+        getByName("tablet") { java.srcDirs("src/tablet/kotlin") }
     }
 }
 
