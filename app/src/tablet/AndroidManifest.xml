@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tablet flavor (feature 009): VanDaemon UI as a UI-launcher/home app that loads the LIVE Pi UI over
+  the van LAN. Overrides the head-unit (005) defaults: app label, cleartext (http:// over LAN), and
+  the launcher entry point (the native ConnectionActivity, not the bundled-asset MainActivity).
+  Soft-default HOME — reversible, no kiosk, removes nothing (FR-002..004).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:label="VanDaemon UI"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:label,android:usesCleartextTraffic">
+
+        <!-- Entry point + soft-default home app. -->
+        <activity
+            android:name=".tablet.ConnectionActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".tablet.TabletWebViewActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <!-- The head-unit's bundled-asset launcher must not appear on the tablet. -->
+        <activity android:name=".MainActivity" tools:node="remove" />
+    </application>
+
+</manifest>
