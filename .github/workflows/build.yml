@@ -5,6 +5,10 @@ on:
     branches: [ main, develop, claude/* ]
   pull_request:
     branches: [ main, develop ]
+  # Manual + nightly triggers exist for the E2E job below (which is gated to these events only).
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'   # 03:00 UTC nightly
 
 jobs:
   build:
@@ -24,8 +28,14 @@ jobs:
     - name: Build
       run: dotnet build VanDaemon.sln --configuration Release --no-restore
 
+    # Unit + integration tests only. E2E (VanDaemon.E2E.Tests) is excluded here because it needs a
+    # Playwright browser AND a running API+Web stack, which this job does not provision — it runs in
+    # the dedicated `e2e` job below. Keeping it out of the gating job makes this a real green signal.
     - name: Test
-      run: dotnet test VanDaemon.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+      run: >
+        dotnet test VanDaemon.sln --configuration Release --no-build --verbosity normal
+        --filter "FullyQualifiedName!~VanDaemon.E2E"
+        --collect:"XPlat Code Coverage"
 
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
@@ -53,3 +63,71 @@ jobs:
       run: |
         cd docker
         docker compose config
+
+  # End-to-end Playwright tests. NOT gating: runs only on manual dispatch or the nightly schedule,
+  # so a flaky WASM/SignalR/browser run can never redden main or block a PR. Once proven stable this
+  # can be promoted to run on pull_request. Installs the browser, boots the API + Web stack, waits for
+  # readiness, then runs only the E2E-filtered tests against the live app.
+  e2e:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+
+    env:
+      VANDAEMON_API_URL: http://localhost:5000
+      VANDAEMON_WEB_URL: http://localhost:5001
+      PLAYWRIGHT_HEADLESS: 'true'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore
+      run: dotnet restore VanDaemon.sln
+
+    - name: Build
+      run: dotnet build VanDaemon.sln --configuration Release --no-restore
+
+    - name: Install Playwright browsers
+      shell: pwsh
+      run: tests/VanDaemon.E2E.Tests/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+
+    - name: Start API + Web stack
+      run: |
+        ASPNETCORE_URLS=http://localhost:5000 \
+          dotnet run --project src/Backend/VanDaemon.Api/VanDaemon.Api.csproj \
+          --configuration Release --no-build > api.log 2>&1 &
+        ASPNETCORE_URLS=http://localhost:5001 \
+          dotnet run --project src/Frontend/VanDaemon.Web/VanDaemon.Web.csproj \
+          --configuration Release --no-build > web.log 2>&1 &
+
+    - name: Wait for stack readiness
+      run: |
+        for i in $(seq 1 60); do
+          api=$(curl -sf http://localhost:5000/health >/dev/null 2>&1 && echo up || echo down)
+          web=$(curl -sf http://localhost:5001/ >/dev/null 2>&1 && echo up || echo down)
+          echo "attempt $i: api=$api web=$web"
+          if [ "$api" = "up" ] && [ "$web" = "up" ]; then echo "stack ready"; exit 0; fi
+          sleep 3
+        done
+        echo "::error::stack did not become ready in time"; echo "--- api.log ---"; cat api.log; echo "--- web.log ---"; cat web.log; exit 1
+
+    - name: Run E2E tests
+      run: >
+        dotnet test tests/VanDaemon.E2E.Tests/VanDaemon.E2E.Tests.csproj
+        --configuration Release --no-build --verbosity normal
+        --filter "FullyQualifiedName~VanDaemon.E2E"
+
+    - name: Upload E2E artifacts on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-diagnostics
+        path: |
+          api.log
+          web.log
+          tests/VanDaemon.E2E.Tests/bin/Release/net10.0/screenshots/**
+        if-no-files-found: ignore
