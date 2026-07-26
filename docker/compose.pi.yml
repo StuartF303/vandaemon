@@ -1,0 +1,55 @@
+# docker/compose.pi.yml
+# Pi runtime compose — PULLS prebuilt images from Docker Hub (never builds).
+# Select the tag with VANDAEMON_TAG (default: dev). Pin to :vX.Y.Z in production.
+# Deployed to /opt/vandaemon/compose.pi.yml by scripts/provision-pi.sh.
+services:
+  api:
+    image: stuartf303/vandaemon-api:${VANDAEMON_TAG:-dev}
+    container_name: vandaemon-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5000:80"
+    volumes:
+      - api-data:/app/data
+      - api-logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - vandaemon
+
+  web:
+    image: stuartf303/vandaemon-web:${VANDAEMON_TAG:-dev}
+    container_name: vandaemon-web
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+    networks:
+      - vandaemon
+
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: vandaemon-mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - mqtt-data:/mosquitto/data
+      - mqtt-logs:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - vandaemon
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
+
+volumes:
+  api-data:
+  api-logs:
+  mqtt-data:
+  mqtt-logs:
+
+networks:
+  vandaemon:
+    driver: bridge
