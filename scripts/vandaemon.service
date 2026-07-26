@@ -1,0 +1,17 @@
+# scripts/vandaemon.service — installed to /etc/systemd/system/ by provision-pi.sh
+[Unit]
+Description=VanDaemon Control System (containerised)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/vandaemon
+ExecStart=/usr/bin/docker compose -f /opt/vandaemon/compose.pi.yml up -d
+ExecStop=/usr/bin/docker compose -f /opt/vandaemon/compose.pi.yml down
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target
