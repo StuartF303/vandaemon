@@ -4,13 +4,13 @@
 
 **Goal:** Make an SD card boot a Raspberry Pi into the containerised VanDaemon stack by pulling prebuilt arm64 images from Docker Hub, with a one-shot provisioner and a manual update path.
 
-**Architecture:** GitHub Actions builds `linux/arm64` images and pushes them to Docker Hub under `stuartf303/vandaemon-{api,web}`. The Pi runs a pull-only compose file plus two shell scripts (provision once, update on demand) and a systemd unit for autostart. The SD card holds only OS + Docker + these files; the app lives in the registry.
+**Architecture:** GitHub Actions builds `linux/arm64` images and pushes them to Docker Hub under `stuartfraser303/vandaemon-{api,web}`. The Pi runs a pull-only compose file plus two shell scripts (provision once, update on demand) and a systemd unit for autostart. The SD card holds only OS + Docker + these files; the app lives in the registry.
 
 **Tech Stack:** Docker + Docker Compose v2, Bash, systemd, GitHub Actions (`docker/build-push-action`, `buildx`, QEMU), Raspberry Pi OS Lite 64-bit.
 
 ## Global Constraints
 
-- Docker Hub namespace is `stuartf303`; images are `stuartf303/vandaemon-api` and `stuartf303/vandaemon-web`.
+- Docker Hub namespace is `stuartfraser303`; images are `stuartfraser303/vandaemon-api` and `stuartfraser303/vandaemon-web`.
 - Pi images MUST be built for `linux/arm64`. Amd64 is optional and out of scope now.
 - The Pi NEVER builds from source — compose uses `image:`, never `build:`.
 - Development tags are `:dev` and `:latest`; pinned `:vX.Y.Z` only on git `v*` tags.
@@ -28,7 +28,7 @@
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: a compose file at `docker/compose.pi.yml` referencing `stuartf303/vandaemon-api:${VANDAEMON_TAG:-dev}` and `stuartf303/vandaemon-web:${VANDAEMON_TAG:-dev}`; consumed by `provision-pi.sh` (Task 4), `update-vandaemon.sh` (Task 3), and `vandaemon.service` (Task 4). Mosquitto reads config from `./mosquitto/config` relative to the file (i.e. `/opt/vandaemon/mosquitto/config` on the Pi).
+- Produces: a compose file at `docker/compose.pi.yml` referencing `stuartfraser303/vandaemon-api:${VANDAEMON_TAG:-dev}` and `stuartfraser303/vandaemon-web:${VANDAEMON_TAG:-dev}`; consumed by `provision-pi.sh` (Task 4), `update-vandaemon.sh` (Task 3), and `vandaemon.service` (Task 4). Mosquitto reads config from `./mosquitto/config` relative to the file (i.e. `/opt/vandaemon/mosquitto/config` on the Pi).
 
 - [ ] **Step 1: Create the compose file**
 
@@ -39,7 +39,7 @@
 # Deployed to /opt/vandaemon/compose.pi.yml by scripts/provision-pi.sh.
 services:
   api:
-    image: stuartf303/vandaemon-api:${VANDAEMON_TAG:-dev}
+    image: stuartfraser303/vandaemon-api:${VANDAEMON_TAG:-dev}
     container_name: vandaemon-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
@@ -54,7 +54,7 @@ services:
       - vandaemon
 
   web:
-    image: stuartf303/vandaemon-web:${VANDAEMON_TAG:-dev}
+    image: stuartfraser303/vandaemon-web:${VANDAEMON_TAG:-dev}
     container_name: vandaemon-web
     ports:
       - "8080:80"
@@ -447,7 +447,7 @@ git commit -m "feat(010): Pi provisioner + systemd autostart unit"
 
 **Interfaces:**
 - Consumes: existing `docker/Dockerfile.api` and `docker/Dockerfile.web`; GitHub repo secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.
-- Produces: `stuartf303/vandaemon-api` and `stuartf303/vandaemon-web` images on Docker Hub, tagged `:dev`+`:latest` on `main`, `:vX.Y.Z` on `v*` tags. Consumed at runtime by `docker/compose.pi.yml` (Task 1).
+- Produces: `stuartfraser303/vandaemon-api` and `stuartfraser303/vandaemon-web` images on Docker Hub, tagged `:dev`+`:latest` on `main`, `:vX.Y.Z` on `v*` tags. Consumed at runtime by `docker/compose.pi.yml` (Task 1).
 
 - [ ] **Step 1: Create the workflow**
 
@@ -490,7 +490,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: stuartf303/${{ matrix.image }}
+          images: stuartfraser303/${{ matrix.image }}
           tags: |
             type=raw,value=dev,enable=${{ github.ref == 'refs/heads/main' }}
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
@@ -523,16 +523,16 @@ Expected: `YAML_OK`. (If `actionlint` is available: `actionlint .github/workflow
 
 ```bash
 git add .github/workflows/publish-images.yml
-git commit -m "ci(010): publish arm64 images to Docker Hub (stuartf303)"
+git commit -m "ci(010): publish arm64 images to Docker Hub (stuartfraser303)"
 ```
 
 - [ ] **Step 4: Human-gated real run (NOT auto-verified)**
 
 This proves the pipeline but needs the Docker Hub token. Record as a manual step, do not mark the plan complete on its behalf:
 1. On Docker Hub, create an access token (Account Settings → Security → New Access Token).
-2. In GitHub repo Settings → Secrets and variables → Actions, add `DOCKERHUB_USERNAME=stuartf303` and `DOCKERHUB_TOKEN=<token>`.
+2. In GitHub repo Settings → Secrets and variables → Actions, add `DOCKERHUB_USERNAME=stuartfraser303` and `DOCKERHUB_TOKEN=<token>`.
 3. Trigger: `gh workflow run publish-images.yml --ref <branch>` (or merge to `main`).
-4. Verify: `stuartf303/vandaemon-api:dev` and `stuartf303/vandaemon-web:dev` appear on Docker Hub as `linux/arm64`.
+4. Verify: `stuartfraser303/vandaemon-api:dev` and `stuartfraser303/vandaemon-web:dev` appear on Docker Hub as `linux/arm64`.
 
 ---
 
@@ -645,7 +645,7 @@ git commit -m "docs(010): containerised Pi provisioning guide + E2E checklist"
 ## Self-Review
 
 **Spec coverage:**
-- Registry/namespace `stuartf303` → Tasks 1, 5. ✓
+- Registry/namespace `stuartfraser303` → Tasks 1, 5. ✓
 - GitHub Actions arm64 build → Task 5. ✓
 - Pi pulls prebuilt (no build) → Task 1 (`image:` only). ✓
 - Manual OTA → Task 3. ✓
@@ -661,4 +661,4 @@ git commit -m "docs(010): containerised Pi provisioning guide + E2E checklist"
 
 **Placeholder scan:** none — all scripts, YAML, and docs are shown in full.
 
-**Type/name consistency:** `check_and_fix_hostname` / `_hc_get_hostname` / `_hc_set_hostname` / `_hc_prompt` used identically in Tasks 2 and 4. `VANDAEMON_TAG`, `/opt/vandaemon`, `compose.pi.yml`, `stuartf303/vandaemon-{api,web}` consistent across Tasks 1, 3, 4, 5, 6. ✓
+**Type/name consistency:** `check_and_fix_hostname` / `_hc_get_hostname` / `_hc_set_hostname` / `_hc_prompt` used identically in Tasks 2 and 4. `VANDAEMON_TAG`, `/opt/vandaemon`, `compose.pi.yml`, `stuartfraser303/vandaemon-{api,web}` consistent across Tasks 1, 3, 4, 5, 6. ✓

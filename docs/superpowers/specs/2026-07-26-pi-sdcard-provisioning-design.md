@@ -20,7 +20,7 @@ a 2GB Pi. So images must be built elsewhere and pulled.
 
 | Decision | Choice |
 |----------|--------|
-| Registry | Docker Hub, namespace `stuartf303` |
+| Registry | Docker Hub, namespace `stuartfraser303` |
 | Image build | GitHub Actions (`buildx`, multi-arch, **linux/arm64** required; amd64 optional) |
 | Pi runtime | Pulls prebuilt images (no source build on the Pi) |
 | Update / OTA trigger | **Manual** — `update-vandaemon.sh` run over SSH when the user chooses |
@@ -54,17 +54,17 @@ image" without changing any of the below.
 - Trigger: push to `main` (and `workflow_dispatch`). Later: git tags `v*`.
 - Uses `docker/setup-qemu-action` + `docker/setup-buildx-action`.
 - Builds **linux/arm64** (amd64 optional for dev-on-laptop) for two images:
-  - `stuartf303/vandaemon-api` from `docker/Dockerfile.api`
-  - `stuartf303/vandaemon-web` from `docker/Dockerfile.web`
+  - `stuartfraser303/vandaemon-api` from `docker/Dockerfile.api`
+  - `stuartfraser303/vandaemon-web` from `docker/Dockerfile.web`
 - Tags: `:dev` and `:latest` now; `:vX.Y.Z` added when a `v*` tag is pushed.
-- Auth via repo secrets `DOCKERHUB_USERNAME` (`stuartf303`) and `DOCKERHUB_TOKEN`
+- Auth via repo secrets `DOCKERHUB_USERNAME` (`stuartfraser303`) and `DOCKERHUB_TOKEN`
   (a Docker Hub access token, not the account password).
 - Context is repo root; Dockerfiles are unchanged from today.
 
 ### 2. Pi compose file — `docker/compose.pi.yml`
 - Same three services as `docker-compose.yml` but `image:` refs instead of `build:`:
-  - `api`  → `stuartf303/vandaemon-api:${VANDAEMON_TAG:-dev}`
-  - `web`  → `stuartf303/vandaemon-web:${VANDAEMON_TAG:-dev}`
+  - `api`  → `stuartfraser303/vandaemon-api:${VANDAEMON_TAG:-dev}`
+  - `web`  → `stuartfraser303/vandaemon-web:${VANDAEMON_TAG:-dev}`
   - `mqtt` → `eclipse-mosquitto:2.0` (already an image; unchanged)
 - Preserves current ports, volumes (`api-data`, `api-logs`, `mqtt-*`), restart
   policies (`unless-stopped`), and the `vandaemon` bridge network.
@@ -133,7 +133,7 @@ documented in `docs/deployment/raspberry-pi-setup.md`.
 - **Scripts** — `bash -n` + `shellcheck` in CI. Hostname-check logic factored into a
   function so it is unit-testable against a faked `hostname`.
 - **CI workflow** — proven by one real run: arm64 images appear at
-  `stuartf303/vandaemon-api:dev` and `-web:dev`.
+  `stuartfraser303/vandaemon-api:dev` and `-web:dev`.
 - **End-to-end (human-gated, on real hardware)** — explicit manual checklist, NOT
   claimed as done until Stuart confirms (same discipline as head-unit SC-006/007):
   1. Flash SD (Imager: OS Lite 64-bit, hostname `vandaemon`, SSH key, WiFi).

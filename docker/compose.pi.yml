@@ -4,7 +4,7 @@
 # Deployed to /opt/vandaemon/compose.pi.yml by scripts/provision-pi.sh.
 services:
   api:
-    image: stuartf303/vandaemon-api:${VANDAEMON_TAG:-dev}
+    image: stuartfraser303/vandaemon-api:${VANDAEMON_TAG:-dev}
     container_name: vandaemon-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
@@ -19,7 +19,7 @@ services:
       - vandaemon
 
   web:
-    image: stuartf303/vandaemon-web:${VANDAEMON_TAG:-dev}
+    image: stuartfraser303/vandaemon-web:${VANDAEMON_TAG:-dev}
     container_name: vandaemon-web
     ports:
       - "8080:80"
