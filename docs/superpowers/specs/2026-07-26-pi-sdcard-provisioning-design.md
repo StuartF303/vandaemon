@@ -156,3 +156,23 @@ documented in `docs/deployment/raspberry-pi-setup.md`.
 
 - `DOCKERHUB_TOKEN` must be created on Docker Hub and added as a GitHub repo secret
   (human step; the token value never enters the repo).
+
+## Post-implementation backlog (before the van goes into service)
+
+Surfaced by the whole-branch review; deferred as out-of-scope for the dev-only path:
+
+- **Pinned tag not persisted across reboot (Important, latent).** `vandaemon.service`
+  runs `docker compose … up -d` with no environment, so `VANDAEMON_TAG` defaults to
+  `dev`. Once pinned `:vX.Y.Z` tags exist, a `VANDAEMON_TAG=v1.2.3 update-vandaemon.sh`
+  in the van is silently reverted to `:dev` on the next power-cycle. Fix when pinning
+  lands: persist the tag to `/opt/vandaemon/.env` (compose and the systemd `up -d`
+  both auto-read it).
+- **Preflight internet check (Minor).** The design listed "confirm reachability to
+  Docker Hub" in provisioner preflight; the implementation omits it (Docker install
+  and first `up -d` fail obviously without internet). Add if hardening preflight.
+- **Provisioner `docker` group edge case (Minor).** If Docker is already installed but
+  the user isn't in the `docker` group, `usermod -aG docker` is skipped; interactive
+  `update-vandaemon.sh` then fails with a permission error (autostart via systemd/root
+  is unaffected).
+- **Human-gated on-hardware E2E** (see `docs/deployment/pi-provisioning.md` checklist)
+  remains the real proof — not claimed as done.
