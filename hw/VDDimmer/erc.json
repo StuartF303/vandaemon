@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-08-17T14:00:35",
+    "ignored_checks": [
+        {
+            "description": "Global label only appears once in the schematic",
+            "key": "single_global_label"
+        },
+        {
+            "description": "Four connection points are joined together",
+            "key": "four_way_junction"
+        },
+        {
+            "description": "SPICE model issue",
+            "key": "simulation_model_issue"
+        },
+        {
+            "description": "Assigned footprint doesn't match footprint filters",
+            "key": "footprint_filter"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.5",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d",
+            "violations": []
+        },
+        {
+            "path": "/Power/",
+            "uuid_path": "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d/43933695-3e83-477a-8f28-1084f7012535",
+            "violations": []
+        },
+        {
+            "path": "/MCU/",
+            "uuid_path": "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d/543faab5-6d4b-413c-aa63-b6cd1a816b5e",
+            "violations": []
+        },
+        {
+            "path": "/PWM/",
+            "uuid_path": "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d/a2332e94-aa8c-4f2f-8845-69c86e434212",
+            "violations": []
+        },
+        {
+            "path": "/Addressable/",
+            "uuid_path": "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d/c7334fab-f3d9-44aa-85cb-ee4f81ac3546",
+            "violations": []
+        }
+    ],
+    "source": "VANDIMMER-4CH2A.kicad_sch"
+}
