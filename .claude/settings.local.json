@@ -53,9 +53,27 @@
       "Bash(\"C:/Projects/konnect/bin/konnect.exe\" skill *)",
       "Bash(echo \"exit=$?\")",
       "Bash(git commit -q -m ' *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "mcp__pcbparts__jlc_get_pinout",
+      "mcp__pcbparts",
+      "Bash",
+      "PowerShell",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "Skill",
+      "Read(//c/Projects/vandaemon/**)",
+      "Edit(//c/Projects/vandaemon/**)",
+      "Write(//c/Projects/vandaemon/**)"
     ],
-    "deny": [],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(git push*)",
+      "Bash(git reset --hard*)"
+    ],
     "ask": [],
     "additionalDirectories": [
       "C:\\Program Files\\KiCad\\10.0\\share\\kicad"
