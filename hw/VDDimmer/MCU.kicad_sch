@@ -4495,17 +4495,6 @@
 		)
 		(uuid "ecc4fa1d-f222-4b90-9b48-0b87da540d5a")
 	)
-	(global_label "STATUS_DIN"
-		(shape input)
-		(at 217.17 142.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0142053d-55f8-42a6-836d-85afaa18fda3")
-	)
 	(global_label "VIN_SENSE"
 		(shape input)
 		(at 181.61 104.14 180)
@@ -4594,7 +4583,7 @@
 		)
 		(uuid "ac4ebd2c-18f0-41ea-95bd-ee03b4bd7e5d")
 	)
-	(global_label "ADDR_CLK"
+	(global_label "STATUS_DIN"
 		(shape input)
 		(at 217.17 134.62 0)
 		(effects
@@ -4603,7 +4592,18 @@
 			)
 			(justify left)
 		)
-		(uuid "2c67647b-14c4-4731-9b8b-15fe7c4b865e")
+		(uuid "1d411471-b9a2-4c77-8aa0-1ca50502b527")
+	)
+	(global_label "ADDR_CLK"
+		(shape input)
+		(at 217.17 142.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "08972586-67de-4f24-bf40-493b13d13282")
 	)
 	(symbol
 		(lib_id "RF_Module:ESP32-S3-WROOM-1")

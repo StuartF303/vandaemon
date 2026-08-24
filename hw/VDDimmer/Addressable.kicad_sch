@@ -2245,16 +2245,6 @@
 		(uuid "6d93d5f4-eb6f-4f00-adfe-af376ccbf4d3")
 	)
 	(label "STATUS_D5V"
-		(at 67.31 160.02 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "9b778fa2-1d6b-4e32-af95-f45b0ac35904")
-	)
-	(label "STATUS_D5V"
 		(at 100.33 156.21 0)
 		(effects
 			(font
@@ -2263,16 +2253,6 @@
 			(justify left bottom)
 		)
 		(uuid "b2af0ead-2b24-49ed-9de4-c64b74574693")
-	)
-	(label "ADDR_CLK5V"
-		(at 67.31 204.47 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "4d13437c-cd99-4215-8e9f-9e703c9e6bbb")
 	)
 	(label "ADDR_CLK5V"
 		(at 100.33 200.66 0)
@@ -2394,6 +2374,26 @@
 		)
 		(uuid "7cfbbdea-2b8e-4b21-bd78-72ef75bd5b2b")
 	)
+	(label "ADDR_CLK5V"
+		(at 67.31 160.02 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b155a90a-3d98-4d22-a191-0aa830a8bbf8")
+	)
+	(label "STATUS_D5V"
+		(at 67.31 204.47 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6120a5fa-fa1a-44a1-9a65-59c93ffa0f72")
+	)
 	(global_label "ADDR1_DIN"
 		(shape input)
 		(at 49.53 59.69 180)
@@ -2416,28 +2416,6 @@
 		)
 		(uuid "1d7dee7c-87d1-4e91-b035-61fc645eddd6")
 	)
-	(global_label "STATUS_DIN"
-		(shape input)
-		(at 49.53 160.02 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "9723b037-afb4-41ba-96d3-d1adc11cf4a5")
-	)
-	(global_label "ADDR_CLK"
-		(shape input)
-		(at 49.53 204.47 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "4f29ad6e-7274-4cea-a0ef-6c62dd6bb09e")
-	)
 	(global_label "VIN_PROT"
 		(shape input)
 		(at 201.93 57.15 180)
@@ -2459,6 +2437,28 @@
 			(justify right)
 		)
 		(uuid "55fdd66a-d7af-4a85-8046-0a65e74d47b5")
+	)
+	(global_label "ADDR_CLK"
+		(shape input)
+		(at 49.53 160.02 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "86a25739-f80e-4ce1-b941-a4fb33b0ebe9")
+	)
+	(global_label "STATUS_DIN"
+		(shape input)
+		(at 49.53 204.47 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bc41cbab-cf95-40ac-8834-ae4fde330df5")
 	)
 	(symbol
 		(lib_id "74xx:74AHCT125")
@@ -2910,15 +2910,6 @@
 				)
 			)
 		)
-		(instances
-			(project "Addressable"
-				(path "32704697-8bd2-4588-95f4-68887eddab67"
-					(reference "R11")
-					(unit 1)
-				)
-			)
-		)
-	
 		(property "Assembly" "DNP - APA102 clock provision per spec 6.2"
 			(at 100.33 204.47 0)
 			(hide yes)
@@ -2927,7 +2918,16 @@
 					(size 1.27 1.27)
 				)
 			)
-		))
+		)
+		(instances
+			(project "Addressable"
+				(path "32704697-8bd2-4588-95f4-68887eddab67"
+					(reference "R11")
+					(unit 1)
+				)
+			)
+		)
+	)
 	(symbol
 		(lib_id "Device:R")
 		(at 129.54 204.47 0)
@@ -2970,15 +2970,6 @@
 				)
 			)
 		)
-		(instances
-			(project "Addressable"
-				(path "32704697-8bd2-4588-95f4-68887eddab67"
-					(reference "R12")
-					(unit 1)
-				)
-			)
-		)
-	
 		(property "Assembly" "DNP - APA102 clock provision per spec 6.2"
 			(at 129.54 204.47 0)
 			(hide yes)
@@ -2987,7 +2978,16 @@
 					(size 1.27 1.27)
 				)
 			)
-		))
+		)
+		(instances
+			(project "Addressable"
+				(path "32704697-8bd2-4588-95f4-68887eddab67"
+					(reference "R12")
+					(unit 1)
+				)
+			)
+		)
+	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x03")
 		(at 209.55 59.69 0)
