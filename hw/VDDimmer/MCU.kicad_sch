@@ -3720,38 +3720,6 @@
 		(uuid "cc00c450-c882-40c4-ae12-7908fc05c4df")
 	)
 	(no_connect
-		(at 184.15 109.22)
-		(uuid "9fafdfee-8b00-4d93-9796-556d6a9d84d9")
-	)
-	(no_connect
-		(at 214.63 137.16)
-		(uuid "1cb86134-f478-410a-b8ff-a8a2a4a28009")
-	)
-	(no_connect
-		(at 184.15 132.08)
-		(uuid "e0fdf683-d4ef-46dc-96e3-29958232810a")
-	)
-	(no_connect
-		(at 184.15 134.62)
-		(uuid "209a8535-57fc-4915-b8cb-cc3cc728744a")
-	)
-	(no_connect
-		(at 184.15 137.16)
-		(uuid "9a7ae009-4aa1-49b1-b05e-a88ebb631ab4")
-	)
-	(no_connect
-		(at 214.63 111.76)
-		(uuid "c17787fc-1a13-40e4-8425-a9fb53b6def3")
-	)
-	(no_connect
-		(at 214.63 139.7)
-		(uuid "ff3597e8-4ff2-410f-9a39-4ef1d0eeb9c5")
-	)
-	(no_connect
-		(at 214.63 134.62)
-		(uuid "30df84d9-77cd-43cd-8eb6-699c10ec5ddb")
-	)
-	(no_connect
 		(at 214.63 114.3)
 		(uuid "8f433276-7bbf-4818-9438-7c85f8772813")
 	)
@@ -3791,61 +3759,44 @@
 		(at 59.69 190.5)
 		(uuid "caac83ec-ce32-4f38-9dcc-60d344a8a2e7")
 	)
+	(no_connect
+		(at 184.15 111.76)
+		(uuid "01dc6a08-5529-4ad1-ad6f-84c857962636")
+	)
+	(no_connect
+		(at 184.15 114.3)
+		(uuid "c5b3a544-71d8-401e-927b-cd77e954bdd6")
+	)
+	(no_connect
+		(at 184.15 116.84)
+		(uuid "64432f28-c63d-43f7-babc-692a7e254824")
+	)
+	(no_connect
+		(at 184.15 119.38)
+		(uuid "bae8e39d-87d6-4697-b478-66f6d5f63fc5")
+	)
+	(no_connect
+		(at 184.15 139.7)
+		(uuid "627230ff-a381-4905-bc3a-24d33d8f5b06")
+	)
+	(no_connect
+		(at 184.15 142.24)
+		(uuid "234aaf60-b127-4013-9f31-23588d4e4a12")
+	)
+	(no_connect
+		(at 214.63 101.6)
+		(uuid "618a4f95-582b-45e5-ad05-a37e9c944f77")
+	)
+	(no_connect
+		(at 184.15 121.92)
+		(uuid "d61e8b41-2f26-4cec-bfa3-4643a9ea11cd")
+	)
 	(wire
 		(pts
 			(xy 76.2 144.78)
 			(xy 73.66 144.78)
 		)
 		(uuid "86b1d9b7-5e90-4404-804c-3d0f0faaf791")
-	)
-	(wire
-		(pts
-			(xy 184.15 111.76)
-			(xy 181.61 111.76)
-		)
-		(uuid "fb041131-fe4c-4ba7-8957-258d9c134c26")
-	)
-	(wire
-		(pts
-			(xy 184.15 114.3)
-			(xy 181.61 114.3)
-		)
-		(uuid "321ad979-3c72-4311-933a-1b6bed0e52de")
-	)
-	(wire
-		(pts
-			(xy 184.15 116.84)
-			(xy 181.61 116.84)
-		)
-		(uuid "810a718e-d62c-46a4-a796-1ddbf785c83c")
-	)
-	(wire
-		(pts
-			(xy 184.15 119.38)
-			(xy 181.61 119.38)
-		)
-		(uuid "98f9925a-25ba-483e-9a25-d9a3cd358060")
-	)
-	(wire
-		(pts
-			(xy 184.15 139.7)
-			(xy 181.61 139.7)
-		)
-		(uuid "f4ee99a8-5dab-4555-bf96-9acd769c6f51")
-	)
-	(wire
-		(pts
-			(xy 184.15 142.24)
-			(xy 181.61 142.24)
-		)
-		(uuid "cd352356-5c30-40b4-8b7c-b6e7179037b6")
-	)
-	(wire
-		(pts
-			(xy 214.63 101.6)
-			(xy 217.17 101.6)
-		)
-		(uuid "38dd811d-8652-42e4-ae11-46c9863a7555")
 	)
 	(wire
 		(pts
@@ -3867,6 +3818,62 @@
 			(xy 181.61 106.68)
 		)
 		(uuid "ae1b5947-d658-437b-b32d-7d64d419e65a")
+	)
+	(wire
+		(pts
+			(xy 184.15 109.22)
+			(xy 181.61 109.22)
+		)
+		(uuid "47c0319e-b136-42a6-9272-80e28007f40a")
+	)
+	(wire
+		(pts
+			(xy 214.63 137.16)
+			(xy 217.17 137.16)
+		)
+		(uuid "f6b8845f-94f0-4aad-bb6a-41bebeb8ac01")
+	)
+	(wire
+		(pts
+			(xy 184.15 132.08)
+			(xy 181.61 132.08)
+		)
+		(uuid "116c8844-39f2-4680-8871-1a4e34d1a67c")
+	)
+	(wire
+		(pts
+			(xy 184.15 134.62)
+			(xy 181.61 134.62)
+		)
+		(uuid "81e32773-7877-4164-bfee-29a4e810c1b0")
+	)
+	(wire
+		(pts
+			(xy 184.15 137.16)
+			(xy 181.61 137.16)
+		)
+		(uuid "a39b55f1-5fde-40c8-8ace-f8b0760afc9b")
+	)
+	(wire
+		(pts
+			(xy 214.63 111.76)
+			(xy 217.17 111.76)
+		)
+		(uuid "f59b0124-1bd0-4cde-aa34-df597c96fc97")
+	)
+	(wire
+		(pts
+			(xy 214.63 139.7)
+			(xy 217.17 139.7)
+		)
+		(uuid "d74f015a-107f-474a-bc90-52f2c9cdbe84")
+	)
+	(wire
+		(pts
+			(xy 214.63 134.62)
+			(xy 217.17 134.62)
+		)
+		(uuid "6958b4bb-ad96-4769-ba71-ac6c5256c15a")
 	)
 	(label "+3V3"
 		(at 199.39 91.44 0)
@@ -4329,16 +4336,6 @@
 		(uuid "389e14b4-6644-4d6e-b260-b07fb41ca34c")
 	)
 	(label "I2C_SDA"
-		(at 184.15 121.92 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "65b4263a-d784-411f-a71f-587728275b28")
-	)
-	(label "I2C_SDA"
 		(at 294.64 110.49 180)
 		(effects
 			(font
@@ -4428,82 +4425,75 @@
 		)
 		(uuid "3de83f7a-cd95-46f0-98e1-ec36271655a1")
 	)
-	(global_label "GATE_IN1"
-		(shape input)
-		(at 181.61 111.76 180)
+	(label "USB_DP"
+		(at 134.62 180.34 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify right bottom)
 		)
-		(uuid "cc392f30-ba43-49f1-9873-b5879ee91698")
+		(uuid "76799850-7067-4e4c-9787-57e19108debe")
 	)
-	(global_label "GATE_IN2"
-		(shape input)
-		(at 181.61 114.3 180)
+	(label "USB_DP"
+		(at 144.78 180.34 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left bottom)
 		)
-		(uuid "6f9680cd-d93b-4ce2-b6ee-0aa7c8bb4e55")
+		(uuid "880ea998-67f3-4075-baa7-a95e39b28db3")
 	)
-	(global_label "GATE_IN3"
-		(shape input)
-		(at 181.61 116.84 180)
+	(label "USB_DM"
+		(at 134.62 182.88 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify right bottom)
 		)
-		(uuid "f3ca95a9-30d5-4631-a37e-19893ffe89bf")
+		(uuid "1061f0ba-9f92-4c09-9294-d03785df1b9e")
 	)
-	(global_label "GATE_IN4"
-		(shape input)
-		(at 181.61 119.38 180)
+	(label "USB_DM"
+		(at 144.78 182.88 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left bottom)
 		)
-		(uuid "568faf38-3c7e-4f41-8845-7fd646f63cc1")
+		(uuid "4a13c991-3fff-4e93-bef6-40d8a07d4bbe")
 	)
-	(global_label "ADDR1_DIN"
-		(shape input)
-		(at 181.61 139.7 180)
+	(label "VBUS"
+		(at 139.7 175.26 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left bottom)
 		)
-		(uuid "bb9f7df2-ae1f-4589-b4cd-54447c250a27")
+		(uuid "667ec5f5-1612-4c84-ae09-ac98e8c35161")
 	)
-	(global_label "ADDR2_DIN"
-		(shape input)
-		(at 181.61 142.24 180)
+	(label "GND"
+		(at 139.7 187.96 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left bottom)
 		)
-		(uuid "fac931c8-afee-4c4f-822a-2d026383c96f")
+		(uuid "a42a736d-fc67-4ce3-97a7-0082c56ba760")
 	)
-	(global_label "ADDR_CLK"
-		(shape input)
-		(at 217.17 101.6 0)
+	(label "I2C_SDA"
+		(at 181.61 137.16 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left)
+			(justify right bottom)
 		)
-		(uuid "5bfaa30f-2477-4553-9b82-20f85ae5751f")
+		(uuid "ecc4fa1d-f222-4b90-9b48-0b87da540d5a")
 	)
 	(global_label "STATUS_DIN"
 		(shape input)
@@ -4538,42 +4528,83 @@
 		)
 		(uuid "1673208a-c688-4c0c-ad20-82c218ef98bc")
 	)
-  (label "USB_DP"
-    (at 134.61999999999998 180.34 180)
-    (fields_autoplaced yes)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid "76799850-7067-4e4c-9787-57e19108debe")
-  )
-  (label "USB_DP"
-    (at 144.78 180.34 0)
-    (fields_autoplaced yes)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid "880ea998-67f3-4075-baa7-a95e39b28db3")
-  )
-  (label "USB_DM"
-    (at 134.61999999999998 182.88 180)
-    (fields_autoplaced yes)
-    (effects (font (size 1.27 1.27)) (justify right bottom))
-    (uuid "1061f0ba-9f92-4c09-9294-d03785df1b9e")
-  )
-  (label "USB_DM"
-    (at 144.78 182.88 0)
-    (fields_autoplaced yes)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid "4a13c991-3fff-4e93-bef6-40d8a07d4bbe")
-  )
-  (label "VBUS"
-    (at 139.7 175.26 0)
-    (fields_autoplaced yes)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid "667ec5f5-1612-4c84-ae09-ac98e8c35161")
-  )
-  (label "GND"
-    (at 139.7 187.96 0)
-    (fields_autoplaced yes)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid "a42a736d-fc67-4ce3-97a7-0082c56ba760")
-  )
+	(global_label "GATE_IN1"
+		(shape input)
+		(at 181.61 109.22 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "2c838055-6232-45a1-a301-4379fca3cc5c")
+	)
+	(global_label "GATE_IN2"
+		(shape input)
+		(at 217.17 137.16 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "609d5557-72ee-4acb-a0e2-de3a4d11ffaa")
+	)
+	(global_label "GATE_IN3"
+		(shape input)
+		(at 181.61 132.08 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5f7f3839-fc5b-4a9b-a7a6-cf49a6eb0dfa")
+	)
+	(global_label "GATE_IN4"
+		(shape input)
+		(at 181.61 134.62 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fab9c79e-a745-4c9e-bb53-87916a33bcdb")
+	)
+	(global_label "ADDR1_DIN"
+		(shape input)
+		(at 217.17 111.76 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5283a9a8-688f-471e-a7df-d3c80088778f")
+	)
+	(global_label "ADDR2_DIN"
+		(shape input)
+		(at 217.17 139.7 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ac4ebd2c-18f0-41ea-95bd-ee03b4bd7e5d")
+	)
+	(global_label "ADDR_CLK"
+		(shape input)
+		(at 217.17 134.62 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2c67647b-14c4-4731-9b8b-15fe7c4b865e")
+	)
 	(symbol
 		(lib_id "RF_Module:ESP32-S3-WROOM-1")
 		(at 199.39 119.38 0)
