@@ -4257,7 +4257,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100nF/50V"
+		(property "Value" "100nF/25V"
 			(at 135.255 107.95 0)
 			(effects
 				(font
@@ -4266,7 +4266,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 134.62 105.41 0)
 			(hide yes)
 			(effects

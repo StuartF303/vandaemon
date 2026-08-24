@@ -45,10 +45,15 @@
       "Bash(/c/Program Files/KiCad/10.0/bin/kicad-cli.exe *)",
       "Bash(\"/c/Program Files/KiCad/10.0/bin/kicad-cli.exe\" *)",
       "Bash(kicad-cli *)",
+      "Bash('/c/Program Files/KiCad/10.0/bin/kicad-cli.exe' *)",
+      "Bash(SCRATCH=*)",
+      "Bash(bash /c/Users/stuart/AppData/Local/Temp/claude/*)",
       "Bash('/c/Program Files/KiCad/10.0/bin/kicad-cli.exe' pcb drc --format json --severity-error --output C:/Users/stuart/AppData/Local/Temp/claude/C--Projects-vandaemon/b292f03e-190f-41e8-bf63-93c3e5bb5f8b/scratchpad/drc3.json VANDIMMER-4CH2A.kicad_pcb)",
       "PowerShell(Stop-Process *)",
       "Bash(\"C:/Projects/konnect/bin/konnect.exe\" skill *)",
-      "Bash(echo \"exit=$?\")"
+      "Bash(echo \"exit=$?\")",
+      "Bash(git commit -q -m ' *)",
+      "Bash(git add *)"
     ],
     "deny": [],
     "ask": [],
