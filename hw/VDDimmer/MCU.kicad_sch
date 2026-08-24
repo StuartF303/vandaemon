@@ -3736,14 +3736,6 @@
 		(uuid "d578ccf2-ed77-4656-8ff0-fa442dc22ebb")
 	)
 	(no_connect
-		(at 214.63 124.46)
-		(uuid "d062972c-f533-4b11-9c6a-e3eda82acaee")
-	)
-	(no_connect
-		(at 214.63 127)
-		(uuid "fbee48b2-52f3-4ef2-b8e3-66c835d85a97")
-	)
-	(no_connect
 		(at 214.63 99.06)
 		(uuid "051edf6d-cac0-4c86-8daa-011af7018263")
 	)
@@ -3791,6 +3783,14 @@
 		(at 184.15 121.92)
 		(uuid "d61e8b41-2f26-4cec-bfa3-4643a9ea11cd")
 	)
+	(no_connect
+		(at 184.15 137.16)
+		(uuid "203d55fc-5bf5-40bc-a915-5d320117e893")
+	)
+	(no_connect
+		(at 214.63 137.16)
+		(uuid "f84d29cf-755d-4906-892f-7fdb423ce27e")
+	)
 	(wire
 		(pts
 			(xy 76.2 144.78)
@@ -3828,31 +3828,10 @@
 	)
 	(wire
 		(pts
-			(xy 214.63 137.16)
-			(xy 217.17 137.16)
-		)
-		(uuid "f6b8845f-94f0-4aad-bb6a-41bebeb8ac01")
-	)
-	(wire
-		(pts
-			(xy 184.15 132.08)
-			(xy 181.61 132.08)
-		)
-		(uuid "116c8844-39f2-4680-8871-1a4e34d1a67c")
-	)
-	(wire
-		(pts
 			(xy 184.15 134.62)
 			(xy 181.61 134.62)
 		)
 		(uuid "81e32773-7877-4164-bfee-29a4e810c1b0")
-	)
-	(wire
-		(pts
-			(xy 184.15 137.16)
-			(xy 181.61 137.16)
-		)
-		(uuid "a39b55f1-5fde-40c8-8ace-f8b0760afc9b")
 	)
 	(wire
 		(pts
@@ -3874,6 +3853,48 @@
 			(xy 217.17 134.62)
 		)
 		(uuid "6958b4bb-ad96-4769-ba71-ac6c5256c15a")
+	)
+	(wire
+		(pts
+			(xy 184.15 124.46)
+			(xy 181.61 124.46)
+		)
+		(uuid "cd1d65ad-9dc0-4d89-a72b-ed118d185916")
+	)
+	(wire
+		(pts
+			(xy 184.15 127)
+			(xy 181.61 127)
+		)
+		(uuid "a0c52993-ce44-412e-af84-6cd03ca39a7a")
+	)
+	(wire
+		(pts
+			(xy 184.15 129.54)
+			(xy 181.61 129.54)
+		)
+		(uuid "691c281b-bff2-4c5b-8f3b-681dcc0fd605")
+	)
+	(wire
+		(pts
+			(xy 184.15 132.08)
+			(xy 181.61 132.08)
+		)
+		(uuid "c17669d0-28d8-4e8c-aa75-fc534146f9c9")
+	)
+	(wire
+		(pts
+			(xy 214.63 124.46)
+			(xy 217.17 124.46)
+		)
+		(uuid "c843f021-d148-4bae-96d0-66ad2374b7b8")
+	)
+	(wire
+		(pts
+			(xy 214.63 127)
+			(xy 217.17 127)
+		)
+		(uuid "378453aa-a0ef-4100-bb08-df089c9585ac")
 	)
 	(label "+3V3"
 		(at 199.39 91.44 0)
@@ -4276,16 +4297,6 @@
 		(uuid "1edfd8c1-6734-4aac-ba0d-7a51957e604f")
 	)
 	(label "BTN1"
-		(at 184.15 127 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "7259e7e2-c634-41e2-afab-a17b4db7e7a7")
-	)
-	(label "BTN1"
 		(at 299.72 63.5 0)
 		(effects
 			(font
@@ -4304,16 +4315,6 @@
 			(justify right bottom)
 		)
 		(uuid "2e9abed1-7aa4-4e5e-8a3d-2efbafc14ffa")
-	)
-	(label "BTN2"
-		(at 184.15 129.54 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "8f4f4167-0107-436b-b8d4-31c58e8db862")
 	)
 	(label "BTN2"
 		(at 317.5 63.5 0)
@@ -4346,16 +4347,6 @@
 		(uuid "fc636bfa-191e-4935-aff8-e9adc3075e58")
 	)
 	(label "I2C_SCL"
-		(at 184.15 124.46 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "ddab796b-b17a-4caf-862c-b6efca7293f2")
-	)
-	(label "I2C_SCL"
 		(at 294.64 113.03 180)
 		(effects
 			(font
@@ -4386,16 +4377,6 @@
 		(uuid "158e68d1-2a3c-4249-9139-0d29672f0750")
 	)
 	(label "UART1_TX"
-		(at 214.63 129.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "9eaf9cbf-3b0d-4122-ab99-582fb7a139f1")
-	)
-	(label "UART1_TX"
 		(at 294.64 162.56 180)
 		(effects
 			(font
@@ -4404,16 +4385,6 @@
 			(justify right bottom)
 		)
 		(uuid "991f01fa-80d9-4e34-ae97-011729e57003")
-	)
-	(label "UART1_RX"
-		(at 214.63 132.08 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "8bff97c4-eef3-4147-b175-f9e0a4738de6")
 	)
 	(label "UART1_RX"
 		(at 294.64 165.1 180)
@@ -4485,15 +4456,65 @@
 		)
 		(uuid "a42a736d-fc67-4ce3-97a7-0082c56ba760")
 	)
-	(label "I2C_SDA"
-		(at 181.61 137.16 180)
+	(label "I2C_SCL"
+		(at 181.61 127 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right bottom)
 		)
-		(uuid "ecc4fa1d-f222-4b90-9b48-0b87da540d5a")
+		(uuid "0880da1e-8bf2-45ed-bebe-06ce96427984")
+	)
+	(label "I2C_SDA"
+		(at 181.61 132.08 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "1ae18553-0f5c-419d-848e-781ba46c5c55")
+	)
+	(label "BTN2"
+		(at 217.17 124.46 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ce3d4555-030e-4506-8ec9-723e2699f5a0")
+	)
+	(label "BTN1"
+		(at 217.17 127 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d5772525-ae89-4e32-89ea-1e8975debb67")
+	)
+	(label "UART1_RX"
+		(at 214.63 129.54 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "189d271b-065f-489c-b3d6-eef5d910576f")
+	)
+	(label "UART1_TX"
+		(at 214.63 132.08 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "905580fa-162b-4aa5-b8db-f9c2a0675d92")
 	)
 	(global_label "VIN_SENSE"
 		(shape input)
@@ -4527,28 +4548,6 @@
 			(justify right)
 		)
 		(uuid "2c838055-6232-45a1-a301-4379fca3cc5c")
-	)
-	(global_label "GATE_IN2"
-		(shape input)
-		(at 217.17 137.16 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "609d5557-72ee-4acb-a0e2-de3a4d11ffaa")
-	)
-	(global_label "GATE_IN3"
-		(shape input)
-		(at 181.61 132.08 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5f7f3839-fc5b-4a9b-a7a6-cf49a6eb0dfa")
 	)
 	(global_label "GATE_IN4"
 		(shape input)
@@ -4604,6 +4603,28 @@
 			(justify left)
 		)
 		(uuid "08972586-67de-4f24-bf40-493b13d13282")
+	)
+	(global_label "GATE_IN2"
+		(shape input)
+		(at 181.61 124.46 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b6c3ae74-58e6-45f5-bdf6-cf8f056ddf86")
+	)
+	(global_label "GATE_IN3"
+		(shape input)
+		(at 181.61 129.54 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "146351f6-5506-4d93-a389-ba2808dbcc0b")
 	)
 	(symbol
 		(lib_id "RF_Module:ESP32-S3-WROOM-1")
