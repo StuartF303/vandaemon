@@ -2658,6 +2658,191 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "VANDIMMER:AP63301"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at 0 10.1600 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "AP63301WU-7"
+				(at 0 -12.7000 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "AP63301_0_1"
+				(rectangle
+					(start -10.1600 -10.1600)
+					(end 10.1600 7.6200)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin power_in line
+					(at -12.7 5.08 0)
+					(length 2.54)
+					(name "VIN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 0 0)
+					(length 2.54)
+					(name "EN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 -5.08 0)
+					(length 2.54)
+					(name "FB"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 5.08 180)
+					(length 2.54)
+					(name "BST"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 12.7 0 180)
+					(length 2.54)
+					(name "SW"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -12.7 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(wire
 		(pts
@@ -2869,36 +3054,6 @@
 		(uuid "d22caf28-6b28-4abd-8060-4d1cacc630c9")
 	)
 	(label "GND"
-		(at 132.08 184.15 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "1d5dd8e9-e164-43e0-bf7d-7035c795c81c")
-	)
-	(label "GND"
-		(at 191.77 166.37 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a5ce058f-4d3c-424e-b531-dd95f86e9289")
-	)
-	(label "GND"
-		(at 212.09 156.21 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "add477e5-e863-4206-91fd-77b8df408906")
-	)
-	(label "GND"
 		(at 312.42 77.47 0)
 		(effects
 			(font
@@ -2977,26 +3132,6 @@
 			(justify left bottom)
 		)
 		(uuid "0f719f3d-6abb-4404-930b-957d910653c1")
-	)
-	(label "GND"
-		(at 189.23 102.87 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "7a06fa99-5f7e-4668-a368-c5c660c4115b")
-	)
-	(label "GND"
-		(at 194.31 102.87 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "22154c45-8334-4a4a-8fc8-792ff71f5cf9")
 	)
 	(label "QREV_G"
 		(at 113.03 48.26 180)
@@ -3079,16 +3214,6 @@
 		(uuid "850da73e-4a27-4832-ada4-d966362b03b8")
 	)
 	(label "VIN_BUCK"
-		(at 179.07 82.55 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "a6b68cac-4e4a-4dca-8aab-545f792e3764")
-	)
-	(label "VIN_BUCK"
 		(at 107.95 135.89 0)
 		(effects
 			(font
@@ -3097,16 +3222,6 @@
 			(justify left bottom)
 		)
 		(uuid "f9dc7bd9-0247-418f-9048-de922ecfc570")
-	)
-	(label "SW"
-		(at 204.47 90.17 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "1e65a2c8-55d4-4e79-a7e1-daa861ba7d21")
 	)
 	(label "SW"
 		(at 237.49 72.39 0)
@@ -3127,16 +3242,6 @@
 			(justify left bottom)
 		)
 		(uuid "7f1735ca-c632-4f53-8416-a05c1beaffb1")
-	)
-	(label "BST"
-		(at 204.47 82.55 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "843cfe4c-90e7-41c1-9f00-2e94ace1a8de")
 	)
 	(label "BST"
 		(at 215.9 55.88 0)
@@ -3219,16 +3324,6 @@
 		(uuid "e563844f-a3fb-4ba5-8384-36aa3d75390c")
 	)
 	(label "FB"
-		(at 179.07 92.71 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "c45b37e8-b110-4e8c-9e8c-38d6c870934e")
-	)
-	(label "FB"
 		(at 149.86 143.51 0)
 		(effects
 			(font
@@ -3259,16 +3354,6 @@
 		(uuid "a1bd2c16-78fa-4c66-a756-51936374b30f")
 	)
 	(label "EN_BUCK"
-		(at 179.07 87.63 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "f1dd6e09-0427-439d-9573-2c239283056c")
-	)
-	(label "EN_BUCK"
 		(at 107.95 143.51 0)
 		(effects
 			(font
@@ -3287,76 +3372,6 @@
 			(justify left bottom)
 		)
 		(uuid "759a618d-bbb2-4e8f-a09d-88234d58b238")
-	)
-	(label "RT_SET"
-		(at 179.07 90.17 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "3f366ccf-709b-4fb2-868d-7725d381c57a")
-	)
-	(label "RT_SET"
-		(at 132.08 176.53 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "2348e774-c10c-4023-b882-e567e3096806")
-	)
-	(label "COMP"
-		(at 179.07 95.25 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "993f12c0-bf08-43fb-be1d-21b638c6b1ec")
-	)
-	(label "COMP"
-		(at 191.77 135.89 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "8aced12b-f251-40dc-89b8-e274e0955f6f")
-	)
-	(label "COMP"
-		(at 212.09 148.59 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "47b7c0c6-2e7b-485a-8185-98a1c3e331e9")
-	)
-	(label "COMP_M"
-		(at 191.77 143.51 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "d8a9f649-c2c3-4a77-af1e-a0e958cce9cc")
-	)
-	(label "COMP_M"
-		(at 191.77 158.75 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "030c4748-53ad-4a9b-bc0a-fb754ea61cff")
 	)
 	(label "+3V3"
 		(at 320.04 69.85 0)
@@ -3602,6 +3617,42 @@
 		)
 		(uuid "30299d7a-35b6-441f-8681-7eb400ef6daf")
 	)
+  (label "VIN_BUCK"
+    (at 179.07000000000002 85.09 180)
+    (fields_autoplaced yes)
+    (effects (font (size 1.27 1.27)) (justify right bottom))
+    (uuid "26b90199-e7dd-4568-86a9-5c2947e77b33")
+  )
+  (label "EN_BUCK"
+    (at 179.07000000000002 90.17 180)
+    (fields_autoplaced yes)
+    (effects (font (size 1.27 1.27)) (justify right bottom))
+    (uuid "430b3fdd-a7bc-4c4b-878e-4d2d50946c66")
+  )
+  (label "FB"
+    (at 179.07000000000002 95.25 180)
+    (fields_autoplaced yes)
+    (effects (font (size 1.27 1.27)) (justify right bottom))
+    (uuid "7c798de6-58ba-4234-b728-7c1fa3f3e688")
+  )
+  (label "BST"
+    (at 204.47 85.09 0)
+    (fields_autoplaced yes)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid "ce45c705-dd88-4fef-9837-3f0e74d832a6")
+  )
+  (label "SW"
+    (at 204.47 90.17 0)
+    (fields_autoplaced yes)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid "97f5dd07-9dda-487d-9afa-cfd0e705bf5a")
+  )
+  (label "GND"
+    (at 191.77 102.87 0)
+    (fields_autoplaced yes)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid "ecffc121-8038-4d78-81e4-3f1076d8a673")
+  )
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x02")
 		(at 30.48 49.53 0)
@@ -3720,7 +3771,7 @@
 				)
 			)
 		)
-		(property "Value" "SMBJ20A"
+		(property "Value" "SMBJ18A"
 			(at 85.09 59.69 0)
 			(effects
 				(font
@@ -4078,57 +4129,6 @@
 			(project "Power"
 				(path "6a82a63b-675a-4b8b-8345-833b7a0020ef"
 					(reference "C20")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "VANDIMMER:AP64350")
-		(at 191.77 90.17 0)
-		(unit 1)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "838e9b12-b7b7-4e8d-ad35-815c3f00df7f")
-		(property "Reference" "U2"
-			(at 191.77 77.47 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "AP64350SP-13"
-			(at 191.77 102.87 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm_ThermalVias"
-			(at 191.77 90.17 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 191.77 90.17 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(instances
-			(project "Power"
-				(path "6a82a63b-675a-4b8b-8345-833b7a0020ef"
-					(reference "U2")
 					(unit 1)
 				)
 			)
@@ -4755,214 +4755,6 @@
 			(project "Power"
 				(path "6a82a63b-675a-4b8b-8345-833b7a0020ef"
 					(reference "R24")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 132.08 180.34 0)
-		(unit 1)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bb5061b0-e5a8-495a-88de-9958cfee3e90")
-		(property "Reference" "R25"
-			(at 134.112 180.34 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "100k"
-			(at 132.08 180.34 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 132.08 180.34 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 132.08 180.34 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(instances
-			(project "Power"
-				(path "6a82a63b-675a-4b8b-8345-833b7a0020ef"
-					(reference "R25")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 191.77 139.7 0)
-		(unit 1)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "0cdf0b06-bdcd-41df-8ecf-39a4c2ed4756")
-		(property "Reference" "R26"
-			(at 193.802 139.7 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "10k"
-			(at 191.77 139.7 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 191.77 139.7 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 191.77 139.7 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(instances
-			(project "Power"
-				(path "6a82a63b-675a-4b8b-8345-833b7a0020ef"
-					(reference "R26")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 191.77 162.56 0)
-		(unit 1)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "dd076202-1434-48f5-992a-4b5243487739")
-		(property "Reference" "C28"
-			(at 192.405 160.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2.2nF"
-			(at 192.405 165.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 191.77 162.56 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 191.77 162.56 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(instances
-			(project "Power"
-				(path "6a82a63b-675a-4b8b-8345-833b7a0020ef"
-					(reference "C28")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 212.09 152.4 0)
-		(unit 1)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "41d015c3-a57a-4762-89eb-06c2057992ef")
-		(property "Reference" "C29"
-			(at 212.725 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100pF"
-			(at 212.725 154.94 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 212.09 152.4 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 212.09 152.4 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(instances
-			(project "Power"
-				(path "6a82a63b-675a-4b8b-8345-833b7a0020ef"
-					(reference "C29")
 					(unit 1)
 				)
 			)
@@ -5895,15 +5687,6 @@
 				)
 			)
 		)
-		(instances
-			(project "VANDIMMER-4CH2A"
-				(path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d/43933695-3e83-477a-8f28-1084f7012535"
-					(reference "R31")
-					(unit 1)
-				)
-			)
-		)
-	
 		(property "Assembly" "DNP - LC filter damping, populate with L3 and C20"
 			(at 67.31 88.9 0)
 			(hide yes)
@@ -5912,5 +5695,65 @@
 					(size 1.27 1.27)
 				)
 			)
-		))
+		)
+		(instances
+			(project "VANDIMMER-4CH2A"
+				(path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d/43933695-3e83-477a-8f28-1084f7012535"
+					(reference "R31")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "VANDIMMER:AP63301")
+		(at 191.77 90.17 0)
+		(unit 1)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c99223fa-f67c-4d4d-a7d6-e80eb0d5ad1b")
+		(property "Reference" "U2"
+			(at 191.77 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "AP63301WU-7"
+			(at 191.77 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:TSOT-23-6"
+			(at 191.77 90.17 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 191.77 90.17 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(instances
+			(project "VANDIMMER-4CH2A"
+				(path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d/43933695-3e83-477a-8f28-1084f7012535"
+					(reference "U2")
+					(unit 1)
+				)
+			)
+		)
+	)
 )
