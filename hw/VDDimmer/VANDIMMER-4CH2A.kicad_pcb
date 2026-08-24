@@ -1345,7 +1345,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "159af2a3-ac90-41af-ac25-5a7faa1d143a")
-		(at 174 97.5)
+		(at 110.973 125.6)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R5"
@@ -5607,7 +5607,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "49d0535e-9df8-4cf5-81e1-bb34c16a98ff")
-		(at 141.2 114.6)
+		(at 129.9 114.6)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R3"
@@ -5757,7 +5757,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "4afa8a7f-5198-4fe7-b7ab-eff65abd7808")
-		(at 178 97.5)
+		(at 122.273 125.6)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R6"
@@ -6057,7 +6057,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "4e926253-3fa7-4040-aa9d-2e967788d650")
-		(at 186 97.5)
+		(at 144.873 125.6)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R8"
@@ -6767,7 +6767,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "5bf4f14b-0b24-40bb-a350-2d2f81ede75c")
-		(at 152 108)
+		(at 141.2 114.6)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R4"
@@ -15722,7 +15722,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "cdc6fccd-2bba-4959-ad36-9a04c9748dbc")
-		(at 129.9 114.6)
+		(at 118.6 114.6)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R2"
@@ -16969,11 +16969,11 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "e419f5b6-54e0-45be-b7ed-f9ee9af7f808")
-		(at 118.6 114.6)
+		(at 111.2 111.5 180)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R1"
-			(at 0 -1.649999 0)
+			(at 0 -1.649999 180)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "2c9e4b52-4e93-4c2b-ab51-35862218b960")
@@ -16985,7 +16985,7 @@
 			)
 		)
 		(property "Value" "220R"
-			(at 0 1.65 0)
+			(at 0 1.65 180)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(hide yes)
@@ -16998,7 +16998,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 0)
+			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "70b33da1-8c07-4ce7-a068-f02858d55946")
@@ -17009,7 +17009,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 0 0 0)
+			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "83cfdd7f-b510-44d0-b830-f0ddca05e5c8")
@@ -17020,7 +17020,7 @@
 			)
 		)
 		(property "KiLib_Generator" "SMD_2terminal_chip_molded"
-			(at 0 0 0)
+			(at 0 0 180)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "a7cdc3cc-bfff-4b84-9b23-b35fac09cba7")
@@ -17034,16 +17034,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/472de3e7-b7e9-4c7b-a4fc-d9fc7abc8dcf")
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start -0.227064 -0.735)
-			(end 0.227064 -0.735)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "564515ba-2616-404d-94a9-0cba933782dd")
-		)
-		(fp_line
 			(start -0.227064 0.735)
 			(end 0.227064 0.735)
 			(stroke
@@ -17052,6 +17042,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "42dfb845-19fd-4cfd-826c-9a0ac47ada9c")
+		)
+		(fp_line
+			(start -0.227064 -0.735)
+			(end 0.227064 -0.735)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "564515ba-2616-404d-94a9-0cba933782dd")
 		)
 		(fp_rect
 			(start -1.68 -0.95)
@@ -17076,7 +17076,7 @@
 			(uuid "f740973e-93b5-4ca8-9c15-82cc3f9483bc")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 0)
+			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
 			(uuid "5c2aa1e5-c019-4d89-a30c-ebe51b48191b")
@@ -17088,7 +17088,7 @@
 			)
 		)
 		(pad "1" smd roundrect
-			(at -0.9125 0)
+			(at -0.9125 0 180)
 			(size 1.025 1.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.243902)
@@ -17096,7 +17096,7 @@
 			(uuid "7fc2bcb8-47c5-4d33-ad1f-677587ba18b7")
 		)
 		(pad "2" smd roundrect
-			(at 0.9125 0)
+			(at 0.9125 0 180)
 			(size 1.025 1.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.243902)
@@ -17119,7 +17119,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "e62469bb-e6f0-4065-8c70-7e3c16088397")
-		(at 182 97.5)
+		(at 133.573 125.6)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R7"
@@ -19400,7 +19400,7 @@
 	(footprint "RF_Module:ESP32-S3-WROOM-1U"
 		(layer "F.Cu")
 		(uuid "fd36012f-770c-4fb3-b38f-cf88934f0c5f")
-		(at 140 102 90)
+		(at 140 99.5 90)
 		(descr "2.4 GHz Wi-Fi and Bluetooth module  https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf")
 		(tags "2.4 GHz Wi-Fi and Bluetooth module")
 		(property "Reference" "U1"
