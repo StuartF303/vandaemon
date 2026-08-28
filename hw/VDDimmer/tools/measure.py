@@ -1,4 +1,4 @@
-import importlib.util, math, re
+import importlib.util, math, os, re
 SP = os.path.dirname(os.path.abspath(__file__))
 s=importlib.util.spec_from_file_location("geom",SP+"/geom.py"); g=importlib.util.module_from_spec(s); s.loader.exec_module(g)
 pads,tracks,vias=g.load()
@@ -29,7 +29,7 @@ worst=[]
 for t in sw:
     for o in tracks:
         if o["net"]==t["net"] or o["layer"]!=t["layer"]: continue
-        d=g.seg_seg_dist(t["x1"],t["y1"],t["x2"],t["y2"],o["x1"],o["y1"],o["x2"],o["y2"])-t["w"]/2-o["w"]/2
+        d=g.seg_seg_dist((t["x1"],t["y1"]),(t["x2"],t["y2"]),(o["x1"],o["y1"]),(o["x2"],o["y2"]))-t["w"]/2-o["w"]/2
         worst.append((d,o["net"],f"({o['x1']},{o['y1']})-({o['x2']},{o['y2']})"))
 worst.sort()
 for d,n,loc in worst[:8]: print(f"   {d:7.3f} mm to {n:24s} {loc}")
@@ -39,7 +39,7 @@ for ref in ("R21","R22","C27"):
     ps=[p for p in pads if p["ref"]==ref]
     if not ps: print(f"   {ref}: not found"); continue
     dl=min(math.hypot(p["cx"]-q["cx"],p["cy"]-q["cy"]) for p in ps for q in pads if q["ref"]=="L1")
-    ds=min(g.seg_rect_dist(t["x1"],t["y1"],t["x2"],t["y2"],p["x0"],p["y0"],p["x1"],p["y1"])-t["w"]/2
+    ds=min(g.seg_rect_dist(t["x1"],t["y1"],t["x2"],t["y2"],p)-t["w"]/2
            for p in ps for t in sw) if sw else float('nan')
     print(f"   {ref}: {dl:6.2f} mm to L1 (pad-centre),  {ds:6.2f} mm to SW copper")
 
@@ -57,14 +57,24 @@ for t in bt:
 for n,(L,c,d) in sorted(bynet.items(), key=lambda kv:-kv[1][0]):
     print(f"   {n:22s} {c:2d} seg {L:7.2f} mm   nearest approach to U2: {d:6.2f} mm")
 
-print("\n=== 5. Zone areas (filled polygons) ===")
+print("\n=== 5. Zones (filled polygons) ===")
 src=open(B,encoding='utf-8').read()
-for m in re.finditer(r'\(zone\s+\(net "([^"]*)"\)\s+\(layers? "([^"]+)"\)(.*?)\n  \)', src, re.S):
-    net,layer,body=m.group(1),m.group(2),m.group(3)
-    tot=0.0; np_=0
-    for fp in re.finditer(r'\(filled_polygon\s+\(layer "([^"]+)"\)\s+\(pts(.*?)\)\s*\)', body, re.S):
-        pts=[(float(a),float(b)) for a,b in re.findall(r'\(xy ([-\d.]+) ([-\d.]+)\)', fp.group(2))]
+rows=[]
+for zs,ze in g.blocks(src, "\n\t(zone"):
+    zb=src[zs:ze]
+    net=re.search(r'\(net_name "([^"]*)"\)', zb) or re.search(r'\(net "([^"]*)"\)', zb)
+    lay=re.search(r'\(layer "([^"]+)"\)', zb)
+    pri=re.search(r'\(priority (\d+)\)', zb)
+    net=net.group(1) if net else "?"
+    lay=lay.group(1) if lay else "?"
+    pri=int(pri.group(1)) if pri else 0
+    area=0.0; n=0
+    for fs,fe in g.blocks(zb, "\n\t\t(filled_polygon"):
+        pts=[(float(a),float(b)) for a,b in re.findall(r'\(xy ([-\d.]+) ([-\d.]+)\)', zb[fs:fe])]
         if len(pts)<3: continue
-        ar=abs(sum(pts[i][0]*pts[(i+1)%len(pts)][1]-pts[(i+1)%len(pts)][0]*pts[i][1] for i in range(len(pts))))/2
-        tot+=ar; np_+=1
-    print(f"   {layer:6s} {net:12s} {np_:3d} island(s)  {tot:9.1f} mm^2")
+        area+=abs(sum(pts[i][0]*pts[(i+1)%len(pts)][1]-pts[(i+1)%len(pts)][0]*pts[i][1]
+                      for i in range(len(pts))))/2
+        n+=1
+    rows.append((lay,net,pri,n,area))
+for lay,net,pri,n,area in sorted(rows, key=lambda r:(r[0],-r[4])):
+    print(f"   {lay:6s} {net:14s} prio {pri}  {n:4d} island(s)  {area:9.1f} mm^2")

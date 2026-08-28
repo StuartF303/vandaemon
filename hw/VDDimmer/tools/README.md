@@ -11,6 +11,19 @@ Run everything with **KiCad's Python 3.11**:
 | `measure.py` | the section 8.5 gate table |
 | `pads.py` `crtyd.py` `cut.py` | pad dumps, courtyard boxes, routing capacity across a cut line |
 | `vias.py` `gndstub.py` | via and stub generators |
+| `polyidx.py` | scanline point-in-polygon for zone fills; pad-perimeter / via-disc / segment samplers. A pad *centre* test misses thermal-relief spokes -- always sample the perimeter |
+| `connect.py` | per-net connected-component groups over tracks, vias, pads and zone islands. Run after every refill; this is what catches a split pour that DRC only whispers about |
+| `emc.py` | pour continuity, F.Cu runs not backed by the B.Cu pour, return-via distances, GND coverage under the buck |
+| `retvia.py` | proposes GND return vias that clear everything and land in GND fill on *both* layers |
+
+## connect.py thresholds
+
+`OVERLAP` (1e-4 mm) is what counts as conducting. Copper that merely *touches* -- a via
+whose radius exactly equals its distance to a pad edge -- does not conduct, and KiCad
+agrees; treating a touch as a connection once reported an unpowered ESP32 as fine.
+`MARGINAL` (0.05 mm) reports contacts thin enough that etch tolerance could open them.
+To ask "what breaks if the fab etches 50 um off everywhere", set `OVERLAP = 0.05` and
+re-run.
 
 ## Known blind spot in route.py
 
