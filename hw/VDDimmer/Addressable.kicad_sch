@@ -2510,7 +2510,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C5962"
+			(at 59.69 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "74HCT125D,653"
+			(at 59.69 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Nexperia"
+			(at 59.69 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "74xx:74AHCT125")
 		(at 59.69 110.49 0)
@@ -2765,7 +2792,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17714"
+			(at 100.33 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F470JT5E"
+			(at 100.33 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 100.33 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 100.33 110.49 0)
@@ -2816,7 +2870,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17714"
+			(at 100.33 110.49 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F470JT5E"
+			(at 100.33 110.49 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 100.33 110.49 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 100.33 160.02 0)
@@ -2867,7 +2948,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17714"
+			(at 100.33 160.02 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F470JT5E"
+			(at 100.33 160.02 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 100.33 160.02 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 100.33 204.47 0)
@@ -2884,7 +2992,7 @@
 				)
 			)
 		)
-		(property "Value" "47R DNP"
+		(property "Value" "47R"
 			(at 100.33 204.47 90)
 			(effects
 				(font
@@ -2910,7 +3018,7 @@
 				)
 			)
 		)
-		(property "Assembly" "DNP - APA102 clock provision per spec 6.2"
+		(property "Assembly" "DNP - APA102 clock provision per spec 6.2. Needs KiCad's (dnp yes) attribute set in the GUI; no MCP tool writes it"
 			(at 100.33 204.47 0)
 			(hide yes)
 			(effects
@@ -2927,7 +3035,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17714"
+			(at 100.33 204.47 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F470JT5E"
+			(at 100.33 204.47 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 100.33 204.47 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 129.54 204.47 0)
@@ -2944,7 +3079,7 @@
 				)
 			)
 		)
-		(property "Value" "47R DNP"
+		(property "Value" "47R"
 			(at 129.54 204.47 90)
 			(effects
 				(font
@@ -2970,7 +3105,7 @@
 				)
 			)
 		)
-		(property "Assembly" "DNP - APA102 clock provision per spec 6.2"
+		(property "Assembly" "DNP - APA102 clock provision per spec 6.2. Needs KiCad's (dnp yes) attribute set in the GUI; no MCP tool writes it"
 			(at 129.54 204.47 0)
 			(hide yes)
 			(effects
@@ -2987,7 +3122,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17714"
+			(at 129.54 204.47 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F470JT5E"
+			(at 129.54 204.47 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 129.54 204.47 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x03")
 		(at 209.55 59.69 0)
@@ -3140,7 +3302,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C18198342"
+			(at 250.19 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "1812L200/30GR"
+			(at 250.19 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "LUTE"
+			(at 250.19 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:Polyfuse")
 		(at 250.19 119.38 0)
@@ -3191,7 +3380,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C18198342"
+			(at 250.19 119.38 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "1812L200/30GR"
+			(at 250.19 119.38 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "LUTE"
+			(at 250.19 119.38 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 275.59 69.85 0)
@@ -3244,7 +3460,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C5156756"
+			(at 275.59 69.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "FS32X106K101EGG"
+			(at 275.59 69.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "PSA"
+			(at 275.59 69.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 275.59 129.54 0)
@@ -3297,7 +3540,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C5156756"
+			(at 275.59 129.54 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "FS32X106K101EGG"
+			(at 275.59 129.54 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "PSA"
+			(at 275.59 129.54 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x04")
 		(at 330.2 59.69 0)
@@ -3452,7 +3722,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "SUBSTITUTE - the V6 revision is not in JLC's catalogue. Confirm the V5 pinout against the PLCC4 footprint before ordering"
+			(at 149.86 165.1 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2874885"
+			(at 149.86 165.1 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "WS2812B-V5/W"
+			(at 149.86 165.1 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Worldsemi"
+			(at 149.86 165.1 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 180.34 175.26 0)
@@ -3505,7 +3811,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C14663"
+			(at 180.34 175.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 180.34 175.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 180.34 175.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 320.04 199.39 0)
@@ -3558,7 +3891,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C15850"
+			(at 320.04 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL21A106KAYNNNE"
+			(at 320.04 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 320.04 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 340.36 199.39 0)
@@ -3611,7 +3971,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C14663"
+			(at 340.36 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 340.36 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 340.36 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "power:GND")
 		(at 59.69 270.51 0)

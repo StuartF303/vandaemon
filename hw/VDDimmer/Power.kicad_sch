@@ -3669,7 +3669,7 @@
 				)
 			)
 		)
-		(property "Value" "VIN 9-24V"
+		(property "Value" "VIN 12V"
 			(at 30.48 54.61 0)
 			(effects
 				(font
@@ -3703,7 +3703,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "hand-fit. 12 V ONLY - D5 is an SMBJ18A (18 V standoff); 24 V destroys it. The old '9-24V' label predated the 12 V-only decision"
+			(at 30.48 49.53 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "MC 1,5/2-G-5.08"
+			(at 30.48 49.53 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Phoenix Contact"
+			(at 30.48 49.53 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:Fuse")
 		(at 59.69 44.45 0)
@@ -3720,7 +3747,7 @@
 				)
 			)
 		)
-		(property "Value" "10A 250V"
+		(property "Value" "8A 250V"
 			(at 57.785 44.45 90)
 			(effects
 				(font
@@ -3754,7 +3781,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "8 A fuse - sized for the 5 A board cap with 25% continuous derating; opens below the 7.5 A blade fuse upstream"
+			(at 59.69 44.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C54824501"
+			(at 59.69 44.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "LTC2410-1800TSK"
+			(at 59.69 44.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "LUTE"
+			(at 59.69 44.45 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:D_TVS")
 		(at 85.09 57.15 0)
@@ -3805,7 +3868,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "18 V standoff, 29.2 V clamp - under U2's 32 V abs max. The spec doc still says SMBJ33A; that is stale and would clamp above the buck's rating"
+			(at 85.09 57.15 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C19077573"
+			(at 85.09 57.15 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "SMBJ18A"
+			(at 85.09 57.15 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "hongjiacheng"
+			(at 85.09 57.15 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Transistor_FET:Q_PMOS_GDS")
 		(at 118.11 48.26 0)
@@ -3858,7 +3957,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "12 mOhm beats the spec's 30 mOhm assumption - reverse-polarity loss 0.30 W not 0.75 W. Vishay original is C141584 at 28 mOhm"
+			(at 118.11 48.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C7503186"
+			(at 118.11 48.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "SUD50P06-15(UMW)"
+			(at 118.11 48.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UMW"
+			(at 118.11 48.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 142.24 66.04 0)
@@ -3909,7 +4044,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C149504"
+			(at 142.24 66.04 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F1003T5E"
+			(at 142.24 66.04 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 142.24 66.04 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:D_Zener")
 		(at 162.56 66.04 0)
@@ -3960,7 +4122,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C19077410"
+			(at 162.56 66.04 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BZT52C12"
+			(at 162.56 66.04 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "hongjiacheng"
+			(at 162.56 66.04 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:L")
 		(at 41.91 95.25 0)
@@ -4003,7 +4192,7 @@
 				)
 			)
 		)
-		(property "Assembly" "DNP - optional input LC filter, populate only if EMI sweep fails"
+		(property "Assembly" "NOW FITTED per the 2026-08-29 decision, no longer DNP. Same land-pattern caveat as L1"
 			(at 41.91 95.25 0)
 			(hide yes)
 			(effects
@@ -4020,7 +4209,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C2849537"
+			(at 41.91 95.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "PNLS6045-100M"
+			(at 41.91 95.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "DMBJ"
+			(at 41.91 95.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 41.91 111.76 0)
@@ -4071,7 +4287,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "0 R jumper carrying ~1.2 A - confirm the part's current rating against its datasheet; JLC lists only 125 mW"
+			(at 41.91 111.76 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C17477"
+			(at 41.91 111.76 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F0000T5E"
+			(at 41.91 111.76 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 41.91 111.76 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 67.31 101.6 0)
@@ -4116,7 +4368,7 @@
 				)
 			)
 		)
-		(property "Assembly" "DNP - spare input cap, populate with L3"
+		(property "Assembly" "LC filter cap - NOW FITTED per the 2026-08-29 decision, no longer DNP"
 			(at 67.31 101.6 0)
 			(hide yes)
 			(effects
@@ -4133,7 +4385,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C5156756"
+			(at 67.31 101.6 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "FS32X106K101EGG"
+			(at 67.31 101.6 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "PSA"
+			(at 67.31 101.6 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 149.86 105.41 0)
@@ -4186,7 +4465,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C5156756"
+			(at 149.86 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "FS32X106K101EGG"
+			(at 149.86 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "PSA"
+			(at 149.86 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 165.1 105.41 0)
@@ -4239,7 +4545,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C5156756"
+			(at 165.1 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "FS32X106K101EGG"
+			(at 165.1 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "PSA"
+			(at 165.1 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 134.62 105.41 0)
@@ -4292,7 +4625,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "buck Cin - keep the 2.51 mm2 hot loop; do not relocate"
+			(at 134.62 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C307331"
+			(at 134.62 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL05B104KB54PNC"
+			(at 134.62 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 134.62 105.41 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 215.9 59.69 0)
@@ -4345,7 +4714,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C14663"
+			(at 215.9 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 215.9 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 215.9 59.69 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:L")
 		(at 237.49 76.2 0)
@@ -4396,7 +4792,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "CANDIDATE ONLY - verify land pattern. Board land is two 2.50 x 6.00 mm pads on 4.90 mm centres; this part is a 6x6 mm body. DCR 57 mOhm costs 0.51 W at 3 A"
+			(at 237.49 76.2 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2849537"
+			(at 237.49 76.2 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "PNLS6045-100M"
+			(at 237.49 76.2 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "DMBJ"
+			(at 237.49 76.2 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 257.81 96.52 0)
@@ -4449,7 +4881,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C12891"
+			(at 257.81 96.52 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL31A226KAHNNNE"
+			(at 257.81 96.52 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 257.81 96.52 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 273.05 96.52 0)
@@ -4502,7 +4961,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C12891"
+			(at 273.05 96.52 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL31A226KAHNNNE"
+			(at 273.05 96.52 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 273.05 96.52 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 149.86 139.7 0)
@@ -4553,7 +5039,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "buck FB divider - extended library, attracts a JLC setup fee"
+			(at 149.86 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2933465"
+			(at 149.86 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "FRC0805F5232TS"
+			(at 149.86 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "FOJAN"
+			(at 149.86 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 149.86 162.56 0)
@@ -4604,7 +5126,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17414"
+			(at 149.86 162.56 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F1002T5E"
+			(at 149.86 162.56 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 149.86 162.56 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 171.45 139.7 0)
@@ -4657,7 +5206,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C1653"
+			(at 171.45 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL10C220JB8NNNC"
+			(at 171.45 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 171.45 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 107.95 139.7 0)
@@ -4708,7 +5284,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "EN_BUCK UVLO divider upper leg - with R24 18k the buck enables at ~7.2 V"
+			(at 107.95 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C149504"
+			(at 107.95 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F1003T5E"
+			(at 107.95 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 107.95 139.7 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 107.95 162.56 0)
@@ -4759,7 +5371,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17506"
+			(at 107.95 162.56 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F1802T5E"
+			(at 107.95 162.56 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 107.95 162.56 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Regulator_Linear:AMS1117-3.3")
 		(at 312.42 69.85 0)
@@ -4776,7 +5415,7 @@
 				)
 			)
 		)
-		(property "Value" "AMS1117-3.3"
+		(property "Value" "BL1117-33CX"
 			(at 312.42 66.675 0)
 			(effects
 				(font
@@ -4811,7 +5450,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "2 mA quiescent vs the AMS1117's 5 mA. No SOT-223 LDO goes lower - uA parts are SOT-89/SOT-23 only and cannot dissipate 0.55 W"
+			(at 312.42 69.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C5400"
+			(at 312.42 69.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "BL1117-33CX"
+			(at 312.42 69.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "BL (Shanghai Belling)"
+			(at 312.42 69.85 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 289.56 91.44 0)
@@ -4864,7 +5539,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C15850"
+			(at 289.56 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL21A106KAYNNNE"
+			(at 289.56 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 289.56 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 337.82 91.44 0)
@@ -4917,7 +5619,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C12891"
+			(at 337.82 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL31A226KAHNNNE"
+			(at 337.82 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Samsung Electro-Mechanics"
+			(at 337.82 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 355.6 91.44 0)
@@ -4970,7 +5699,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C14663"
+			(at 355.6 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 355.6 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 355.6 91.44 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 41.91 199.39 0)
@@ -5021,7 +5777,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "VIN_SENSE divider upper leg - with R28 10k gives 0.0909 ratio, safe to 36 V at the ADC"
+			(at 41.91 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C149504"
+			(at 41.91 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F1003T5E"
+			(at 41.91 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 41.91 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 41.91 222.25 0)
@@ -5072,7 +5864,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17414"
+			(at 41.91 222.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F1002T5E"
+			(at 41.91 222.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 41.91 222.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 62.23 214.63 0)
@@ -5125,7 +5944,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C14663"
+			(at 62.23 214.63 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 62.23 214.63 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 62.23 214.63 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:R")
 		(at 111.76 199.39 0)
@@ -5176,7 +6022,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C17414"
+			(at 111.76 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F1002T5E"
+			(at 111.76 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 111.76 199.39 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:Thermistor_NTC")
 		(at 111.76 222.25 0)
@@ -5227,7 +6100,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "+/-1% on both R and B"
+			(at 111.76 222.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C49247662"
+			(at 111.76 222.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "HNTC0805-103F3950FB"
+			(at 111.76 222.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "hongjiacheng"
+			(at 111.76 222.25 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Device:C")
 		(at 132.08 214.63 0)
@@ -5280,7 +6189,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C14663"
+			(at 132.08 214.63 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CC0603KRX7R9BB104"
+			(at 132.08 214.63 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "YAGEO"
+			(at 132.08 214.63 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "power:PWR_FLAG")
 		(at 74.93 190.5 0)
@@ -5687,7 +6623,7 @@
 				)
 			)
 		)
-		(property "Assembly" "DNP - LC filter damping, populate with L3 and C20"
+		(property "Assembly" "LC filter damping - NOW FITTED per the 2026-08-29 decision, no longer DNP"
 			(at 67.31 88.9 0)
 			(hide yes)
 			(effects
@@ -5704,7 +6640,34 @@
 				)
 			)
 		)
-	)
+	
+		(property "LCSC" "C25271"
+			(at 67.31 88.9 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0805W8F100KT5E"
+			(at 67.31 88.9 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL"
+			(at 67.31 88.9 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "VANDIMMER:AP63301")
 		(at 191.77 90.17 0)
@@ -5755,5 +6718,41 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "32 V abs max - this is why the board is 12 V only and D5 is an SMBJ18A"
+			(at 191.77 90.17 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2158003"
+			(at 191.77 90.17 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "AP63301WU-7"
+			(at 191.77 90.17 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Diodes Incorporated"
+			(at 191.77 90.17 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 )
