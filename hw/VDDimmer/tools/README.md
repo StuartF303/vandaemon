@@ -15,6 +15,16 @@ Run everything with **KiCad's Python 3.11**:
 | `connect.py` | per-net connected-component groups over tracks, vias, pads and zone islands. Run after every refill; this is what catches a split pour that DRC only whispers about |
 | `emc.py` | pour continuity, F.Cu runs not backed by the B.Cu pour, return-via distances, GND coverage under the buck |
 | `retvia.py` | proposes GND return vias that clear everything and land in GND fill on *both* layers |
+| `export-bom.sh` | BOM export with the correct grouping — see below, the obvious grouping is wrong |
+
+## Why export-bom.sh does not group by MPN
+
+Konnect's `edit_schematic_component` writes fields to **unit 1 only** of a multi-unit
+symbol; KiCad's GUI propagates them to every unit. U4 and U5 are 5-unit 74HCT125s, so
+units 2-5 carry no MPN and grouping by MPN splits U5 across two BOM lines -- a BOM that
+orders 3 of a 2-off part. Grouping by Value+Footprint collapses them correctly and still
+reports the MPN from unit 1. The inconsistency heals as soon as anyone opens those field
+dialogs in the GUI.
 
 ## connect.py thresholds
 

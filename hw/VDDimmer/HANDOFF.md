@@ -1,117 +1,110 @@
 # VANDIMMER-4CH+2A — session handoff
 
-Phase 3 (layout). **Four functional defects were found this session and all four are
-fixed.** Two of them — unpowered gate drivers and an unpowered ESP32 — would each have
-made the board dead on arrival, and both were sitting behind a clean "DRC 0 errors".
-An F.Cu GND pour has been added. Electrically the layout is now sound; the fab blockers
-below are not.
+Phase 3 (layout) is **electrically complete**. Schematic ERC 0/0, board DRC 0 errors, and
+every remaining unconnected item is accounted for. What is left is fab preparation, and
+the critical path there is **assembly data, not copper**.
 
-## Open work
+Last commit: `147a6c9`. Working tree clean.
 
-Nothing blocks the board electrically. What is left is fab preparation, listed under
-"Remaining work" below: **0 of 49 BOM lines have an MPN**, there is no board name or
-revision on silkscreen, **0 fiducials, 0 test points**, and ~150 silkscreen warnings.
+## Start here
 
-Optional tidy-up: seven contacts hold together by 23-50 µm of copper (listed below).
-None is load-bearing, but the four in the buck area are worth nudging properly onto
-their pads if the board is opened again.
+Everything below is verified against the tools in `tools/`. Re-derive rather than inherit —
+two tooling bugs in earlier sessions each hid a defect that would have killed the board.
 
-## Fixed this session
+```bash
+bash hw/VDDimmer/tools/drc.sh                                  # refill + DRC (KiCad CLOSED)
+"C:/Program Files/KiCad/10.0/bin/python.exe" hw/VDDimmer/tools/connect.py   # all 61 nets
+"C:/Program Files/KiCad/10.0/bin/python.exe" hw/VDDimmer/tools/emc.py
+bash hw/VDDimmer/tools/export-bom.sh                           # 49-line BOM
+```
 
-- **U4's gate drivers were unpowered.** The F.Cu +5V pour filled as two islands that did
-  not touch — 448.6 mm² carrying the main rail, and 123.1 mm² carrying only U4.14, C50.1
-  and C51.1. The four-wire addressable bus (ADDR1_DIN x=168.6, ADDR2_DIN x=169.1,
-  ADDR_CLK x=170.1, STATUS_DIN x=170.6; 0.25 mm traces on 0.5 mm pitch) runs the full
-  height of the zone, y 92 → 117.14, and nothing can fill between them. Bridged on B.Cu
-  across the bus only: +5V vias at (167.6, 105.0) and (171.6, 105.0) with a 0.5 mm B.Cu
-  track between them — 4.0 mm of slot, and both vias land inside their own island's fill
-  so no F.Cu track was needed at either end. **U4.14, C50.1 and C51.1 are now in the main
-  +5V group.**
-- **J1's north GND pad was floating.** A1+B12 are one physical pad at (107.695, 108.750)
-  and formed their own group; USB return had only the shell. Joined to the adjacent
-  J1.SH pad with a 0.4 mm F.Cu track to (107.35, 107.68).
-- **U1, the ESP32, had no 3V3.** The via at (133.0, 107.2) was *exactly tangent* to pad
-  U1.2 — centre-to-pad-box distance 0.3000 mm against a via radius of 0.3000 mm, so zero
-  overlap. KiCad calls a point touch unconnected and is right. Fixed with a 0.5 mm F.Cu
-  stub (133.0, 107.2) → (133.0, 108.25), running 0.75 mm into the pad. **U1.2 is now in
-  the main +3V3 group.**
-- **Orphan +3V3 copper deleted** — a 10.3 mm B.Cu track (187.2, 84.5)→(187.2, 94.8)
-  dangling at both ends, plus its via, which slotted the GND pour for nothing.
-- **Six `starved_thermal` errors** from the new pour, cleared by setting the F.Cu GND
-  zone to **Pad connection: Solid** (`connect_pads yes`) in the GUI — there is no MCP
-  tool for zone pad-connection mode. Solid is right for a ground reference, and the
-  +3V3 pour on this board already used it.
+## Current state
 
-## The F.Cu GND pour
-
-Added at priority 0 (lowest), outline = board inset 0.5 mm with a rectangular bite out of
-the top edge at **x 172.5-186.0, y 60.5-78.5**. The bite keeps ground copper off the SW
-node and, because R21, R22, C27 and R24 sit in that block alongside U2, C23, C24 and L1,
-off the FB divider as well. B.Cu GND under the buck is untouched — coverage is still
-100.0% of 6400 sample points with zero foreign tracks or vias.
-
-What it bought:
-
-| | before | after |
-|---|---|---|
-| `via_dangling` warnings | 81 | **9** |
-| GND vias touching one layer only | 75 | 5 |
-| DRC warnings, total | 244 | **170** |
-| DRC errors | 0 | **0** |
-| Unconnected items | 18 | **15**, all benign |
-| GND connected groups | 2 | **1** |
-| F.Cu GND copper | 0 mm² | **2664.9 mm²** (49 islands, all tied through vias) |
-
-**But the return-via idea still mostly cannot be realised.** `tools/retvia.py` could place
-only **3 of 30** missing return vias, and only one of those three landed inside the 1.0 mm
-criterion (the other two are at 1.05 and 1.10 mm — a real return path, but `emc.py` still
-counts them as missing). The score moved 30 → 29 of 44. The reason is structural, not a lack of care: on a
-2-layer board the F.Cu side of most layer transitions is inside a *power* pour, not GND —
-14 of the 27 failures are VIN_PROT vias sitting in the VIN_PROT pour, and both new +5V
-bridge vias sit inside the +5V pour. There is no GND copper next to them to stitch to.
-Rev B needs a floorplan change or a 4-layer stackup; no amount of via work fixes it here.
-
-## Copper held together by 23-50 µm
-
-`connect.py` now requires a real overlap and reports anything thinner than 50 µm. Seven
-contacts qualify:
-
-    23 µm  trk F.Cu (174.863,74.95)-(174.863,76.5)      <-> pad C23.1   (buck Cin)
-    23 µm  trk F.Cu (174.5,81.25)-(174.863,76.6)        <-> pad C23.1
-    25 µm  trk F.Cu (174.1,73.05)-(174.1,66.0)          <-> pad U2.1    (FB)
-    25 µm  trk F.Cu (177.137,74.0)-(178.5,74.0)         <-> pad C24.2   (bootstrap)
-    25 µm  trk B.Cu (124.3,100.6)-(121.088,100.6)       <-> via (121.088,100.200)
-    25 µm  via (172.588,124.025)                        <-> pad R10.1
-    50 µm  via (112.400,107.000)                        <-> pad D8.4
-
-**None of them is load-bearing.** Re-running every net with the overlap threshold raised
-to 50 µm — i.e. asking what breaks if the fab etches 50 µm off everywhere — splits no net
-that was not already split. They are redundant second paths, so this is a tidiness item,
-not a defect. Worth nudging the four buck-area tracks properly onto their pads if the
-board is touched again.
-
-## Verified state (after the pour and refill)
-
-| Check | Value |
+| | |
 |---|---|
-| Schematic | 5 sheets, 96 parts, ERC 0/0 |
+| Schematic | 5 sheets, 96 parts, **ERC 0 violations** |
 | DRC | **0 errors**, 170 warnings |
-| Phantom pads | 0 |
-| Unconnected | 15, every one accounted for below |
-| Schematic parity | 25, all benign |
-| Tracks / vias | 321 / 192 |
-| Nets split into more than one group | 12 of 61, **all benign** |
+| Unconnected | 15, every one benign — see the table below |
+| Nets split into >1 group | 12 of 61, all benign |
+| GND | **one connected group**; pours on both layers |
+| BOM | **49 lines, 96 parts, $11.91/board**; 35 lines carry an LCSC code |
+| Decisions | `DECISIONS-2026-08-29.md` — settled, do not re-litigate |
 
-### Every remaining unconnected item, and why
+## Open work, in order
 
-`connect.py` with no arguments checks all 61 nets and agrees with KiCad exactly. Twelve
-nets are split and **none of them is a defect** — each is either a package-internal
-connection or a routing limitation with a product decision already taken:
+### 1. Two GUI-only items (no MCP tool writes either)
+
+- **`(dnp yes)` on R11 and R12.** Their Assembly fields say so. All five text-only DNPs
+  were in this state; L3/C20/R31 are now *fitted* by decision, so only these two remain.
+  Without the real flag a generated BOM quotes and fits them.
+- **Open U4 and U5's field dialogs** so KiCad propagates MPN/LCSC across their units.
+  See the Konnect gotcha about multi-unit symbols — the BOM is correct today only
+  because `export-bom.sh` groups by Value+Footprint rather than MPN.
+
+### 2. The two I2C pull-ups — the last schematic change
+
+Decision taken: fit 4.7 k from I2C_SDA and I2C_SCL to +3V3 near J13, LCSC **C17673**
+(0805, Basic, 7 M stock). Provisional refs **R45/R46**.
+
+This is the riskiest remaining step and needs planning, not improvisation:
+adding symbols means `update_pcb_from_schematic`, which **injects a phantom pad on every
+footprint it adds** — two new resistors, two phantom pads, cleared only by KiCad's
+targeted right-click → Update Footprint. Never the global Tools → Update Footprints from
+Library; that re-anchors and scrambles placement. Then both parts need placing and routing
+near J13 on a board whose F.Cu is already full.
+
+### 3. The fab blockers
+
+- **Footprint `attr` is missing on all 96 footprints.** No `(attr smd)` anywhere, so
+  `kicad-cli pcb export pos --smd-only` returns **0 rows** and the unfiltered export
+  returns 96 including the four mounting holes. There is no usable CPL either way.
+  Measured, not assumed. This is also what generates all 92 `lib_footprint_mismatch`
+  warnings — **do not clear those with Tools → Update Footprints from Library.**
+- **Six drill defects**, none previously investigated:
+  - two GND vias at (176.112, 63.5) / (176.5, 63.5) — hole-to-hole **0.0000 mm**, the
+    drills touch
+  - pairs at 0.105 mm near (134.6, 126.8) and (145.9, 126.8)
+  - J2 pad 2 vs a via at 0.200 mm against a 0.2495 mm minimum
+  - a **duplicate EN_MCU via** — two drills co-located at exactly (150.6, 105.16)
+- **No board name, no revision on silkscreen, 0 fiducials, 0 test points.**
+- Silkscreen: 4 clipped by the board edge (H1/H2 refdes off the top, J1's outline off
+  the left), 28 `silk_over_copper`, 24 `silk_overlap`.
+
+### 4. Verify before ordering
+
+- **L1/L3 land pattern.** The board land is two 2.50 × 6.00 mm pads on 4.90 mm centres
+  (7.40 × 6.00 overall). The proposed PNLS6045-100M is a 6 × 6 mm body. Check the
+  datasheet land before committing. Its 57 mΩ DCR also costs 0.51 W at 3 A — a 3.4 %
+  efficiency hit on a 15 W converter, so a lower-DCR 10 µH in the same land is worth
+  looking for.
+- **WS2812B-V6 is not in JLC's catalogue.** Only V5/W and B/T. C2874885 (V5/W) is
+  substituted in the BOM; confirm the pinout against the PLCC4 footprint.
+- **R30's 0 Ω jumper carries ~1.2 A** and JLC lists only 125 mW for C17477. Confirm the
+  current rating against UNI-ROYAL's datasheet or pick a jumper rated ≥ 2 A.
+- **J1 is listed hand-fit** with the other connectors per spec §10 — but 16 pads at
+  0.5 mm pitch plus four shield legs is not sensibly hand-soldered. Machine-place J1.
+
+### 5. Documentation that contradicts the design
+
+- `VANDIMMER-4CH-2ADDR-SPEC-v2.0.md` line 77 still says **SMBJ33A**. The board has an
+  SMBJ18A and must. An SMBJ33A clamps at ~53 V, above the AP63301's 32 V absolute
+  maximum, so a 24 V-capable version of this board cannot protect its own buck.
+- The spec's channel-loss figure uses **15 mΩ** for the 20N06. The real part is **29 mΩ
+  at the 4.5 V the 74HCT125 actually drives**; loss is 0.116 W per channel, not 0.06 W.
+  Still only ~6 °C, so the no-thermal-vias decision stands, but the number was optimistic.
+- **Firmware must be regenerated from the current schematic.** U1's GPIO map changed
+  twice and U5's buffer channels 3↔4 were swapped during layout.
+
+## Every remaining unconnected item, and why
+
+`connect.py` with no arguments checks all 61 nets and agrees with KiCad exactly. None of
+the twelve splits is a defect — each is a package-internal connection or a routing
+limitation with a decision already taken.
 
 | Net | Group | Verdict |
 |---|---|---|
 | +3V3 | U3.2 tab vs pin | benign, SOT-223 tab and pin 2 are one node inside the package |
-| +5V | D9.1 | known, no USB-powered operation — product decision already taken |
+| +5V | D9.1 | known, no USB-powered operation |
 | +5V | 3 × zero-area prio-1 slivers | artefact, no copper |
 | /MCU/BTN1 | J11.1 | known unroutable |
 | /MCU/USB_DM, USB_DP | D8's pin pairs | benign, bonded inside the USBLC6 |
@@ -120,51 +113,77 @@ connection or a routing limitation with a product decision already taken:
 | /Power/VIN_FUSED | Q5.2 | benign, same |
 | VIN_PROT | J9.1, J10.1 | known, no 12 V for the addressable strips |
 
-### 8.5 gate
+## What earlier sessions got wrong
+
+Kept because each cost real time and would otherwise be rediscovered:
+
+- **"DRC 0 errors" hid four dead-on-arrival defects.** KiCad reports a split net as an
+  *unconnected item*, never an error. All 20 had been written off as benign; four were
+  not — U4's gate drivers unpowered, U1's ESP32 unpowered, J1's GND floating, and a
+  10.3 mm orphan +3V3 stub. `connect.py` exists to catch exactly this. Run it after
+  every refill.
+- **A via can be *exactly tangent* to a pad** — centre-to-pad-box distance equal to the
+  via radius, zero overlap — and KiCad calls it unconnected while any `distance <= radius`
+  check calls it connected. That is how the ESP32 read as powered when it was floating.
+  `connect.py`'s `OVERLAP` is 1e-4 mm for this reason; `MARGINAL` (0.05 mm) reports copper
+  thin enough that etch tolerance could open it.
+- **The 33 "GND return vias" added at `1a1d10b` were inert.** There was no F.Cu GND pour,
+  so 75 of 145 GND vias touched no F.Cu copper at all. A stitching via needs two GND
+  references. Fixed by adding the F.Cu pour; `via_dangling` went 81 → 9.
+- **`measure.py` did not run at all as committed** — missing `import os`, two calls using
+  signatures `geom.py` does not have, and a zone parser matching two-space indentation
+  against a tab-indented file. Numbers in the old gate table came from an unrecorded
+  method. Any figure from a tool that does not currently run is unverified.
+- **F1 was described as "a 10 A PPTC".** It is a 2410 *fuse*; PF1/PF2 are the PPTCs.
+  That mattered — no 8 A PPTC exists in SMD at all, but an 8 A fuse dropped straight in.
+
+## The F.Cu GND pour
+
+Priority 0, board inset 0.5 mm, with a rectangular bite out of the top edge at
+**x 172.5-186.0, y 60.5-78.5**. The bite keeps ground copper off SW and — because R21,
+R22, C27 and R24 sit in that block with U2, C23, C24 and L1 — off the FB divider too.
+Pad connection is **Solid** (`connect_pads yes`), which is what cleared six
+`starved_thermal` errors. B.Cu GND under the buck is untouched: 100.0 % of 6400 sample
+points, zero foreign tracks or vias.
+
+**The return-via idea still mostly cannot be realised.** `retvia.py` could place only
+3 of 30, and only one landed inside the 1.0 mm criterion. The reason is structural: on
+2 layers the F.Cu side of most transitions sits inside a *power* pour, not GND — 14 of
+the 27 failures are VIN_PROT vias inside the VIN_PROT pour, and both +5V bridge vias sit
+in the +5V pour. Rev B needs a floorplan change or 4 layers.
+
+## 8.5 gate — last measured
 
 | Criterion | Gate | Measured | |
 |---|---|---|---|
 | Cin hot loop | < 15 mm² | 2.51 mm² | pass |
-| Vias in hot loop bbox | 0 | 1 — GND at (177.137, 75.95), on U2.4's own pad; a shunt to plane, not in series | pass in spirit |
+| Vias in hot loop bbox | 0 | 1 — GND at (177.137, 75.95) on U2.4's own pad, a shunt to plane | pass in spirit |
 | SW → nearest non-buck net | ≥ 3 mm | 0.25 mm to BST | gate is mis-stated, see note |
-| B.Cu GND under buck (fp +5 mm) | unbroken | 100.0% of 6400 points; 0 foreign tracks/vias | pass |
+| B.Cu GND under buck (fp +5 mm) | unbroken | 100.0 % of 6400 points | pass |
 | B.Cu GND pour | continuous | 1 island, 7194.2 mm² | pass |
-| F.Cu GND pour | — | 2664.9 mm², 49 islands, all tied through vias (GND is one group) | new |
-| Buck output +5V copper | 645 mm² | 571.8 mm², now a single connected group | under gate, but connected |
+| F.Cu GND pour | — | 2664.9 mm², 49 islands, all tied through vias | new |
+| Buck output +5V copper | 645 mm² | 571.8 mm², one connected group | under gate, but connected |
 | VIN_PROT copper | 645 mm² | 2212.7 mm² | pass |
 | FB divider → L1 / SW | away | R21 6.73 / 4.80 mm, R22 8.95 / 4.91, C27 8.61 / 7.03 | pass |
-| F.Cu nets crossing a B.Cu pour gap | — | 42 of 60, worst 6.50 mm (DRAIN1) | unchanged, see EMC |
-| Layer transitions w/o return via ≤ 1 mm | — | 29 of 44 | structural, see above |
+| F.Cu nets crossing a B.Cu pour gap | — | 42 of 60, worst 6.50 mm (DRAIN1) | see EMC |
+| Layer transitions w/o return via ≤ 1 mm | — | 29 of 44 | structural |
 
-Notes:
+**SW → BST is 0.25 mm**, not the 12.75 mm an early handoff recorded — that figure was the
+distance to the nearest *non-buck* net. BST is the buck's own bootstrap and 0.25 mm is the
+design clearance. The gate should name BST/L1/FB as excluded rather than rely on "non-buck"
+being obvious.
 
-- **SW → BST is 0.25 mm**, not the 12.75 mm an earlier handoff recorded. That figure was
-  the distance to the nearest *non-buck* net (U3.2 `+3V3`); BST is the buck's own bootstrap
-  and 0.25 mm is the design clearance. The gate should name BST/L1/FB as excluded rather
-  than rely on "non-buck" being obvious.
-- **+5V is 571.8 mm² against a 645 mm² gate.** It is now one connected group, so this is a
-  copper-area/thermal question, not a connectivity one. The bus wall is what costs the
-  area; widening it needs the addressable bus moved.
-- **Section 2 of `emc.py` did not change** when the F.Cu pour went in, and that is
-  expected — it measures F.Cu tracks against the *B.Cu* pour, which was untouched. The
-  F.Cu pour helps a different way: it gives B.Cu-routed signals a reference and puts
-  return copper beside the F.Cu runs.
+**+5V is 571.8 mm² against a 645 mm² gate**, but it is one connected group, so this is a
+copper-area and thermal question rather than a connectivity one. The addressable bus wall
+is what costs the area.
 
-## Trust the tools, but verify them
+## Copper held together by 23-50 µm
 
-Two tooling bugs this session each hid a fatal defect, so re-derive rather than inherit:
-
-- `measure.py` did not run at all as committed — missing `import os`, two calls using
-  signatures `geom.py` does not have, and a zone parser matching two-space indentation
-  against a tab-indented file. Several numbers in the previous handoff's gate table came
-  from an unrecorded method, not from this tool.
-- `connect.py`'s first version treated a *touching* via and pad as connected. That is
-  exactly the U1.2 case, and it reported the ESP32 as powered when it is not. It now
-  requires ≥ 0.1 µm of real overlap and flags anything under 50 µm.
-
-**Any number in a handoff that came from a tool which does not currently run should be
-treated as unverified.** Both defects were caught only by comparing the tool's verdict
-against KiCad's own DRC output, item by item. Keep doing that.
+`connect.py` reports seven contacts thinner than 50 µm, four of them in the buck area
+(both C23 tracks at 23 µm, U2.1 FB and C24.2 bootstrap at 25 µm). **None is load-bearing** —
+re-running every net with the threshold raised to 50 µm, i.e. asking what breaks if the fab
+over-etches, splits no net that was not already split. A tidiness item, worth nudging the
+four buck-area tracks properly onto their pads if the board is opened again.
 
 ## Tooling — now in the repo, was in a session temp dir
 
@@ -212,6 +231,21 @@ enough that etch tolerance could open it.
 7. **`delete_trace` works on via UUIDs too**, which is the only way to move a via.
 8. **Verify every move and route by reading it back.**
 9. Pin-header footprints anchor at **pin 1, not centre**.
+10. **`add_copper_pour` succeeds but writes malformed-looking output** — appended after
+    `(embedded_fonts …)`, two-space-indented in a tab-indented file, `(layers "F.Cu")`
+    where KiCad writes `(layer …)`, and a bare `(fill yes)`. KiCad parses it, but a
+    parser keyed on a tab-indented `(zone` opener will not see it. Run `drc.sh` (which
+    re-emits the board canonically) *before* reading the zone back, or the read-back lies.
+11. **No tool sets a zone's pad-connection mode.** A new pour is always thermal-relief,
+    which on a crowded ground pour gives `starved_thermal` errors. Zone Properties →
+    **Pad connection: Solid** in the GUI.
+12. **`edit_schematic_component` writes unit 1 only of a multi-unit symbol**, where
+    KiCad's GUI propagates fields to every unit. U4/U5 are 5-unit 74HCT125s, so a BOM
+    grouped by MPN splits U5 into two lines and orders 3 of a 2-off part. Group by
+    Value+Footprint (`tools/export-bom.sh`) and open the field dialog in the GUI to heal it.
+13. **No tool sets KiCad's `(dnp yes)` attribute.** DNP written only into a Value string
+    or an Assembly field does not reach the BOM — five parts on this board were in that
+    state and would all have been quoted and fitted.
 
 ## Design decisions already made — do not re-litigate
 
@@ -221,7 +255,8 @@ enough that etch tolerance could open it.
 - **Cin = C23, 0402** (100nF/25V) bridging pin3 to pin4 from below.
 - Connectors: J2 screw terminal; J3-J6 JST XH `S2B-XH-A`; J7/J8 `S4B-XH-A`.
 - USB ESD: D8 USBLC6-2SC6.
-- Input LC filter damping: R31 1 Ω in series with C20, **both DNP with L3**.
+- Input LC filter: L3 + C20 + R31 (1 Ω damping). **All three are now FITTED** — the
+  2026-08-29 decision reversed the earlier DNP. See `DECISIONS-2026-08-29.md`.
 - M3 mounting holes 4.5 mm in from each corner.
 - 8.4's "USB D± 90 Ω differential" ignored — unachievable on 2-layer 1.6 mm and
   unnecessary at 12 Mbit full-speed.
@@ -242,49 +277,38 @@ enough that etch tolerance could open it.
 
 ## Remaining work
 
-1. **Fab blockers are now the critical path** — see item 4. Electrical work is done.
-2. **Unroutable without placement changes** — all confirmed, not guesses:
-   - `BTN1` → J11.1
-   - `VIN_PROT` → J9.1 / J10.1 — **no 12 V option for the addressable strips**
-   - `+5V` → D9.1 — **no USB-powered operation**
-   - `VBUS` → C44.1, and J1's north VBUS pad (A4/B9)
-   All are walled in by the VIN_PROT bottom-layer strip, the gate verticals, J14's pin
-   row and CC1's lane. **Product decision needed**: with D9.1 unreachable, VBUS feeds
-   nothing but D8's clamp — the board is 12 V-input-only and USB is data-and-ESD only.
-3. **30 of 44 layer transitions have no GND return via within 1.0 mm**, and only 3 can be
-   given one. The F.Cu side of the rest is inside a power pour, not GND. Structural; see
-   "The F.Cu GND pour" above.
-4. **Fab blockers** (kicad-happy release gate fails on these):
-   - **0 of 49 BOM lines have an MPN.** `bom-mapping.csv` covers only the Power sheet and
-     is not in the schematic fields.
-   - No board name, no revision on silkscreen; **0 fiducials**; **0 test points**.
-5. Silkscreen cleanup: ~92 `lib_footprint_mismatch`, ~28 `silk_over_copper`,
-   ~21 `silk_overlap`, 4 `silk_edge_clearance`. Also 5 `hole_to_hole` and 1
-   `holes_co_located` not yet investigated.
+Superseded by **"Open work, in order"** at the top of this file. The only items from the
+old list still outstanding and not repeated there:
+
+- **Unroutable without placement changes** — all confirmed, not guesses: `BTN1` → J11.1;
+  `VIN_PROT` → J9.1/J10.1 (no 12 V for the addressable strips); `+5V` → D9.1 (no
+  USB-powered operation); `VBUS` → C44.1 and J1's north VBUS pad. Product decision taken:
+  the board is 12 V-input-only and USB is data-and-ESD only.
 
 ## Known open items
 
-- **Q5's tab is VIN_FUSED, not GND**; Q1-Q4's tabs are DRAIN1-4. All five have **0 thermal
-  vias** on 37 mm² tab pads (a DPAK tab wants ~18). Vias would need a matching
-  bottom-layer island, which conflicts with the GND pour.
-- **The 4 DPAK centre-lead pads and D8's two internal pin pairs read as unconnected in DRC
-  and cannot be routed** — GATE runs between each FET's centre lead and its tab, and D8's
-  D± pin pairs are bonded inside the package. Electrically harmless.
-- R30 is an 0805 0 Ω jumper carrying ~1.2 A. Recommend 1206 or larger.
-- F1 is a 10 A PPTC on a 5 A board — recommend ~6.3 A / 63 V 2410.
-- **No I2C pull-ups on the board.** I2C_SDA/SCL go from U1 straight to J13 and nowhere
-  else. Decide whether peripherals carry them or add 4.7 k here.
-- **U3 (AMS1117-3.3) dissipates 0.55 W** in SOT-223 with no thermal vias (Tj 57.9 °C,
-  margin 67 °C — safe but hot) and draws **5 mA quiescent**, dominating the board's
-  5.66 mA sleep current. On a vehicle that is a permanent parasitic drain; consider a
-  switcher or an LDO with an EN pin.
-- **J2 has no EMC filtering within 25 mm** because L3/C20/R31 are DNP. On a 12 V vehicle
-  rail this is the highest-value fit option to reconsider.
-- **Schematic parity is 25 items, all benign**: 20 `unconnected-()` pins (J1 SBU1/SBU2,
-  16 unused ESP32 GPIOs including UART0, D7's DOUT as chain end) and 5 footprints missing
-  an `Assembly` field (C20, L3, R31, R11, R12).
+Six items that used to live here were settled on 2026-08-29 — F1's rating, R30's package,
+the I2C pull-ups, U3's quiescent drain, the input LC filter, and the DPAK thermal vias.
+Read `DECISIONS-2026-08-29.md` rather than re-opening them. What remains:
+
+- **Q5's tab is VIN_FUSED, not GND**; Q1-Q4's tabs are DRAIN1-4. All five have 0 thermal
+  vias on 37 mm² tab pads. **This is correct and deliberate** — the spec's own numbers give
+  0.116 W per channel (~6 °C) and 0.75 W for Q5 into 645 mm² (~34 °C). Vias would need
+  bottom-layer islands that cut the GND pour and buy nothing.
+- **The 4 DPAK centre-lead pads and D8's two internal pin pairs read as unconnected and
+  cannot be routed** — GATE runs between each FET's centre lead and its tab, and D8's D±
+  pin pairs are bonded inside the package. Electrically harmless.
+- **U3 still dissipates 0.55 W** in SOT-223 (Tj 57.9 °C, margin 67 °C — safe but hot).
+  The BL1117 swap fixed the quiescent drain, not the dissipation. Both share one cause:
+  12 V → 5 V → 3.3 V linear feeding a 355 mA ESP32. **Deferred to Rev B**, where a
+  12 V → 3.3 V converter fixes drain and heat together.
+- **Schematic parity: 25 items, all benign** — 20 `unconnected-()` pins (J1 SBU1/SBU2,
+  16 unused ESP32 GPIOs including UART0, D7's DOUT as chain end). The 5 footprints that
+  were missing an `Assembly` field now have one.
 - ERC has 4 suppressed checks in the `.kicad_pro`, including `single_global_label`.
-- AP63301 stock was 417 at selection.
+- **Stock to watch**: ESP32-S3-WROOM-1U-N16 4667, AP63301WU-7 6114 (was 417 at original
+  selection), PNLS6045-100M 5539. Fine for a batch of 5, thin for a production run.
+- **16 BOM lines are on JLC's extended library**, each attracting a setup fee.
 
 ## EMC — the risk the 2-layer decision bought
 
