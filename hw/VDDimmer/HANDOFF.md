@@ -4,7 +4,8 @@ Phase 3 (layout) is **electrically complete**. Schematic ERC 0/0, board DRC 0 er
 every remaining unconnected item is accounted for. What is left is fab preparation, and
 the critical path there is **assembly data, not copper**.
 
-Last commit: `147a6c9`. Working tree clean.
+State as of 2026-08-29. `git log --oneline -6 -- hw/VDDimmer` shows how it got here;
+the working tree was clean when this was written.
 
 ## Start here
 
