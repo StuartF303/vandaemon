@@ -173,19 +173,73 @@ them needs one more KiCad-open pass, and **the board text cannot be moved by any
   text width as `len × size × 0.85`, which was slightly optimistic here. Nudging the text
   ~1 mm east clears it.
 
-### 4. Verify before ordering
+### 4. Verify before ordering — two real defects found, both need a decision
 
-- **L1/L3 land pattern.** The board land is two 2.50 × 6.00 mm pads on 4.90 mm centres
-  (7.40 × 6.00 overall). The proposed PNLS6045-100M is a 6 × 6 mm body. Check the
-  datasheet land before committing. Its 57 mΩ DCR also costs 0.51 W at 3 A — a 3.4 %
-  efficiency hit on a 15 W converter, so a lower-DCR 10 µH in the same land is worth
-  looking for.
-- **WS2812B-V6 is not in JLC's catalogue.** Only V5/W and B/T. C2874885 (V5/W) is
-  substituted in the BOM; confirm the pinout against the PLCC4 footprint.
-- **R30's 0 Ω jumper carries ~1.2 A** and JLC lists only 125 mW for C17477. Confirm the
-  current rating against UNI-ROYAL's datasheet or pick a jumper rated ≥ 2 A.
-- **J1 is listed hand-fit** with the other connectors per spec §10 — but 16 pads at
-  0.5 mm pitch plus four shield legs is not sensibly hand-soldered. Machine-place J1.
+**(a) R30 shorts out the input LC filter. This is the one that matters.**
+
+```
+VIN_PROT ─┬─ L3 ─┬─ VIN_BUCK ─ R31 ─ VIN_DAMP ─ C20 ─ GND
+         └─ R30 ─┘        (0 Ω, in PARALLEL with L3)
+```
+
+Confirmed from the exported netlist: L3 and R30 both bridge VIN_PROT to VIN_BUCK.
+**R30 is the filter's bypass jumper**, which is exactly what spec §415 describes — it
+provisions the input LC filter "as unpopulated", i.e. filter out, jumper in.
+
+The 2026-08-29 decision populated L3/C20/R31 but left R30 fitted and specified it
+"rated ≥ 2 A", treating it as a current-carrying jumper rather than the bypass it is.
+**Both fitted means there is no filter**: a 0 Ω thick-film part is ~20-50 mΩ, so at DC it
+parallels L3, and at the switching frequency — where the filter is supposed to work — it
+shunts the inductor completely. The board pays for L3, C20 and R31 and gets nothing.
+
+**R30 must be DNP** if the 2026-08-29 decision stands. That also dissolves the "confirm a
+0 Ω jumper rated ≥ 2 A" item entirely, because an unfitted part carries no current.
+C17477 is 125 mW, ±1 %, with no current rating published — fine as a DNP, unusable as a
+1.2 A jumper.
+
+*Not yet actioned: needs `(dnp yes)` in the GUI, plus a bom-lcsc.csv and Assembly-field
+update so the CPL agrees.*
+
+**(b) L1/L3's land is for a different part family than the BOM proposes.**
+
+The footprint is **`VANDIMMER:L_cjiang_FXL0630_7.0x6.6mm`** — a custom footprint for a
+cjiang FXL0630, body **7.0 × 6.6 mm**. The BOM proposes **PNLS6045-100M, body 6.0 × 6.0 mm**.
+Different families, and nobody had checked.
+
+Land measured from the board: two 2.50 × 6.00 mm pads on 4.90 mm centres, so each pad
+spans 1.20-3.70 mm either side of the part centreline, 7.40 mm overall.
+
+- A 7.0 mm body sits with 0.2 mm of pad proud of each end — what the footprint was drawn for.
+- A 6.0 mm body leaves 0.7 mm of pad unused at each end. It would very likely still solder,
+  since a 6045's electrodes fall inside 1.20-3.70 mm, but self-alignment during reflow is
+  degraded and the part can shift.
+
+JLC does **not** stock the FXL0630. The datasheet's land drawing is vector art and its
+dimensions are not extractable, so this was not resolved from the datasheet.
+
+Options, in order of preference:
+
+| | |
+|---|---|
+| Redraw the footprint to the chosen part's datasheet land | correct; it is our own custom footprint, and L1/L3 would need re-verifying afterwards |
+| Switch to **MSA75-100M** (`C396426`, 7.8 × 7 mm, 4.2 A, **43 mΩ**, $0.19, 2997 stock) | closer to a 7 mm land than a 6045, and lower DCR |
+| Keep PNLS6045-100M and accept an oversized land | cheapest, some reflow-alignment risk |
+
+On DCR specifically: the whole JLC catalogue has only **three** 10 µH parts in 6×6 mm at
+≥ 3.5 A — the PNLS6045 (4.5 A, 57 mΩ, $0.07), an MPS MPL-SE6040 (41 mΩ but **Isat only
+2.8-3.4 A**, which a 3 A buck would saturate), and a KEMET at 78 mΩ and $1.60. So within
+6×6 the current choice is genuinely the best available, and 0.51 W at 3 A is the price of
+that package. Going lower needs a bigger land, which is a footprint change either way.
+
+**(c) Still unverified.** `jlc_get_pinout` timed out on **C2874885** (WS2812B-V5/W),
+so the substitute's pinout is still unconfirmed against
+`LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm`. Board pad nets are pin1 +5V, pin2 DOUT,
+pin3 GND, pin4 DIN — check that against the V5 datasheet before ordering.
+
+**(d) J1** is listed hand-fit with the other connectors per spec §10 — but 16 pads at
+0.5 mm pitch plus four shield legs is not sensibly hand-soldered. Machine-placing it needs
+an LCSC part number, which it does not have. `export-cpl.sh` will warn if the tier is
+changed without adding one.
 
 ### 5. Documentation that contradicts the design — DONE except the firmware
 
