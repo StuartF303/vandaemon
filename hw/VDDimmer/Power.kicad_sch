@@ -7561,7 +7561,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "e32dfa54-0107-477d-9962-e6ab667a351d")
 		(property "Reference" "R30"
 			(at 43.942 111.76 90)

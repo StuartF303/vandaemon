@@ -25,12 +25,13 @@ bash hw/VDDimmer/tools/export-cpl.sh                           # CPL + JLC BOM
 | | |
 |---|---|
 | Schematic | 5 sheets, **98 parts**, **ERC 0 violations** |
-| DRC | **0 errors**, 168 warnings — but see the severity warning below |
+| DRC | **0 errors**, 166 warnings — but see the severity warning below |
 | Unconnected | 15, every one benign — see the table below |
 | Nets split into >1 group | 12 of 61, all benign |
 | GND | **one connected group**; B.Cu pour 1 island, 7179.8 mm² |
 | BOM | **51 lines, 98 parts** |
-| Assembly data | **CPL 78 parts / JLC BOM 35 lines**, reconciled — `tools/export-cpl.sh` |
+| Buck gate (§8.5) | hot loop **2.51 mm²** (< 15), B.Cu GND **1 island, 7179.8 mm²** |
+| Assembly data | **CPL 77 parts / JLC BOM 34 lines**, reconciled — `tools/export-cpl.sh` |
 | Schematic parity | **0** — cleared entirely by KiCad's own F8 sync |
 | Decisions | `DECISIONS-2026-08-29.md` — settled, do not re-litigate |
 
@@ -173,73 +174,68 @@ them needs one more KiCad-open pass, and **the board text cannot be moved by any
   text width as `len × size × 0.85`, which was slightly optimistic here. Nudging the text
   ~1 mm east clears it.
 
-### 4. Verify before ordering — two real defects found, both need a decision
+### 4. ~~Verify before ordering~~ — both defects RESOLVED
 
-**(a) R30 shorts out the input LC filter. This is the one that matters.**
+**(a) R30 shorted out the input LC filter. Fixed — R30 is now DNP.**
 
 ```
 VIN_PROT ─┬─ L3 ─┬─ VIN_BUCK ─ R31 ─ VIN_DAMP ─ C20 ─ GND
-         └─ R30 ─┘        (0 Ω, in PARALLEL with L3)
+         └─ R30 ─┘        (0 Ω bypass jumper — now DNP)
 ```
 
-Confirmed from the exported netlist: L3 and R30 both bridge VIN_PROT to VIN_BUCK.
-**R30 is the filter's bypass jumper**, which is exactly what spec §415 describes — it
-provisions the input LC filter "as unpopulated", i.e. filter out, jumper in.
+Confirmed from the netlist: L3 and R30 both bridged VIN_PROT to VIN_BUCK, so R30 was
+the filter's bypass — exactly what spec §415 describes ("optional input LC filter as
+unpopulated", i.e. filter out, jumper in). The 2026-08-29 decision populated L3/C20/R31
+but left R30 fitted and asked for it "rated ≥ 2 A", treating it as a series jumper.
+Both fitted meant **no filter at all**: a 0 Ω thick-film part is ~20-50 mΩ, so it
+paralleled L3 at DC and shunted it at the switching frequency.
 
-The 2026-08-29 decision populated L3/C20/R31 but left R30 fitted and specified it
-"rated ≥ 2 A", treating it as a current-carrying jumper rather than the bypass it is.
-**Both fitted means there is no filter**: a 0 Ω thick-film part is ~20-50 mΩ, so at DC it
-parallels L3, and at the switching frequency — where the filter is supposed to work — it
-shunts the inductor completely. The board pays for L3, C20 and R31 and gets nothing.
+`(dnp yes)` is set, and `export-cpl.sh` now reports all three DNPs via KiCad's own
+attribute. This also closed the old "find a 0 Ω jumper rated ≥ 2 A" item — an unfitted
+part carries no current.
 
-**R30 must be DNP** if the 2026-08-29 decision stands. That also dissolves the "confirm a
-0 Ω jumper rated ≥ 2 A" item entirely, because an unfitted part carries no current.
-C17477 is 125 mW, ±1 %, with no current rating published — fine as a DNP, unusable as a
-1.2 A jumper.
+**(b) L1/L3's land was wrong for any part. Fixed — now on a curated KiCad land.**
 
-*Not yet actioned: needs `(dnp yes)` in the GUI, plus a bom-lcsc.csv and Assembly-field
-update so the CPL agrees.*
+The old footprint `VANDIMMER:L_cjiang_FXL0630_7.0x6.6mm` was Konnect-generated and
+internally inconsistent: named for an FXL0630 (a **6.0 mm** body) but described as
+7.0 × 6.6 mm. Three independent curated KiCad 6×6 lands agree exactly with each other
+and disagree with it:
 
-**(b) L1/L3's land is for a different part family than the BOM proposes.**
+| Land | Pad | Pitch |
+|---|---|---|
+| old VANDIMMER custom | 2.50 × 6.00 | **4.90** |
+| `L_Changjiang_FXL0630` | 2.35 × 3.50 | **6.05** |
+| `L_Chilisin_BMRx00060630` | 2.35 × 3.50 | 6.05 |
+| `L_Chilisin_BMRB00060650` | 2.35 × 3.50 | 6.05 |
 
-The footprint is **`VANDIMMER:L_cjiang_FXL0630_7.0x6.6mm`** — a custom footprint for a
-cjiang FXL0630, body **7.0 × 6.6 mm**. The BOM proposes **PNLS6045-100M, body 6.0 × 6.0 mm**.
-Different families, and nobody had checked.
+The custom pads sat **1.15 mm too close together** — a real 6×6 inductor's terminals
+span 1.85-4.20 mm from the centreline while those pads spanned 1.20-3.70 mm.
 
-Land measured from the board: two 2.50 × 6.00 mm pads on 4.90 mm centres, so each pad
-spans 1.20-3.70 mm either side of the part centreline, 7.40 mm overall.
+L1/L3 now use `Inductor_SMD:L_Changjiang_FXL0630`. The part stays **PNLS6045-100M**
+(`C2849537`), which is the best of only three 10 µH parts JLC stocks in 6×6 at ≥ 3.5 A:
+4.5 A Isat, 57 mΩ, $0.07, 5539 stock. MSA75-100M was considered and abandoned — its
+recommended-layout dimensions are vector art in the datasheet and unreadable without a
+PDF renderer (`pdftotext` returns only the labels H/S/M; no raster image is embedded).
 
-- A 7.0 mm body sits with 0.2 mm of pad proud of each end — what the footprint was drawn for.
-- A 6.0 mm body leaves 0.7 mm of pad unused at each end. It would very likely still solder,
-  since a 6045's electrodes fall inside 1.20-3.70 mm, but self-alignment during reflow is
-  degraded and the part can shift.
+**§8.5 gate re-measured after the swap** — hot loop still 2.51 mm², SW→BST still 0.25 mm,
+B.Cu GND still one island at 7179.8 mm². The FB divider moved ~0.3 mm closer to L1
+(6.49 / 8.53 / 8.41 mm) as its pads spread outward; still clear.
 
-JLC does **not** stock the FXL0630. The datasheet's land drawing is vector art and its
-dimensions are not extractable, so this was not resolved from the datasheet.
+**What this cost, and the lesson.** The wider land (8.90 mm courtyard vs 7.90) pushed
+L1's courtyard wings 0.25 mm into C25 and C26 — **two DRC errors**, the first this board
+has had. Pad clearance had been checked and was clean; *courtyards* had not been. C25/C26
+moved 0.4 mm east (nothing but board edge lies east of them, whereas C24's bootstrap cap
+is 1.25 mm west of L1, and L1 sits in the switching path). `tools/fpspace.py --courtyards`
+now sweeps the whole board for this, and was negative-tested against the pre-fix geometry.
 
-Options, in order of preference:
-
-| | |
-|---|---|
-| Redraw the footprint to the chosen part's datasheet land | correct; it is our own custom footprint, and L1/L3 would need re-verifying afterwards |
-| Switch to **MSA75-100M** (`C396426`, 7.8 × 7 mm, 4.2 A, **43 mΩ**, $0.19, 2997 stock) | closer to a 7 mm land than a 6045, and lower DCR |
-| Keep PNLS6045-100M and accept an oversized land | cheapest, some reflow-alignment risk |
-
-On DCR specifically: the whole JLC catalogue has only **three** 10 µH parts in 6×6 mm at
-≥ 3.5 A — the PNLS6045 (4.5 A, 57 mΩ, $0.07), an MPS MPL-SE6040 (41 mΩ but **Isat only
-2.8-3.4 A**, which a 3 A buck would saturate), and a KEMET at 78 mΩ and $1.60. So within
-6×6 the current choice is genuinely the best available, and 0.51 W at 3 A is the price of
-that package. Going lower needs a bigger land, which is a footprint change either way.
-
-**(c) Still unverified.** `jlc_get_pinout` timed out on **C2874885** (WS2812B-V5/W),
-so the substitute's pinout is still unconfirmed against
+**(c) Still unverified.** `jlc_get_pinout` timed out on **C2874885** (WS2812B-V5/W), so
+the substitute's pinout is still unconfirmed against
 `LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm`. Board pad nets are pin1 +5V, pin2 DOUT,
-pin3 GND, pin4 DIN — check that against the V5 datasheet before ordering.
+pin3 GND, pin4 DIN — check against the V5 datasheet before ordering.
 
-**(d) J1** is listed hand-fit with the other connectors per spec §10 — but 16 pads at
-0.5 mm pitch plus four shield legs is not sensibly hand-soldered. Machine-placing it needs
-an LCSC part number, which it does not have. `export-cpl.sh` will warn if the tier is
-changed without adding one.
+**(d) J1** is hand-fit per spec §10, but 16 pads at 0.5 mm pitch plus four shield legs is
+not sensibly hand-soldered. Machine-placing needs an LCSC part number it does not have;
+`export-cpl.sh` warns if the tier changes without one.
 
 ### 5. Documentation that contradicts the design — DONE except the firmware
 
@@ -376,6 +372,7 @@ four buck-area tracks properly onto their pads if the board is opened again.
 | `connect.py` | **per-net connected-component groups** over tracks, vias, pads and zone islands. No argument = sweep all 61 nets and list the split ones plus every marginal contact. Run after every refill |
 | `emc.py` | pour continuity, F.Cu runs not backed by the B.Cu pour, return-via distances, GND coverage under the buck |
 | `retvia.py` | proposes GND return vias that are clear of everything *and* land in GND fill on both layers |
+| `fpspace.py --courtyards` | whole-board courtyard-overlap sweep. Run after ANY footprint swap or move — a courtyard overlap is a DRC *error* and is not predicted by pad clearance |
 | `fpspace.py` | clear-space finder for a **footprint**. Tests pads, vias, **tracks** and silkscreen — an earlier ad-hoc check built a track list and never used it, reporting 4648 "clear" 0805 sites in a corridor packed with the GATE_IN fan-out |
 | `silkspace.py` | clear-space finder for board text. Correct `F.SilkS` filter, includes refdes text, prints the item count so a broken filter is obvious |
 | `export-cpl.sh` / `cpl.py` | **assembly data** — JLCPCB CPL + JLC BOM. Filters the unfiltered position export using `bom-lcsc.csv`'s library tier, so CPL and BOM cannot disagree. Cross-checks Value/LCSC against the schematic and warns on drift; refuses to write if any footprint has no BOM line |

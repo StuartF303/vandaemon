@@ -2933,6 +2933,39 @@
 				)
 			)
 		)
+		(property "LCSC" "C5962"
+			(at 59.69 160.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "74HCT125D,653"
+			(at 59.69 160.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Nexperia"
+			(at 59.69 160.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "8"
 			(uuid "64365902-85d7-481a-b6ef-72cd3999acfd")
 		)
@@ -2989,34 +3022,7 @@
 				)
 			)
 		)
-	
-		(property "LCSC" "C5962"
-			(at 59.69 160.02 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "74HCT125D,653"
-			(at 59.69 160.02 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Nexperia"
-			(at 59.69 160.02 0)
-			(hide yes)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		))
+	)
 	(symbol
 		(lib_id "Transistor_FET:Q_NMOS_GDS")
 		(at 149.86 110.49 0)
