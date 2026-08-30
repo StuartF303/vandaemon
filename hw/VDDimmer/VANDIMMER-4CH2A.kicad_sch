@@ -1,93 +1,198 @@
 (kicad_sch
-	(version 20250610)
-	(generator "konnect")
+	(version 20260306)
+	(generator "eeschema")
 	(generator_version "10.0")
 	(uuid "370dbe5f-37ac-49d6-b08d-b5668aac7a2d")
 	(paper "A3")
-	(lib_symbols
+	(lib_symbols)
+	(sheet
+		(at 40 40)
+		(size 100 70)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "43933695-3e83-477a-8f28-1084f7012535")
+		(property "Sheetname" "Power"
+			(at 40 39.365 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Power.kicad_sch"
+			(at 40 110.635 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "VANDIMMER-4CH2A"
+				(path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d"
+					(page "2")
+				)
+			)
+		)
 	)
 	(sheet
-    (at 40 40)
-    (size 100 70)
-    (fields_autoplaced yes)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0))
-    (uuid "43933695-3e83-477a-8f28-1084f7012535")
-    (property "Sheetname" "Power"
-      (at 40 39.365 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "Power.kicad_sch"
-      (at 40 110.635 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "VANDIMMER-4CH2A"
-        (path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d" (page "2"))
-      )
-    )
-  )
+		(at 220 40)
+		(size 100 70)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "543faab5-6d4b-413c-aa63-b6cd1a816b5e")
+		(property "Sheetname" "MCU"
+			(at 220 39.365 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "MCU.kicad_sch"
+			(at 220 110.635 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "VANDIMMER-4CH2A"
+				(path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d"
+					(page "3")
+				)
+			)
+		)
+	)
 	(sheet
-    (at 220 40)
-    (size 100 70)
-    (fields_autoplaced yes)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0))
-    (uuid "543faab5-6d4b-413c-aa63-b6cd1a816b5e")
-    (property "Sheetname" "MCU"
-      (at 220 39.365 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "MCU.kicad_sch"
-      (at 220 110.635 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "VANDIMMER-4CH2A"
-        (path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d" (page "3"))
-      )
-    )
-  )
+		(at 40 160)
+		(size 100 70)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "a2332e94-aa8c-4f2f-8845-69c86e434212")
+		(property "Sheetname" "PWM"
+			(at 40 159.365 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "PWM.kicad_sch"
+			(at 40 230.635 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "VANDIMMER-4CH2A"
+				(path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d"
+					(page "4")
+				)
+			)
+		)
+	)
 	(sheet
-    (at 40 160)
-    (size 100 70)
-    (fields_autoplaced yes)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0))
-    (uuid "a2332e94-aa8c-4f2f-8845-69c86e434212")
-    (property "Sheetname" "PWM"
-      (at 40 159.365 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "PWM.kicad_sch"
-      (at 40 230.635 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "VANDIMMER-4CH2A"
-        (path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d" (page "4"))
-      )
-    )
-  )
-	(sheet
-    (at 220 160)
-    (size 100 70)
-    (fields_autoplaced yes)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0))
-    (uuid "c7334fab-f3d9-44aa-85cb-ee4f81ac3546")
-    (property "Sheetname" "Addressable"
-      (at 220 159.365 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "Addressable.kicad_sch"
-      (at 220 230.635 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "VANDIMMER-4CH2A"
-        (path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d" (page "5"))
-      )
-    )
-  )
+		(at 220 160)
+		(size 100 70)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "c7334fab-f3d9-44aa-85cb-ee4f81ac3546")
+		(property "Sheetname" "Addressable"
+			(at 220 159.365 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Addressable.kicad_sch"
+			(at 220 230.635 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "VANDIMMER-4CH2A"
+				(path "/370dbe5f-37ac-49d6-b08d-b5668aac7a2d"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
 )
