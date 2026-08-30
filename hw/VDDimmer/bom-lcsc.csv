@@ -1,16 +1,16 @@
 Value,Footprint,Refs,Qty,MPN,LCSC,JLC_Library,Stock,Price_USD,Notes
-0R,R_0805_2012Metric,R30,1,0805W8F0000T5E,C17477,basic,8973359,0.0044,"CHECK current rating vs R30's ~1.2 A - JLC spec lists only 125 mW; confirm against UNI-ROYAL datasheet or pick a jumper rated >= 2 A"
-10k,R_0805_2012Metric,"R5,R6,R7,R8,R40,R43,R44",7,0805W8F1002T5E,C17414,basic,31886656,0.0055,"same part covers the 10k 1% line"
+0R,R_0805_2012Metric,R30,1,0805W8F0000T5E,C17477,basic,8973359,0.0044,CHECK current rating vs R30's ~1.2 A - JLC spec lists only 125 mW; confirm against UNI-ROYAL datasheet or pick a jumper rated >= 2 A
+10k,R_0805_2012Metric,"R5,R6,R7,R8,R40,R43,R44",7,0805W8F1002T5E,C17414,basic,31886656,0.0055,same part covers the 10k 1% line
 10k 1%,R_0805_2012Metric,"R22,R28,R29",3,0805W8F1002T5E,C17414,basic,31886656,0.0055,
 220R,R_0805_2012Metric,"R1,R2,R3,R4",4,0805W8F2200T5E,C17557,basic,1351925,0.0058,gate resistors
 47R,R_0805_2012Metric,"R9,R10,R13",3,0805W8F470JT5E,C17714,basic,764710,0.0077,
-47R DNP,R_0805_2012Metric,"R11,R12",2,0805W8F470JT5E,C17714,basic,764710,0.0077,"DO NOT FIT - APA102 clock provision per spec 6.2; set KiCad (dnp yes)"
+47R DNP,R_0805_2012Metric,"R11,R12",2,0805W8F470JT5E,C17714,basic,764710,0.0077,DO NOT FIT - APA102 clock provision per spec 6.2; set KiCad (dnp yes)
 100k,R_0805_2012Metric,R20,1,0805W8F1003T5E,C149504,basic,5202116,0.0059,
-100k 1%,R_0805_2012Metric,"R23,R27",2,0805W8F1003T5E,C149504,basic,5202116,0.0059,"R23 = EN_BUCK UVLO divider; R27 = VIN_SENSE divider"
+100k 1%,R_0805_2012Metric,"R23,R27",2,0805W8F1003T5E,C149504,basic,5202116,0.0059,R23 = EN_BUCK UVLO divider; R27 = VIN_SENSE divider
 5.1k,R_0805_2012Metric,"R41,R42",2,0805W8F5101T5E,C27834,basic,4481391,0.0064,USB-C CC pulldowns
-18k 1%,R_0805_2012Metric,R24,1,0805W8F1802T5E,C17506,preferred,243381,0.0071,"EN_BUCK divider - no Basic part at this value"
+18k 1%,R_0805_2012Metric,R24,1,0805W8F1802T5E,C17506,preferred,243381,0.0071,EN_BUCK divider - no Basic part at this value
 52.3k 1%,R_0805_2012Metric,R21,1,FRC0805F5232TS,C2933465,extended,68775,0.0035,"buck FB divider - extended library, attracts a setup fee"
-1R,R_0805_2012Metric,R31,1,0805W8F100KT5E,C25271,basic,484448,0.008,"LC filter damping - NOW FITTED per 2026-08-29 decision"
+1R,R_0805_2012Metric,R31,1,0805W8F100KT5E,C25271,basic,484448,0.008,LC filter damping - NOW FITTED per 2026-08-29 decision
 4.7k,R_0805_2012Metric,"R45,R46",2,0805W8F4701T5E,C17673,basic,7064039,0.005,"NEW - I2C pull-ups to +3V3, refs provisional until placed"
 100nF/50V,C_0603_1608Metric,"C24,C32,C33,C34,C41,C42,C43,C51,C60,C62",10,CC0603KRX7R9BB104,C14663,basic,70663295,0.015,
 100nF/25V,C_0402_1005Metric,C23,1,CL05B104KB54PNC,C307331,basic,24054503,0.0088,"buck Cin - 50 V part, exceeds the 25 V called for"
@@ -19,28 +19,28 @@ Value,Footprint,Refs,Qty,MPN,LCSC,JLC_Library,Stock,Price_USD,Notes
 10uF/50V,C_1210_3225Metric,"C20,C63,C64",3,FS32X106K101EGG,C5156756,extended,493672,0.4774,"100 V part - a 50 V 1210 would be much cheaper, worth a second look. C20 NOW FITTED"
 10uF/50V X7R,C_1210_3225Metric,"C21,C22",2,FS32X106K101EGG,C5156756,extended,493672,0.4774,buck input caps
 22pF,C_0603_1608Metric,C27,1,CL10C220JB8NNNC,C1653,basic,3361370,0.0068,buck FB feedforward
-10A 250V,Fuse_2410_6125Metric,F1,1,LTC2410-1800TSK,C54824501,extended,22111,0.0947,"CHANGED to 8 A per 2026-08-29 decision - update Value to '8A 250V'. 50 A interrupt, I2t 115.2"
-AMS1117-3.3,SOT-223-3_TabPin2,U3,1,BL1117-33CX,C5400,extended,99728,0.06,"CHANGED per 2026-08-29 decision - 2 mA Iq vs 5 mA. Update Value to 'BL1117-33CX'"
+8A 250V,Fuse_2410_6125Metric,F1,1,LTC2410-1800TSK,C54824501,extended,22111,0.0947,"8 A per 2026-08-29 decision. 50 A interrupt, I2t 115.2"
+BL1117-33CX,SOT-223-3_TabPin2,U3,1,BL1117-33CX,C5400,extended,99728,0.06,CHANGED per 2026-08-29 decision - 2 mA Iq vs 5 mA. Update Value to 'BL1117-33CX'
 74HCT125,SOIC-14_3.9x8.7mm_P1.27mm,"U4,U5",2,"74HCT125D,653",C5962,extended,88003,0.2047,"Nexperia - the only SOIC-14 option at JLC. 160 uA Iq, 6 mA drive"
 ESP32-S3-WROOM-1U-N16,ESP32-S3-WROOM-1U,U1,1,ESP32-S3-WROOM-1U-N16,C2980298,extended,4667,5.0206,"355 mA TX / 95 mA RX - confirms U3 must carry ~350 mA, which is why no SOT-23 LDO can serve"
 AP63301WU-7,TSOT-23-6,U2,1,AP63301WU-7,C2158003,extended,6114,0.8641,"3.8-32 V in, 3 A, 500 kHz, 22 uA Iq, spread-spectrum. Stock recovered from 417 at original selection"
-USBLC6-2SC6,SOT-23-6,D8,1,USBLC6-2SC6,C2687116,extended,103997,0.0475,"UMW second source. Genuine ST is C7519 at $0.18 / 46k stock if preferred"
+USBLC6-2SC6,SOT-23-6,D8,1,USBLC6-2SC6,C2687116,extended,103997,0.0475,UMW second source. Genuine ST is C7519 at $0.18 / 46k stock if preferred
 SS34,D_SMA,"D1,D2,D3,D4,D9",5,SS34,C8678,basic,4943085,0.0351,"40 V 3 A, Vf 550 mV @ 3 A"
 SMBJ18A,D_SMB,D5,1,SMBJ18A,C19077573,preferred,40592,0.0515,"18 V standoff, 22.1 V breakdown, 29.2 V clamp - under the AP63301 32 V abs max. This part is why the board is 12 V only"
-BZT52C12,D_SOD-123,D6,1,BZT52C12,C19077410,preferred,680230,0.0168,"12 V zener clamping Q5 gate"
-WS2812B-V6,LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm,D7,1,WS2812B-V5/W,C2874885,extended,254779,0.1097,"SUBSTITUTE - the V6 revision is NOT in JLC catalogue; V5/W and B/T are. Confirm the V5 pinout matches the PLCC4 footprint before ordering"
+BZT52C12,D_SOD-123,D6,1,BZT52C12,C19077410,preferred,680230,0.0168,12 V zener clamping Q5 gate
+WS2812B-V6,LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm,D7,1,WS2812B-V5/W,C2874885,extended,254779,0.1097,SUBSTITUTE - the V6 revision is NOT in JLC catalogue; V5/W and B/T are. Confirm the V5 pinout matches the PLCC4 footprint before ordering
 20N06,TO-252-3_TabPin2,"Q1,Q2,Q3,Q4",4,20N06,C2890395,extended,28820,0.1206,"60 V 20 A, Vgs(th) 1.6 V. NOTE Rds(on) is 29 mOhm at the 4.5 V the 74HCT125 actually drives, not the 15 mOhm the spec assumed - channel loss 0.116 W not 0.06 W, still only ~6 C"
 SUD50P06-15,TO-252-3_TabPin2,Q5,1,SUD50P06-15(UMW),C7503186,extended,65485,0.361,"12 mOhm @ 10 V beats the spec assumption of 30 mOhm - reverse-polarity loss drops 0.75 W to 0.30 W. Vishay original is C141584 at $1.81 / 2.7k stock, 28 mOhm"
-NTC 10k B3950,R_0805_2012Metric,RT1,1,HNTC0805-103F3950FB,C49247662,extended,120388,0.0429,"+/-1% on both R and B - worth the extra over the +/-5% C338623 for a temperature sensor"
-PTC 2A 30V,R_1812_4532Metric,"PF1,PF2",2,1812L200/30GR,C18198342,extended,92386,0.1043,"2 A hold / 4 A trip / 30 V - matches the schematic value exactly"
+NTC 10k B3950,R_0805_2012Metric,RT1,1,HNTC0805-103F3950FB,C49247662,extended,120388,0.0429,+/-1% on both R and B - worth the extra over the +/-5% C338623 for a temperature sensor
+PTC 2A 30V,R_1812_4532Metric,"PF1,PF2",2,1812L200/30GR,C18198342,extended,92386,0.1043,2 A hold / 4 A trip / 30 V - matches the schematic value exactly
 10uH 4.5A,L_cjiang_FXL0630_7.0x6.6mm,L1,1,PNLS6045-100M,C2849537,extended,5539,0.0688,"CANDIDATE ONLY - VERIFY LAND PATTERN. Board land is 2 pads 2.50 x 6.00 mm on 4.90 mm centres (7.40 x 6.00 overall); this part is a 6x6 mm body. Also DCR 57 mOhm = 0.51 W at 3 A, a 3.4% efficiency hit on a 15 W converter - a lower-DCR 10 uH in the same land would be better"
 10uH,L_cjiang_FXL0630_7.0x6.6mm,L3,1,PNLS6045-100M,C2849537,extended,5539,0.0688,"same land-pattern caveat as L1. NOW FITTED per 2026-08-29 decision. DCR matters less here - filter, not switcher"
-USB-C 16P,USB_C_Receptacle_HRO_TYPE-C-31-M-12,J1,1,,,,,,"HAND-FIT per spec 10 - but QUESTION THAT: 16 pads at 0.5 mm pitch plus 4 shield legs is not sensibly hand-soldered. Recommend machine-placing J1 even if the rest are hand-fit"
-VIN 9-24V,PhoenixContact_MC_1.5_2-G-5.08_1x02_P5.08mm_Horizontal,J2,1,MC 1.5/2-G-5.08,,,,,"hand-fit per spec 10. CHANGE Value to 12 V only; 9-24V is wrong and unsafe with D5 = SMBJ18A"
-CH1-4 V+/LED-,JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal,"J3,J4,J5,J6",4,S2B-XH-A,,,,,"hand-fit per spec 10 - exclude from CPL"
-ADDR1-2,JST_XH_S4B-XH-A_1x04_P2.50mm_Horizontal,"J7,J8",2,S4B-XH-A,,,,,"hand-fit per spec 10 - exclude from CPL"
-A1/A2 V+SEL,PinHeader_1x03_P2.54mm_Vertical,"J9,J10",2,,,,,,"hand-fit per spec 10 - generic 2.54 mm header"
-BTN1/BTN2,PinHeader_1x02_P2.54mm_Vertical,"J11,J12",2,,,,,,"hand-fit per spec 10 - generic 2.54 mm header"
-EXP,PinHeader_1x06_P2.54mm_Vertical,J13,1,,,,,,"hand-fit per spec 10 - generic 2.54 mm header"
-UART1,PinHeader_1x04_P2.54mm_Vertical,J14,1,,,,,,"hand-fit per spec 10 - generic 2.54 mm header"
-M3,MountingHole_3.2mm_M3,"H1,H2,H3,H4",4,,,,,,"mechanical - exclude from BOM and CPL"
+USB-C 16P,USB_C_Receptacle_HRO_TYPE-C-31-M-12,J1,1,,,,,,HAND-FIT per spec 10 - but QUESTION THAT: 16 pads at 0.5 mm pitch plus 4 shield legs is not sensibly hand-soldered. Recommend machine-placing J1 even if the rest are hand-fit
+VIN 9-24V,PhoenixContact_MC_1.5_2-G-5.08_1x02_P5.08mm_Horizontal,J2,1,MC 1.5/2-G-5.08,,,,,hand-fit per spec 10. CHANGE Value to 12 V only; 9-24V is wrong and unsafe with D5 = SMBJ18A
+CH1-4 V+/LED-,JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal,"J3,J4,J5,J6",4,S2B-XH-A,,,,,hand-fit per spec 10 - exclude from CPL
+ADDR1-2,JST_XH_S4B-XH-A_1x04_P2.50mm_Horizontal,"J7,J8",2,S4B-XH-A,,,,,hand-fit per spec 10 - exclude from CPL
+A1/A2 V+SEL,PinHeader_1x03_P2.54mm_Vertical,"J9,J10",2,,,,,,hand-fit per spec 10 - generic 2.54 mm header
+BTN1/BTN2,PinHeader_1x02_P2.54mm_Vertical,"J11,J12",2,,,,,,hand-fit per spec 10 - generic 2.54 mm header
+EXP,PinHeader_1x06_P2.54mm_Vertical,J13,1,,,,,,hand-fit per spec 10 - generic 2.54 mm header
+UART1,PinHeader_1x04_P2.54mm_Vertical,J14,1,,,,,,hand-fit per spec 10 - generic 2.54 mm header
+M3,MountingHole_3.2mm_M3,"H1,H2,H3,H4",4,,,,,,mechanical - exclude from BOM and CPL
