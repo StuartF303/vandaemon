@@ -17,59 +17,161 @@ bash hw/VDDimmer/tools/drc.sh                                  # refill + DRC (K
 "C:/Program Files/KiCad/10.0/bin/python.exe" hw/VDDimmer/tools/connect.py   # all 61 nets
 "C:/Program Files/KiCad/10.0/bin/python.exe" hw/VDDimmer/tools/emc.py
 bash hw/VDDimmer/tools/export-bom.sh                           # 49-line BOM
+bash hw/VDDimmer/tools/export-cpl.sh                           # CPL + JLC BOM
 ```
 
 ## Current state
 
 | | |
 |---|---|
-| Schematic | 5 sheets, 96 parts, **ERC 0 violations** |
-| DRC | **0 errors**, 170 warnings |
+| Schematic | 5 sheets, **98 parts**, **ERC 0 violations** |
+| DRC | **0 errors**, 168 warnings — but see the severity warning below |
 | Unconnected | 15, every one benign — see the table below |
 | Nets split into >1 group | 12 of 61, all benign |
-| GND | **one connected group**; pours on both layers |
-| BOM | **49 lines, 96 parts, $11.91/board**; 35 lines carry an LCSC code |
+| GND | **one connected group**; B.Cu pour 1 island, 7179.8 mm² |
+| BOM | **51 lines, 98 parts** |
+| Assembly data | **CPL 78 parts / JLC BOM 35 lines**, reconciled — `tools/export-cpl.sh` |
+| Schematic parity | **0** — cleared entirely by KiCad's own F8 sync |
 | Decisions | `DECISIONS-2026-08-29.md` — settled, do not re-litigate |
+
+## "DRC 0 errors" is still not what it looks like
+
+`hole_to_hole` and `holes_co_located` are **downgraded to `warning`** in `.kicad_pro`,
+along with 27 other checks. That is why the board reports zero errors while carrying six
+real drill defects, two of whose holes physically overlap. This is the same shape of trap
+as the split-net lesson below — read the warning breakdown, not the error count:
+
+The six drill defects are now fixed, but the severity override is still in the project
+file, so the same trap will hide the next one. Current breakdown:
+
+```
+92 lib_footprint_mismatch   30 silk_over_copper   26 silk_overlap   9 via_dangling
+ 7 track_dangling            4 silk_edge_clearance   0 hole_to_hole   0 holes_co_located
+```
+
+Consider putting `hole_to_hole` and `holes_co_located` back to `error` in
+Board Setup → Violation Severity. Nothing legitimate on this board relies on them
+being warnings.
 
 ## Open work, in order
 
-### 1. Two GUI-only items (no MCP tool writes either)
+### 1. ~~GUI-only items~~ — ALL DONE
 
-- **`(dnp yes)` on R11 and R12.** Their Assembly fields say so. All five text-only DNPs
-  were in this state; L3/C20/R31 are now *fitted* by decision, so only these two remain.
-  Without the real flag a generated BOM quotes and fits them.
-- **Open U4 and U5's field dialogs** so KiCad propagates MPN/LCSC across their units.
-  See the Konnect gotcha about multi-unit symbols — the BOM is correct today only
-  because `export-bom.sh` groups by Value+Footprint rather than MPN.
+`(dnp yes)` is set on R11/R12 and reaches the BOM. U4/U5's fields are healed. The two
+mis-placed board texts were deleted and re-added at (166.55, 98.00) and (166.55, 100.60).
 
-### 2. The two I2C pull-ups — the last schematic change
+**Two things went wrong here that are worth not repeating:**
 
-Decision taken: fit 4.7 k from I2C_SDA and I2C_SCL to +3V3 near J13, LCSC **C17673**
-(0805, Basic, 7 M stock). Provisional refs **R45/R46**.
+- **Opening a multi-unit symbol's properties on the wrong unit wipes its fields.** The
+  dialog shows only the *clicked unit's* fields and writes them to all units on OK. U5 was
+  clicked on unit 1 and propagated correctly; U4 was clicked on another unit, so the empty
+  field set propagated and **deleted its MPN, LCSC and Manufacturer**. The BOM did not
+  notice, because U4 and U5 collapse into one Value+Footprint line and U5 still carried
+  the values. Restored. Always click unit 1, and diff the BOM afterwards.
+- **A DNP part collapsing into its fitted siblings' BOM line.** R11/R12 share `47R` with
+  R9/R10/R13, so grouping by Value+Footprint produced one line of five reading "DNP" —
+  telling the assembler not to fit any of them. `export-bom.sh` now groups by
+  `Value,Footprint,${DNP}`.
 
-This is the riskiest remaining step and needs planning, not improvisation:
-adding symbols means `update_pcb_from_schematic`, which **injects a phantom pad on every
-footprint it adds** — two new resistors, two phantom pads, cleared only by KiCad's
-targeted right-click → Update Footprint. Never the global Tools → Update Footprints from
-Library; that re-anchors and scrambles placement. Then both parts need placing and routing
-near J13 on a board whose F.Cu is already full.
+What remains here is cosmetic only — 4 silkscreen warnings, see §6.
+
+### 2. ~~The two I2C pull-ups~~ — DONE, schematic and PCB
+
+R45 and R46 (4.7 k, 0805, `C17673`, `0805W8F4701T5E`, UNI-ROYAL) are fitted, routed and
+verified on both sides.
+
+**Schematic**: `MCU.kicad_sch` at (283.21, 99.06) and (289.56, 99.06), tied with
+`connect_to_net`. Verified against the exported netlist, not the tool's return value:
+
+```
++3V3            15 nodes  ... J13.1 R43.1 R44.1 R45.1 R46.1 U1.2 U3.2
+/MCU/I2C_SDA     3 nodes  J13.3  R45.2  U1.20
+/MCU/I2C_SCL     3 nodes  J13.4  R46.2  U1.18
+```
+
+That +3V3 check mattered: the pins were tied with a plain `+3V3` **net label**, because
+that is what J13's own supply pin uses on this sheet. Had it not merged with the power
+net the pull-ups would have pulled to nothing — the exact silent failure the decision
+existed to prevent.
+
+**PCB**: R45 at (161.0, 100.0) and R46 at (161.0, 102.5), both **rot 180**, in a pocket
+east of the GATE_IN fan-out. 3 vias (0.6/0.3) at (160.0875, 98.8), (160.0875, 104.2) and
+(161.9125, 98.8); 27.35 mm of new track, 20.75 mm of it B.Cu.
+
+**Why B.Cu was unavoidable.** `ADDR1_DIN` runs the full width of the board on F.Cu at
+**y = 96.33, x 149.35–168.60**. It walls +3V3 (which reaches J13.1 at y = 95) off from
+the I2C lines (y = 100.14 and 102.67). There is no F.Cu-only path; going round its east
+end costs ~30 mm and still needs via hops over the GATE_IN verticals. B.Cu east of J13 is
+bare GND pour, and **J13's pads 1/3/4 are through-hole**, so they are reachable from below
+with no via at that end — which is what makes the tap cheap.
+
+The rotation matters: the parts arrive with pad 1 (+3V3) **west**. Left that way, the SDA
+return would cross the +3V3 spine on B.Cu. At rot 180 the three B.Cu runs are strictly
+parallel and nothing crosses.
+
+**Cost to the GND pour, measured**: B.Cu pour 7194.2 → **7179.8 mm², still one island**.
+14.4 mm² of slot, in the digital region, far from the buck. I²C at 100–400 kHz does not
+care about its return path, so this was the right trade — but it is a real cut and it is
+recorded here rather than buried.
+
+Both checks ran *before* anything was pushed: `route.py` reported 0 violations over 9
+segments, and the 3 vias were swept separately against every pad, track and via on both
+layers, because `route.py` does not synthesise vias.
 
 ### 3. The fab blockers
 
-- **Footprint `attr` is missing on all 96 footprints.** No `(attr smd)` anywhere, so
-  `kicad-cli pcb export pos --smd-only` returns **0 rows** and the unfiltered export
-  returns 96 including the four mounting holes. There is no usable CPL either way.
-  Measured, not assumed. This is also what generates all 92 `lib_footprint_mismatch`
-  warnings — **do not clear those with Tools → Update Footprints from Library.**
-- **Six drill defects**, none previously investigated:
-  - two GND vias at (176.112, 63.5) / (176.5, 63.5) — hole-to-hole **0.0000 mm**, the
-    drills touch
-  - pairs at 0.105 mm near (134.6, 126.8) and (145.9, 126.8)
-  - J2 pad 2 vs a via at 0.200 mm against a 0.2495 mm minimum
-  - a **duplicate EN_MCU via** — two drills co-located at exactly (150.6, 105.16)
-- **No board name, no revision on silkscreen, 0 fiducials, 0 test points.**
+- **~~No usable CPL~~ — SOLVED, needs no GUI pass.** The `attr` problem is real and
+  unchanged: no footprint carries `(attr smd)`, so `--smd-only` returns 0 rows and the
+  unfiltered export returns all 96 including the mounting holes. But the fix is not to
+  set 96 footprint types by hand. `tools/export-cpl.sh` takes the unfiltered export and
+  derives the exclusion set from `bom-lcsc.csv` — a part is machine-placed iff its BOM
+  line names a JLC library tier. **CPL and BOM then agree by construction**: nothing can
+  be quoted-and-not-placed or placed-and-not-quoted. **98 = 78 placed + 18 hand-fit /
+  mechanical + 2 DNP**, all top side.
+  The `attr` flag is still what generates the 92 `lib_footprint_mismatch` warnings —
+  **do not clear those with Tools → Update Footprints from Library.**
+- **~~Six drill defects~~ — FIXED.** All five `hole_to_hole` and the one
+  `holes_co_located` are gone; `drc.sh` now reports **0 of each**. Five vias deleted via
+  IPC, each proven non-load-bearing first by checking which track endpoints actually land
+  on it. In every overlapping pair only *one* via carried a track; the other was a bare
+  stitching via with its twin 0.1–0.5 mm away. `d85c5d26` was redundant by construction —
+  1 mm from J2's **PTH** GND pad, which already ties both layers. `afb88017` was an exact
+  duplicate. Afterwards GND is **still one connected group** and the split-net count is
+  unchanged at 12; via count 192 → 187. Kept for the record:
+
+  | Defect | Refs | Fix |
+  |---|---|---|
+  | 0.0000 mm — drills touch | GND vias `098213e7` (176.112, 63.5) and `dd170b03` (176.5, 63.5) | delete one, re-run `connect.py` |
+  | 0.1049 mm | GND vias `70c8a0bb` (134.744, 126.566) and `9b71116c` (134.486, 127.0) | delete one |
+  | 0.1049 mm | GND vias `8d1d0912` (146.044, 126.566) and `f488f812` (145.786, 127.0) | delete one |
+  | 0.2000 mm vs 0.2495 min | J2 pad 2 (112.92, 69.0) vs GND via `d85c5d26` (113.92, 69.0) | nudge the via ~0.06 mm east |
+  | co-located | **duplicate** EN_MCU vias `a14092cd` and `afb88017`, both at (150.6, 105.16) | delete either; they are identical |
+
+  The four GND deletions are stitching vias, so confirm with `connect.py` that GND still
+  reports one connected group afterwards — do not assume redundancy.
+- **~~No board name or revision~~ — DONE.** `VANDIMMER-4CH+2A` (1.2 mm) and `Rev A`
+  (1.0 mm) on F.SilkS at (166.55, 98.00) / (166.55, 100.60). Note the board is 100 × 80 mm
+  and **its whole perimeter is connectors** — there is no clear edge space anywhere, which
+  is why the board ID sits mid-board.
+- **Still absent: 0 fiducials, 0 test points, and an empty title block** (no title,
+  revision, company or date — that prints on the fab drawing, and no MCP tool sets it).
+  Fiducials are arguably optional here: the finest *machine-placed* pitch is SOIC-14,
+  because J1's 0.5 mm USB-C is hand-fit and excluded from the CPL.
 - Silkscreen: 4 clipped by the board edge (H1/H2 refdes off the top, J1's outline off
-  the left), 28 `silk_over_copper`, 24 `silk_overlap`.
+  the left), 30 `silk_over_copper`, 26 `silk_overlap`.
+
+### 6. Cosmetic silkscreen, the only thing left that I introduced
+
+Four warnings, no functional effect — JLCPCB clips silkscreen off exposed pads. Fixing
+them needs one more KiCad-open pass, and **the board text cannot be moved by any tool**
+(gotcha 14), so it is a GUI delete-and-re-add:
+
+- **R45's auto-placed reference field** at (161.00, 101.65) clips R46's outline and prints
+  over both of R46's pads — 3 of the 4. Cleanest fix is to move R46 from y = 102.5 to
+  about y = 104.0 and re-route its two taps, or just drag R45's refdes in the GUI.
+- **`VANDIMMER-4CH+2A` clips J13's silkscreen outline.** `silkspace.py` estimates stroke
+  text width as `len × size × 0.85`, which was slightly optimistic here. Nudging the text
+  ~1 mm east clears it.
 
 ### 4. Verify before ordering
 
@@ -85,14 +187,31 @@ near J13 on a board whose F.Cu is already full.
 - **J1 is listed hand-fit** with the other connectors per spec §10 — but 16 pads at
   0.5 mm pitch plus four shield legs is not sensibly hand-soldered. Machine-place J1.
 
-### 5. Documentation that contradicts the design
+### 5. Documentation that contradicts the design — DONE except the firmware
 
-- `VANDIMMER-4CH-2ADDR-SPEC-v2.0.md` line 77 still says **SMBJ33A**. The board has an
-  SMBJ18A and must. An SMBJ33A clamps at ~53 V, above the AP63301's 32 V absolute
-  maximum, so a 24 V-capable version of this board cannot protect its own buck.
-- The spec's channel-loss figure uses **15 mΩ** for the 20N06. The real part is **29 mΩ
-  at the 4.5 V the 74HCT125 actually drives**; loss is 0.116 W per channel, not 0.06 W.
-  Still only ~6 °C, so the no-thermal-vias decision stands, but the number was optimistic.
+`VANDIMMER-4CH-2ADDR-SPEC-v2.0.md` has been corrected and now carries an as-built banner
+pointing at `DECISIONS-2026-08-29.md` as authoritative. Twelve edits; the ones that
+mattered beyond the two originally listed:
+
+- **Line 30 advertised "10-30 V DC" input.** That is the most dangerous line the spec had:
+  above ~20 V the SMBJ18A conducts continuously and dies, and above 32 V the buck does.
+  Now "12 V nominal, 10-16 V DC", and the transient row names the real 29.2 V clamp
+  rather than "40 V".
+- SMBJ33A → SMBJ18A in both §4.1 and the §12 parts list; F1 7 A → 8 A in both.
+- Channel loss 0.015 Ω / 0.06 W → 0.029 Ω / **0.116 W**, with the reason recorded (the
+  old figure assumed a 10 V gate drive the 74HCT125 does not provide). LDO row 0.26 W →
+  the measured 0.55 W; board total ~2.5 W → ~2.4-2.7 W.
+- The "24 V variant" row said "commercial question, not technical". It is technical: D5
+  *and* U2 must change together, and an SMBJ33A cannot be the answer.
+
+**`bom-lcsc.csv` had drifted from the schematic too** — it still named the 10 A fuse and
+the AMS1117 after both were superseded, though every LCSC code was already correct.
+Fixed, and `tools/cpl.py` now cross-checks the two sheets on every run: the schematic owns
+what a part *is* (Value, Assembly), `bom-lcsc.csv` owns where it is *bought* (LCSC, tier).
+A superseded Value can no longer reach the BOM Comment.
+
+Still outstanding:
+
 - **Firmware must be regenerated from the current schematic.** U1's GPIO map changed
   twice and U5's buffer channels 3↔4 were swapped during layout.
 
@@ -203,6 +322,9 @@ four buck-area tracks properly onto their pads if the board is opened again.
 | `connect.py` | **per-net connected-component groups** over tracks, vias, pads and zone islands. No argument = sweep all 61 nets and list the split ones plus every marginal contact. Run after every refill |
 | `emc.py` | pour continuity, F.Cu runs not backed by the B.Cu pour, return-via distances, GND coverage under the buck |
 | `retvia.py` | proposes GND return vias that are clear of everything *and* land in GND fill on both layers |
+| `fpspace.py` | clear-space finder for a **footprint**. Tests pads, vias, **tracks** and silkscreen — an earlier ad-hoc check built a track list and never used it, reporting 4648 "clear" 0805 sites in a corridor packed with the GATE_IN fan-out |
+| `silkspace.py` | clear-space finder for board text. Correct `F.SilkS` filter, includes refdes text, prints the item count so a broken filter is obvious |
+| `export-cpl.sh` / `cpl.py` | **assembly data** — JLCPCB CPL + JLC BOM. Filters the unfiltered position export using `bom-lcsc.csv`'s library tier, so CPL and BOM cannot disagree. Cross-checks Value/LCSC against the schematic and warns on drift; refuses to write if any footprint has no BOM line |
 
 **`route.py` has one known blind spot**: it validates track polylines but does **not**
 synthesise a via at each layer transition, so a via can be too close to a neighbouring
@@ -247,6 +369,29 @@ enough that etch tolerance could open it.
 13. **No tool sets KiCad's `(dnp yes)` attribute.** DNP written only into a Value string
     or an Assembly field does not reach the BOM — five parts on this board were in that
     state and would all have been quoted and fitted.
+
+14. **`add_board_text` is a one-way door.** No tool deletes, moves or edits a board-level
+    `gr_text` — only `add_board_text` exists. Get the position right the first time or the
+    only remedy is a GUI delete. Verify the target area *before* adding, not after.
+15. **The silkscreen layer is `"F.SilkS"`, not `"F.Silkscreen"`.** The DRC report prints
+    "F.Silkscreen", so a filter written from the report matches **nothing** and every
+    region reads as empty. That is exactly how two board texts were placed into J7/J8's
+    connector outlines after a clearance check that "passed". `tools/silkspace.py` has the
+    correct filter and a self-check that prints the item count — if it says 0, the filter
+    is wrong again. Occupancy must also include `fp_text` reference designators, which are
+    silkscreen too.
+
+16. **Use KiCad's own F8 sync, not Konnect's `update_pcb_from_schematic`.** Konnect's
+    refuses this board outright with `reference_identity_conflict` on U4 and U5, because
+    their board footprints carry a path built from a *non-unit-1* UUID and the sync expects
+    unit 1. That state is byte-identical to what was committed, KiCad's own parity check
+    does not object to it, and `footprints_added` comes back 0 — so nothing gets added.
+    **Tools → Update PCB from Schematic (F8) has no such objection and does not inject
+    phantom pads either**, so it sidesteps gotcha 1 completely. It also repaired all 106
+    parity items in one go. This is now the preferred route for any schematic→PCB sync
+    on this board.
+
+
 
 ## Design decisions already made — do not re-litigate
 

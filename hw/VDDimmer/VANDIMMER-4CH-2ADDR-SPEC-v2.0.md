@@ -6,6 +6,13 @@
 **Status:** Specification — pre-schematic
 **Supersedes:** VANDIMMER-8CH v1.1
 
+> **As-built corrections (2026-08-29).** This document was written before layout and
+> several figures in it no longer describe the board. The corrected values are inline
+> below; the reasoning is in `DECISIONS-2026-08-29.md`, which is authoritative where the
+> two disagree. The substantive changes: the board is **12 V only** (was "10–30 V"),
+> D5 is an **SMBJ18A** (was SMBJ33A), F1 is an **8 A** fuse (was 7 A), and the per-channel
+> FET loss is **0.116 W** (was 0.06 W). See also §12's parts list.
+
 ---
 
 ## 1. Changes from v1.1
@@ -27,8 +34,8 @@
 
 | Parameter | Value | Notes |
 |---|---|---|
-| Input voltage | 10–30 V DC | 12V nominal; 24V-capable variant noted §4.1 |
-| Input transient | 40 V, 400 W TVS clamp | Automotive load-dump margin |
+| Input voltage | **12 V nominal, 10–16 V DC** | **12 V-only board.** D5 is an SMBJ18A (~20 V breakdown) and U2 an AP63301 (32 V abs max) — see §4.1 |
+| Input transient | **29.2 V clamp**, 400 W TVS | SMBJ18A, chosen to clamp *below* the AP63301's 32 V absolute maximum |
 | Total board current | **5 A max** | Hard design cap |
 | PWM channel current | 2 A max each | 4 channels; aggregate must not exceed 5 A |
 | Addressable V+ current | 2 A per output | Polyfuse limited |
@@ -73,8 +80,8 @@ hardware interlock. Silkscreen must state it.
 
 | Ref | Part | Spec |
 |---|---|---|
-| F1 | SMD fuse, 2410 | 7 A, 63 V — backup to external fusing |
-| D_TVS | SMBJ33A | 33 V standoff, 400 W |
+| F1 | SMD fuse, 2410 | **8 A**, 250 V, 50 A interrupt — 6 A usable after 25 % derating, against a 5 A board cap. Backup to external fusing |
+| D_TVS | **SMBJ18A** | 18 V standoff, 22.1 V breakdown, **29.2 V clamp**, 400 W |
 | Q_REV | P-channel MOSFET, DPAK | Vds ≥ 60 V, Rds(on) ≤ 30 mΩ @ Vgs −10 V |
 | R_G | 100 kΩ | Gate–source pulldown |
 | D_Z | 12 V Zener, SOD-123 | Gate clamp — **required**, VIN exceeds Vgs(max) |
@@ -153,7 +160,10 @@ MOSFET source ── GND
 dissipation is no longer predictable. AO3400A-class silicon in a DPAK body is
 the target.
 
-**Thermal:** 2 A × 2 A × 0.015 Ω = 0.06 W per channel. Approximately 3 °C rise.
+**Thermal:** 2 A × 2 A × 0.029 Ω = **0.116 W per channel**. Approximately 6 °C rise.
+The earlier 0.015 Ω assumed a 10 V gate drive. The fitted 20N06 is **29 mΩ at the
+4.5 V the 74HCT125 actually delivers**, so the real loss is about double. Still
+comfortable, but the original number was optimistic.
 DPAK is thermal overkill here and is chosen for assembly robustness and future
 headroom, not dissipation.
 
@@ -418,9 +428,9 @@ else in the buck layout matters as much.
 |---|---|---|---|
 | Buck (5 V @ 2 A) | 1.1–1.4 W | 645 mm² + vias | ~33 °C |
 | Q_REV @ 5 A | 0.75 W | 645 mm² | ~34 °C |
-| LDO | 0.26 W | 645 mm² | ~12 °C |
-| Q1–Q4 @ 2 A each | 0.06 W each | 300 mm² | ~4 °C |
-| **Board total** | **~2.5 W** | | **~15–20 °C enclosure rise** |
+| LDO | 0.55 W | 645 mm² | ~25 °C (Tj 57.9 °C, 67 °C margin) |
+| Q1–Q4 @ 2 A each | 0.116 W each | 300 mm² | ~6 °C |
+| **Board total** | **~2.4–2.7 W** | | **~15–20 °C enclosure rise** |
 
 At 60 °C ambient worst case, hottest junction ≈ 95 °C. Acceptable margin.
 
@@ -461,11 +471,11 @@ At 60 °C ambient worst case, hottest junction ≈ 95 °C. Acceptable margin.
 | 4 | Q1–Q4 | N-FET, 60 V, Vgs 2.5 V rated | DPAK |
 | 1 | Q5 | P-FET, 60 V, ≤30 mΩ | DPAK |
 | 4 | D1–D4 | SS34 flyback | SMA |
-| 1 | D5 | SMBJ33A TVS | SMB |
+| 1 | D5 | SMBJ18A TVS | SMB |
 | 1 | D6 | 12 V Zener | SOD-123 |
 | 1 | D7 | WS2812B status | 5050 |
 | 1 | L1 | 10 µH, 4 A shielded | 6×6 mm |
-| 1 | F1 | 7 A fuse | 2410 |
+| 1 | F1 | 8 A fuse | 2410 |
 | 2 | PF1–2 | Polyfuse 2 A | 1812 |
 | 2 | C1–2 | 10 µF / 50 V X7R | 1210 |
 | 2 | C3–4 | 22 µF / 16 V X7R | 0805 |
@@ -517,10 +527,10 @@ At 60 °C ambient worst case, hottest junction ≈ 95 °C. Acceptable margin.
 
 | Item | Decision needed |
 |---|---|
-| Buck part | AP64350 (12 V only) vs TPS54360 (24 V capable) — product decision |
+| Buck part | **Settled: AP63301WU-7** — 12 V only, 3 A, 500 kHz, internally compensated |
 | Q_REV part | Verify 60 V / ≤30 mΩ DPAK P-FET against JLC live stock |
 | Enclosure | Affects thermal rise assumptions — currently modelled as enclosed still air |
-| 24 V variant | Commercial-product question, not technical |
+| 24 V variant | **Not a drop-in.** Needs D5 *and* U2 changed together — an SMBJ18A breaks down at ~20 V, and an SMBJ33A clamps at ~53 V, above the AP63301's 32 V limit |
 | Conformal coating | Consider for condensation resistance in van environment |
 | EMI contingency | If §11 item 10 fails: populate optional input LC filter first; respin to 4-layer only if that is insufficient |
 
