@@ -278,6 +278,67 @@ Still outstanding:
 - **Firmware must be regenerated from the current schematic.** U1's GPIO map changed
   twice and U5's buffer channels 3↔4 were swapped during layout.
 
+## 3D renders, and what they can and cannot tell you
+
+`renders/board-top.png`, `board-bottom.png`, `board-iso.png`, from:
+
+```bash
+"C:/Program Files/KiCad/10.0/bin/kicad-cli.exe" pcb render -o renders/board-iso.png     -w 1800 -h 1400 --rotate '-45,0,45' --perspective --floor --quality high     --background opaque VANDIMMER-4CH2A.kicad_pcb
+```
+
+**A render cannot verify connector orientation on this board.** J1 and U1 have no 3D model
+(see below), so they draw as bare pads. J1 sat *reversed* through an entire layout once;
+a render would not have caught it then either. Verify orientation geometrically — compare
+the F.Fab body outline against the pad row and the board edge:
+
+| Ref | Body extends | Nearest edge | Verdict |
+|---|---|---|---|
+| J1 USB-C | West 7.52 mm; **F.Fab x 100.000-107.300**, tails at x 107.695 | W | opening flush with the west edge, facing out — correct |
+| J2 screw terminal | North 8.50 mm | N, 0.50 mm | wire entry faces out |
+| J3-J8 JST XH (side-entry) | South 9.70 mm | S, 0.80 mm | openings face out |
+
+Note J1's *courtyard* reaches x 99.50 and its silkscreen x 99.75, both proud of the board
+edge — that is the source of the `silk_edge_clearance` warning, not a body overhang.
+
+Enclosure notes: J1's shell is **exactly flush**, not proud, so a wall cutout must align to
+x = 100. **J13 sits 30.5 mm from the nearest edge** — no access through a closed lid.
+Through-hole leads protrude underneath (J1 pegs, J2, six JSTs, all headers), so standoffs
+are needed; the M3 holes are 4.5 mm in from each corner.
+
+### 3D models: 89 of 98 footprints resolve
+
+Known and accepted — cosmetic for fab, but it means a **STEP export for enclosure work will
+be missing two of the most mechanically significant parts**:
+
+| Cause | Refs |
+|---|---|
+| Model declared, **file not shipped by KiCad** | **J1** (`USB_C_Receptacle_HRO_TYPE-C-31-M-12.step`), **U1** (`ESP32-S3-WROOM-1U.step`) |
+| No `(model ...)` block — hand-made footprints | F1, L1, L3 |
+| None by design | H1-H4 mounting holes |
+
+This is an upstream gap, not a broken install: `Connector_USB.3dshapes` ships 12 models but
+no HRO part, and `RF_Module.3dshapes` ships WROOM-1 and -2 but not -1U. If substitutes are
+ever wanted, note the obvious ones are wrong in the dimension that matters:
+ESP32-S3-WROOM-**1** is 25.5 mm long against the 1U's 19.2 mm, and an `0630` inductor model
+is 3.0 mm tall against the PNLS6045's 4.5 mm. Accurate stand-ins do exist —
+`USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.step` for J1, and any of
+`L_Sunlord_SWPA6045S` / `L_TDK_SLF6045` / `L_Chilisin_BWVS00606045` for L1/L3.
+
+### F1 prints `REF**` on the silkscreen
+
+`fp_text user "REF**"` at (0, -2.7) on **F.SilkS**, plus a harmless
+`fp_text user "Fuse_2410_6125Metric"` on F.Fab. F1's Reference property is correctly "F1";
+these are stale duplicates.
+
+Cause: `VANDIMMER:Fuse_2410_6125Metric` uses the **legacy `fp_text reference/value` syntax**
+instead of modern `property` blocks, so when the properties were added KiCad demoted the
+now-duplicate legacy text to plain user text. L1/L3's footprint has the same legacy syntax
+but is clean, because the F8 sync re-imported them; F1 was placed by Konnect and never was.
+
+**GUI fix** — `set_footprint_graphics` handles only lines/arcs/rects/circles/polys, so
+neither the board instance nor the library can be corrected through MCP. Delete the `REF**`
+text near x 128, y 66.3.
+
 ## Every remaining unconnected item, and why
 
 `connect.py` with no arguments checks all 61 nets and agrees with KiCad exactly. None of

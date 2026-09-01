@@ -8,3 +8,4 @@ fp-info-cache
 tools/drc-report.json
 tools/dangling-vias.txt
 tools/__pycache__/
+renders/
