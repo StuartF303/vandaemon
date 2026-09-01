@@ -194,44 +194,57 @@ paralleled L3 at DC and shunted it at the switching frequency.
 attribute. This also closed the old "find a 0 Ω jumper rated ≥ 2 A" item — an unfitted
 part carries no current.
 
-**(b) L1/L3's land was wrong for any part. Fixed — now on a curated KiCad land.**
+**(b) L1/L3's land was investigated, changed, and CHANGED BACK. The original geometry
+was right.** Read this before touching it again.
 
-The old footprint `VANDIMMER:L_cjiang_FXL0630_7.0x6.6mm` was Konnect-generated and
-internally inconsistent: named for an FXL0630 (a **6.0 mm** body) but described as
-7.0 × 6.6 mm. Three independent curated KiCad 6×6 lands agree exactly with each other
-and disagree with it:
+The footprint `VANDIMMER:L_cjiang_FXL0630_7.0x6.6mm` is **misnamed**: it is a 6045 land,
+not an FXL0630 7.0 × 6.6. That wrong metadata caused a wrong conclusion — the land was
+swapped to KiCad's curated `Inductor_SMD:L_Changjiang_FXL0630` on the reasoning that three
+independent curated 6×6 lands agreed with each other and disagreed with it.
 
-| Land | Pad | Pitch |
+**That was wrong, and it was caught by reading the actual part's datasheet.** DMBJ
+PNLS6045 (datasheet p3, dimension table): body A=6.0, B=6.0, C(max)=4.50, and the terminals
+are **D=5.0 × E=1.65 mm**, so each terminal spans **1.35-3.00 mm** from the centreline.
+
+| Land | Pad span | Contact | Area | % of terminal |
+|---|---|---|---|---|
+| **`L_cjiang_FXL0630_7.0x6.6mm`** (fitted) | 1.20-3.70 | 1.65 × 5.00 | 8.25 mm² | **100 %** |
+| `Inductor_SMD:L_Changjiang_FXL0630` | 1.85-4.20 | 1.15 × 3.50 | 4.03 mm² | **49 %** |
+
+The custom land covers the whole terminal with a sensible 0.70 mm toe. KiCad's covers half
+of it and puts 1.20 mm of pad beyond the body edge. **KiCad's land is correct for an
+FXL0630 — a different part — and must not be used here.** The footprint's `descr` now says
+so in its first line; the filename was deliberately left alone to avoid board churn.
+
+The lesson: a curated library land is only authority for *the part it is named after*.
+Verify against the fitted part's own terminal dimensions. The name on a footprint is not
+evidence.
+
+The round trip cost a footprint swap and a courtyard fix, both reverted. Two things
+survive it and are worth keeping:
+
+- **`poppler` is now installed** (`winget install oschwartz10612.Poppler`). It is what read
+  the PNLS6045 dimension table and caught the error. The pre-existing `pdftotext` in
+  `/mingw64/bin` is **Xpdf 4.06, not poppler** — its `pdftoppm` emits PPM only, no `-png`.
+  Binaries live under `AppData/Local/Microsoft/WinGet/Packages/oschwartz10612.Poppler_*/
+  poppler-25.07.0/Library/bin/`. LCSC datasheet drawings are vector art, so `pdftotext`
+  alone returns only dimension *labels*; render the page and read it.
+- **C25/C26 stayed at x = 192.9** (moved 0.4 mm east during the swap). Harmless with the
+  narrower courtyard restored, and already verified there, so they were not moved back.
+
+**(c) ~~WS2812B pinout~~ — VERIFIED.** The WS2812B-V5/W (`C2874885`) pin function table
+matches the board's `LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm` exactly:
+
+| Pin | Datasheet | Board net |
 |---|---|---|
-| old VANDIMMER custom | 2.50 × 6.00 | **4.90** |
-| `L_Changjiang_FXL0630` | 2.35 × 3.50 | **6.05** |
-| `L_Chilisin_BMRx00060630` | 2.35 × 3.50 | 6.05 |
-| `L_Chilisin_BMRB00060650` | 2.35 × 3.50 | 6.05 |
+| 1 | VDD, power supply | `+5V` |
+| 2 | DOUT, data out | `unconnected-(D7-DOUT-Pad2)` — chain end, correct |
+| 3 | VSS, ground | `GND` |
+| 4 | DIN, data in | `/Addressable/STATUS_D` |
 
-The custom pads sat **1.15 mm too close together** — a real 6×6 inductor's terminals
-span 1.85-4.20 mm from the centreline while those pads spanned 1.20-3.70 mm.
-
-L1/L3 now use `Inductor_SMD:L_Changjiang_FXL0630`. The part stays **PNLS6045-100M**
-(`C2849537`), which is the best of only three 10 µH parts JLC stocks in 6×6 at ≥ 3.5 A:
-4.5 A Isat, 57 mΩ, $0.07, 5539 stock. MSA75-100M was considered and abandoned — its
-recommended-layout dimensions are vector art in the datasheet and unreadable without a
-PDF renderer (`pdftotext` returns only the labels H/S/M; no raster image is embedded).
-
-**§8.5 gate re-measured after the swap** — hot loop still 2.51 mm², SW→BST still 0.25 mm,
-B.Cu GND still one island at 7179.8 mm². The FB divider moved ~0.3 mm closer to L1
-(6.49 / 8.53 / 8.41 mm) as its pads spread outward; still clear.
-
-**What this cost, and the lesson.** The wider land (8.90 mm courtyard vs 7.90) pushed
-L1's courtyard wings 0.25 mm into C25 and C26 — **two DRC errors**, the first this board
-has had. Pad clearance had been checked and was clean; *courtyards* had not been. C25/C26
-moved 0.4 mm east (nothing but board edge lies east of them, whereas C24's bootstrap cap
-is 1.25 mm west of L1, and L1 sits in the switching path). `tools/fpspace.py --courtyards`
-now sweeps the whole board for this, and was negative-tested against the pre-fix geometry.
-
-**(c) Still unverified.** `jlc_get_pinout` timed out on **C2874885** (WS2812B-V5/W), so
-the substitute's pinout is still unconfirmed against
-`LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm`. Board pad nets are pin1 +5V, pin2 DOUT,
-pin3 GND, pin4 DIN — check against the V5 datasheet before ordering.
+The V5/W substitution for the uncatalogued V6 is safe. Note LCSC's `www.lcsc.com/datasheet/
+...pdf` URL serves **HTML**, not a PDF; the real file is the `datasheet.lcsc.com/datasheet/
+pdf/<hash>.pdf` link inside it.
 
 **(d) J1** is hand-fit per spec §10, but 16 pads at 0.5 mm pitch plus four shield legs is
 not sensibly hand-soldered. Machine-placing needs an LCSC part number it does not have;

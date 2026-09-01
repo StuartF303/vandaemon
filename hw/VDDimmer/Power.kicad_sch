@@ -3901,7 +3901,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_Changjiang_FXL0630"
+		(property "Footprint" "VANDIMMER:L_cjiang_FXL0630_7.0x6.6mm"
 			(at 41.91 95.25 0)
 			(hide yes)
 			(show_name no)
@@ -3933,7 +3933,7 @@
 				)
 			)
 		)
-		(property "Assembly" "Land is KiCad's curated Inductor_SMD:L_Changjiang_FXL0630 (2.35 x 3.50 pads, 6.05 pitch). Input LC filter inductor - fitted per the 2026-08-29 decision, with R30 (its bypass jumper) DNP"
+		(property "Assembly" "Land VERIFIED against the PNLS6045 datasheet (p3): terminals D=5.0 x E=1.65 mm, covered 100% by these pads. Input LC filter inductor, fitted per the 2026-08-29 decision with R30 (its bypass jumper) DNP. NOTE the footprint NAME is wrong - it is a 6045 land, not an FXL0630 7.0x6.6"
 			(at 41.91 95.25 0)
 			(hide yes)
 			(show_name no)
@@ -7971,7 +7971,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_Changjiang_FXL0630"
+		(property "Footprint" "VANDIMMER:L_cjiang_FXL0630_7.0x6.6mm"
 			(at 237.49 76.2 0)
 			(hide yes)
 			(show_name no)
@@ -8003,7 +8003,7 @@
 				)
 			)
 		)
-		(property "Assembly" "Land is KiCad's curated Inductor_SMD:L_Changjiang_FXL0630 (2.35 x 3.50 pads, 6.05 pitch), NOT the earlier Konnect-generated VANDIMMER footprint whose pads sat 1.15 mm too close together. Fitted part is PNLS6045-100M, 6.0 x 6.0 x 4.5 mm"
+		(property "Assembly" "Land VERIFIED against the PNLS6045 datasheet (p3): terminals are D=5.0 x E=1.65 mm on a 6.0 x 6.0 body, spanning 1.35-3.00 mm from centreline. These pads (2.50 x 6.00 at +/-2.45, spanning 1.20-3.70) cover 100% of the terminal with a 0.70 mm toe. NOTE the footprint NAME is wrong - it is a 6045 land, not an FXL0630 7.0x6.6"
 			(at 237.49 76.2 0)
 			(hide yes)
 			(show_name no)
