@@ -2931,7 +2931,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C5156756"
+		(property "LCSC" "C33546018"
 			(at 275.59 69.85 0)
 			(hide yes)
 			(show_name no)
@@ -2942,7 +2942,7 @@
 				)
 			)
 		)
-		(property "MPN" "FS32X106K101EGG"
+		(property "MPN" "HGC1210R7106M500NSVK"
 			(at 275.59 69.85 0)
 			(hide yes)
 			(show_name no)
@@ -2953,7 +2953,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "PSA"
+		(property "Manufacturer" "Chinocera"
 			(at 275.59 69.85 0)
 			(hide yes)
 			(show_name no)
@@ -3050,7 +3050,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C5156756"
+		(property "LCSC" "C33546018"
 			(at 275.59 129.54 0)
 			(hide yes)
 			(show_name no)
@@ -3061,7 +3061,7 @@
 				)
 			)
 		)
-		(property "MPN" "FS32X106K101EGG"
+		(property "MPN" "HGC1210R7106M500NSVK"
 			(at 275.59 129.54 0)
 			(hide yes)
 			(show_name no)
@@ -3072,7 +3072,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "PSA"
+		(property "Manufacturer" "Chinocera"
 			(at 275.59 129.54 0)
 			(hide yes)
 			(show_name no)

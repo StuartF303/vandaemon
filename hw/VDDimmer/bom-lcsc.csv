@@ -16,8 +16,8 @@ Value,Footprint,Refs,Qty,MPN,LCSC,JLC_Library,Stock,Price_USD,Notes
 100nF/25V,C_0402_1005Metric,C23,1,CL05B104KB54PNC,C307331,basic,24054503,0.0088,"buck Cin - 50 V part, exceeds the 25 V called for"
 10uF/25V,C_0805_2012Metric,"C30,C40,C44,C50,C61",5,CL21A106KAYNNNE,C15850,basic,8003192,0.096,
 22uF/25V,C_1206_3216Metric,"C25,C26,C31",3,CL31A226KAHNNNE,C12891,basic,1464722,0.2037,
-10uF/50V,C_1210_3225Metric,"C20,C63,C64",3,FS32X106K101EGG,C5156756,extended,493672,0.4774,"100 V part - a 50 V 1210 would be much cheaper, worth a second look. C20 NOW FITTED"
-10uF/50V X7R,C_1210_3225Metric,"C21,C22",2,FS32X106K101EGG,C5156756,extended,493672,0.4774,buck input caps
+10uF/50V,C_1210_3225Metric,"C20,C63,C64",3,HGC1210R7106M500NSVK,C33546018,extended,16809,0.1901,"50 V X7R, swapped from the 100 V FS32X106K101EGG ($0.4774) which was 20% of the BOM on a 12 V board. All five sit on 12 V-class rails and the SMBJ18A clamps transients at 29.2 V, well under 50 V. Same 1210 land (identical EasyEDA footprint UUID). Saves $1.42/board. Do NOT drop to 25 V: C21/C22 are the buck's input caps and a 25 V X7R 1210 loses 40-60% of its capacitance at 12 V bias"
+10uF/50V X7R,C_1210_3225Metric,"C21,C22",2,HGC1210R7106M500NSVK,C33546018,extended,16809,0.1901,"50 V X7R, swapped from the 100 V FS32X106K101EGG ($0.4774) which was 20% of the BOM on a 12 V board. All five sit on 12 V-class rails and the SMBJ18A clamps transients at 29.2 V, well under 50 V. Same 1210 land (identical EasyEDA footprint UUID). Saves $1.42/board. Do NOT drop to 25 V: C21/C22 are the buck's input caps and a 25 V X7R 1210 loses 40-60% of its capacitance at 12 V bias"
 22pF,C_0603_1608Metric,C27,1,CL10C220JB8NNNC,C1653,basic,3361370,0.0068,buck FB feedforward
 8A 250V,Fuse_2410_6125Metric,F1,1,LTC2410-1800TSK,C54824501,extended,22111,0.0947,"8 A per 2026-08-29 decision. 50 A interrupt, I2t 115.2"
 BL1117-33CX,SOT-223-3_TabPin2,U3,1,BL1117-33CX,C5400,extended,99728,0.06,CHANGED per 2026-08-29 decision - 2 mA Iq vs 5 mA. Update Value to 'BL1117-33CX'

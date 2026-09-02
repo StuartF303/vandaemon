@@ -1,6 +1,6 @@
 "Reference","Value","Footprint","MPN","LCSC","Manufacturer","QUANTITY","DNP"
-"C20,C63,C64","10uF/50V","Capacitor_SMD:C_1210_3225Metric","FS32X106K101EGG","C5156756","PSA","3",""
-"C21,C22","10uF/50V X7R","Capacitor_SMD:C_1210_3225Metric","FS32X106K101EGG","C5156756","PSA","2",""
+"C20,C63,C64","10uF/50V","Capacitor_SMD:C_1210_3225Metric","HGC1210R7106M500NSVK","C33546018","Chinocera","3",""
+"C21,C22","10uF/50V X7R","Capacitor_SMD:C_1210_3225Metric","HGC1210R7106M500NSVK","C33546018","Chinocera","2",""
 "C23","100nF/25V","Capacitor_SMD:C_0402_1005Metric","CL05B104KB54PNC","C307331","Samsung Electro-Mechanics","1",""
 "C24,C32-C34,C41-C43,C51,C60,C62","100nF/50V","Capacitor_SMD:C_0603_1608Metric","CC0603KRX7R9BB104","C14663","YAGEO","10",""
 "C25,C26,C31","22uF/25V","Capacitor_SMD:C_1206_3216Metric","CL31A226KAHNNNE","C12891","Samsung Electro-Mechanics","3",""
