@@ -295,6 +295,68 @@ Still outstanding:
 - **Firmware must be regenerated from the current schematic.** U1's GPIO map changed
   twice and U5's buffer channels 3↔4 were swapped during layout.
 
+## Getting a quote — build the bundle yourself, do not ship the tool's
+
+JLCPCB has **no public quoting API**; the quote is a manual upload. Regenerate with:
+
+```bash
+# 1. gerbers only -- the tool's BOM and CPL are WRONG, see below
+export_manufacturing_package(board, schematic, output_dir="fab", fab_house="jlcpcb")
+# 2. our own, verified assembly data
+bash tools/export-cpl.sh
+```
+
+Upload `fab/jlcpcb/`: gerber zip (9 layers), `VANDIMMER-4CH2A-BOM.csv`,
+`VANDIMMER-4CH2A-CPL.csv`.
+
+**`export_manufacturing_package`'s assembly files are unusable.** It reports "No warnings"
+and produces:
+
+| | its output | correct |
+|---|---|---|
+| CPL rows | **98** — includes 4 mounting holes, 14 connectors, 3 DNP | 77 |
+| CPL units | **inches** (C20 at 6.496 = 165 mm / 25.4) | mm |
+| BOM | **no LCSC column**, ungrouped, 98 rows | 34 lines, all with LCSC |
+
+JLC would try to pick-and-place mounting holes and could source nothing. Take only its
+gerbers and drills; use `tools/export-cpl.sh` for BOM and CPL. Cross-check before
+uploading: CPL and BOM designator sets must match exactly and every BOM line must carry an
+LCSC code.
+
+Verified good: outline **100.00 × 80.00 mm**, drills **241 PTH + 6 NPTH = 247** (matching
+`drill.py`; the 6 NPTH are 4 mounting holes plus J1's 2 locating pegs), CPL and BOM both
+77 designators with no orphans on either side.
+
+### Assembly will likely need edge rails
+
+JLC wants ≥ 5 mm clear of machine-placed copper on **two opposite** edges, else it adds
+rails — extra panel area and cost. Closest machine-placed copper per edge:
+
+```
+W  4.55 mm (C44)    <- only 0.45 mm short
+E  3.45 mm (C63)
+N  2.80 mm (R23)
+S 12.30 mm (PF2)    ok
+```
+
+Only S qualifies, so there is no opposite pair. The cheapest fix would be pulling the W
+edge clear by 0.45 mm to pair with... nothing — E is 3.45. Realistically either accept
+rails, or in Rev B reserve 5 mm on N and S.
+
+### Cost, from real LCSC prices
+
+$11.86/board at 5 off, $10.09 at 100 — **excluding all 14 connectors**, which have no LCSC
+code and are not costed anywhere. 77 placed parts, 280 solder joints (U1 alone is 62),
+16 extended-library lines each attracting a setup fee.
+
+Biggest lever: the five 10 µF 1210s are **100 V** parts at $0.474 (20 % of the BOM) on a
+12 V-only board. A 50 V part (`C33546018`, $0.190) saves **$1.42/board**. Do not drop to
+25 V without checking DC-bias derating — C21/C22 are the buck's input capacitors and a
+25 V X7R 1210 can lose 40-60 % of its capacitance at 12 V.
+
+Konnect's `estimate_cost` returns $7.19/board at qty 5; its component figure is less than
+half the real BOM cost. Treat it as indicative only.
+
 ## 3D renders, and what they can and cannot tell you
 
 `renders/board-top.png`, `board-bottom.png`, `board-iso.png`, from:

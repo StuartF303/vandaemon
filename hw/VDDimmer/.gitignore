@@ -9,3 +9,4 @@ tools/drc-report.json
 tools/dangling-vias.txt
 tools/__pycache__/
 renders/
+fab/
