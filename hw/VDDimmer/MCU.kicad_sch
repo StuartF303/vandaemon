@@ -7029,7 +7029,43 @@
 				)
 			)
 		)
-	)
+	
+		(property "Assembly" "MACHINE-PLACED. SMD (surface mount, right angle) so it belongs in the SMT assembly, unlike J2-J14 which are through-hole and correctly hand-fit. 16 pads at 0.5 mm pitch plus four shell legs is not sensibly hand-soldered"
+			(at 44.45 175.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C165948"
+			(at 44.45 175.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "TYPE-C-31-M-12"
+			(at 44.45 175.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Korean Hroparts Elec"
+			(at 44.45 175.26 0)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		))
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x02")
 		(at 299.72 199.39 0)

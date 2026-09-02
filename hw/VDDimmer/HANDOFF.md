@@ -263,9 +263,27 @@ The V5/W substitution for the uncatalogued V6 is safe. Note LCSC's `www.lcsc.com
 ...pdf` URL serves **HTML**, not a PDF; the real file is the `datasheet.lcsc.com/datasheet/
 pdf/<hash>.pdf` link inside it.
 
-**(d) J1** is hand-fit per spec §10, but 16 pads at 0.5 mm pitch plus four shield legs is
-not sensibly hand-soldered. Machine-placing needs an LCSC part number it does not have;
-`export-cpl.sh` warns if the tier changes without one.
+**(d) ~~J1 hand-fit~~ — SOURCED and machine-placed.** `C165948`, TYPE-C-31-M-12,
+Korean Hroparts Elec, **315k in stock at $0.185**. That is precisely the part the footprint
+is named for (`USB_C_Receptacle_HRO_TYPE-C-31-M-12`; HRO = Korean Hroparts).
+
+J1 was never hand-fit by decision — it simply had no LCSC code, and `export-cpl.sh` treats
+unsourced as hand-fit. The classification was an accident of missing data.
+
+**The rule that actually separates them: J1 is SMD, J2-J14 are through-hole.** JLC's SMT
+service does not place THT parts, so the other connectors are correctly hand-fit even
+though JLC stocks them too (e.g. S2B-XH-A is `C157931`, 55k in stock). Do not "fix" those
+the same way.
+
+CPL 77 → 78, BOM 34 → 35 lines, cost $10.450 → $10.635/board.
+
+Two consequences worth carrying:
+
+- **Assembly edge clearance got worse.** J1 sits at the west edge, so the closest
+  machine-placed copper to the W edge fell from 4.55 mm to **1.80 mm**. Still no opposite
+  pair over 5 mm, so rails remain likely — see the quote section.
+- **Check J1's rotation in JLC's preview.** The CPL emits KiCad's 270° uncorrected, and
+  USB-C receptacles are a classic case where a fab library's reference orientation differs.
 
 ### 5. Documentation that contradicts the design — DONE except the firmware
 
