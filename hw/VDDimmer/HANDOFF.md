@@ -25,56 +25,73 @@ bash hw/VDDimmer/tools/export-cpl.sh                           # CPL + JLC BOM
 | | |
 |---|---|
 | Schematic | 5 sheets, **98 parts**, **ERC 0 violations** |
-| DRC | **0 errors**, 166 warnings — but see the severity warning below |
+| DRC | **0 errors**, 165 warnings — drill checks now at **error** severity, so this means something |
 | Unconnected | 15, every one benign — see the table below |
 | Nets split into >1 group | 12 of 61, all benign |
 | GND | **one connected group**; B.Cu pour 1 island, 7179.8 mm² |
 | BOM | **51 lines, 98 parts** |
 | Buck gate (§8.5) | hot loop **2.51 mm²** (< 15), B.Cu GND **1 island, 7179.8 mm²** |
 | Assembly data | **CPL 77 parts / JLC BOM 34 lines**, reconciled — `tools/export-cpl.sh` |
+| Drills | **247 holes, 0 overlapping** — `tools/drill.py` |
 | Schematic parity | **0** — cleared entirely by KiCad's own F8 sync |
 | Decisions | `DECISIONS-2026-08-29.md` — settled, do not re-litigate |
 
-## "DRC 0 errors" is still not what it looks like
+## "DRC 0 errors" — now it means something
 
-`hole_to_hole` and `holes_co_located` are **downgraded to `warning`** in `.kicad_pro`,
-along with 27 other checks. That is why the board reports zero errors while carrying six
-real drill defects, two of whose holes physically overlap. This is the same shape of trap
-as the split-net lesson below — read the warning breakdown, not the error count:
+`hole_to_hole` and `holes_co_located` were overridden to `warning` in `.kicad_pro`.
+**They are now back to `error`**, and the board still passes. That override hid six drill
+defects, and later hid three vias whose drills physically overlapped J1's shell slots.
 
-The six drill defects are now fixed, but the severity override is still in the project
-file, so the same trap will hide the next one. Current breakdown:
+Current warnings — read the breakdown, never just the error count:
 
 ```
-92 lib_footprint_mismatch   30 silk_over_copper   26 silk_overlap   9 via_dangling
- 7 track_dangling            4 silk_edge_clearance   0 hole_to_hole   0 holes_co_located
+90 lib_footprint_mismatch   30 silk_over_copper   25 silk_overlap
+ 9 via_dangling              7 track_dangling      4 silk_edge_clearance
 ```
 
-Consider putting `hole_to_hole` and `holes_co_located` back to `error` in
-Board Setup → Violation Severity. Nothing legitimate on this board relies on them
-being warnings.
+`padstack` is still `warning`; 12 of 17 KiCad demo projects have it as `error`. Left as a
+deliberate choice.
+
+**DRC alone is still not a fab check.** Two things it does not do:
+
+- **Slot drills.** KiCad's own checks did not flag a 0.4 mm via overlapping a
+  `drill oval 0.6 1.7` slot. `tools/drill.py` treats slots as rectangles and sweeps every
+  hole pair; it exits non-zero on any overlap. Run it before every order.
+- **Fab capability.** Measured against JLCPCB standard 2-layer limits: min track 0.250 mm
+  (limit 0.127, fine), **min via drill 0.200 mm** (standard 0.30, 0.20 costs extra),
+  **min annular ring 0.125 mm** (limit 0.13, marginally under), and **15 hole pairs between
+  0.300 and 0.499 mm** against a 0.50 mm standard — six are vias deliberately placed beside
+  header pads. None is a defect; all of them push the board off JLC's cheapest tier.
+
+`validate_for_manufacturing` reported **"READY: 0 issues"** on the board while it still had
+three overlapping drills. It checks layer/footprint/net/track counts. Do not rely on it.
 
 ## Open work, in order
 
 ### 1. ~~GUI-only items~~ — ALL DONE
 
-`(dnp yes)` is set on R11/R12 and reaches the BOM. U4/U5's fields are healed. The two
-mis-placed board texts were deleted and re-added at (166.55, 98.00) and (166.55, 100.60).
+`(dnp yes)` on R11/R12/R30. U4/U5 fields healed. Board texts placed at (166.55, 98.00) /
+(166.55, 100.60). Drill checks restored to **error** severity. F1's stray `REF**`
+silkscreen deleted.
 
-**Two things went wrong here that are worth not repeating:**
+**Three things went wrong in this area that are worth not repeating:**
 
 - **Opening a multi-unit symbol's properties on the wrong unit wipes its fields.** The
   dialog shows only the *clicked unit's* fields and writes them to all units on OK. U5 was
   clicked on unit 1 and propagated correctly; U4 was clicked on another unit, so the empty
   field set propagated and **deleted its MPN, LCSC and Manufacturer**. The BOM did not
-  notice, because U4 and U5 collapse into one Value+Footprint line and U5 still carried
-  the values. Restored. Always click unit 1, and diff the BOM afterwards.
+  notice, because U4 and U5 collapse into one Value+Footprint line and U5 still carried the
+  values. Always click unit 1, and diff the BOM afterwards.
 - **A DNP part collapsing into its fitted siblings' BOM line.** R11/R12 share `47R` with
   R9/R10/R13, so grouping by Value+Footprint produced one line of five reading "DNP" —
   telling the assembler not to fit any of them. `export-bom.sh` now groups by
   `Value,Footprint,${DNP}`.
-
-What remains here is cosmetic only — 4 silkscreen warnings, see §6.
+- **`VANDIMMER:Fuse_2410_6125Metric` still uses legacy `fp_text reference/value` syntax.**
+  That is what put a literal `REF**` on F1's silkscreen: when property blocks were added,
+  KiCad demoted the duplicate legacy text to plain user text. The board instance is fixed,
+  **the library file is not** — re-importing F1 will bring it back.
+  `set_footprint_graphics` handles only lines/arcs/rects/circles/polys, so the library
+  cannot be corrected through MCP.
 
 ### 2. ~~The two I2C pull-ups~~ — DONE, schematic and PCB
 

@@ -4143,18 +4143,6 @@
 			(layer "F.Fab")
 			(uuid "e00c44c9-8511-4528-be68-258402af4d57")
 		)
-		(fp_text user "REF**"
-			(at 0 -2.7 0)
-			(unlocked yes)
-			(layer "F.SilkS")
-			(uuid "505deee2-a034-479e-b3e7-17289b483a04")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
 		(fp_text user "Fuse_2410_6125Metric"
 			(at 0 2.7 0)
 			(unlocked yes)
@@ -25432,8 +25420,8 @@
 			)
 		)
 	)
-	(gr_text "VANDIMMER-4CH+2A"
-		(at 166.55 98 0)
+	(gr_text "VANDIMMER-4CH+2A\nv 1.0"
+		(at 113.5 76 0)
 		(layer "F.SilkS")
 		(uuid "7b34da94-8ff2-497d-8981-9a034ffcca95")
 		(effects
@@ -26026,22 +26014,6 @@
 		(layers "F.Cu" "B.Cu")
 		(net "GND")
 		(uuid "0ea61a08-4d7e-49bc-8b87-3473aff27d4b")
-	)
-	(via
-		(at 101.962 115.957)
-		(size 0.8)
-		(drill 0.4)
-		(layers "F.Cu" "B.Cu")
-		(net "GND")
-		(uuid "0ea9cc38-746f-4d30-ae15-353334313e1d")
-	)
-	(via
-		(at 107.35 116.32)
-		(size 0.8)
-		(drill 0.4)
-		(layers "F.Cu" "B.Cu")
-		(net "GND")
-		(uuid "0ff36e38-033f-4f38-9f95-260eae168d8c")
 	)
 	(via
 		(at 114.221 104.95)
@@ -26698,14 +26670,6 @@
 		(layers "F.Cu" "B.Cu")
 		(net "GND")
 		(uuid "93bf51bf-7941-4363-890c-8761757fbe83")
-	)
-	(via
-		(at 107.35 107.68)
-		(size 0.8)
-		(drill 0.4)
-		(layers "F.Cu" "B.Cu")
-		(net "GND")
-		(uuid "98d41f5d-ade5-45c1-a366-948976847c3c")
 	)
 	(via
 		(at 102 124)
