@@ -43,6 +43,60 @@ going wrong:
 U5's buffer channels 3↔4 were swapped during layout, so anything built against the
 original pin plan will drive the wrong channels.
 
+## Firmware: the current pin map, extracted from the netlist
+
+**There is no firmware for this board.** The only sketch in the repo is
+`hw/LEDDimmer-8ch/led_dimmer.ino` (268 lines, **untracked**), written for the older
+8-channel design with hardcoded pins that do **not** match this board. It is a useful
+starting point, not something to "regenerate".
+
+Verified against the exported netlist on 2026-09-03. Regenerate any time with
+`kicad-cli sch export netlist` and read U1's pins.
+
+| ESP32-S3 GPIO | Pad | Net | Function |
+|---|---|---|---|
+| IO3  | 15 | `GATE_IN1` | PWM channel 1 |
+| IO9  | 17 | `GATE_IN2` | PWM channel 2 |
+| IO11 | 19 | `GATE_IN3` | PWM channel 3 |
+| IO13 | 21 | `GATE_IN4` | PWM channel 4 |
+| IO21 | 23 | `ADDR1_DIN` | addressable strip 1 data |
+| IO47 | 24 | `ADDR2_DIN` | addressable strip 2 data |
+| IO48 | 25 | `ADDR_CLK` | addressable clock (APA102-style, shared) |
+| IO45 | 26 | `STATUS_DIN` | on-board WS2812B status LED (D7) |
+| IO40 | 33 | `BTN1` | button 1 (J11, active low) |
+| IO39 | 32 | `BTN2` | button 2 (J12, active low) |
+| IO10 | 18 | `I2C_SCL` | expansion header J13 |
+| IO12 | 20 | `I2C_SDA` | expansion header J13 |
+| IO42 | 35 | `UART1_TX` | J14 |
+| IO41 | 34 | `UART1_RX` | J14 |
+| IO1  | 39 | `VIN_SENSE` | ADC, input voltage divider |
+| IO2  | 38 | `NTC_SENSE` | ADC, thermistor RT1 |
+| IO0  | 27 | `BOOT_IO0` | boot select |
+| EN   | 3  | `EN_MCU` | reset |
+
+Buffer chain, confirmed 1:1 end to end — the earlier "U5 channels 3↔4 swapped" note is
+resolved, the netlist is self-consistent and these assignments are authoritative:
+
+```
+GATE_IN1 -> U4.2  U4.3  -> GDRV1 -> R1 -> GATE1 -> Q1
+GATE_IN2 -> U4.5  U4.6  -> GDRV2 -> R2 -> GATE2 -> Q2
+GATE_IN3 -> U4.9  U4.8  -> GDRV3 -> R3 -> GATE3 -> Q3
+GATE_IN4 -> U4.12 U4.11 -> GDRV4 -> R4 -> GATE4 -> Q4
+
+ADDR1_DIN -> U5.2   ADDR2_DIN -> U5.5   ADDR_CLK -> U5.9   STATUS_DIN -> U5.12
+```
+
+Notes that bear on the firmware:
+
+- **Channels are low-side N-FET drivers**, so a channel is ON when the GPIO is HIGH.
+  U4 is a 74HCT125 buffer running from +5V, driving the gates through 220 R.
+- **R11/R12 are DNP**, so `ADDR1_CLK`/`ADDR2_CLK` reach J7.3/J8.3 through unfitted
+  resistors. The clock lines are a **provision for APA102-style strips only** — with the
+  parts unfitted the outputs are WS2812-style single-wire (data only).
+- **USB is data and ESD only.** There is no USB power path; the board is 12 V-input-only,
+  so it will not enumerate or run from USB alone.
+- PWM: the 8-channel sketch used 5 kHz / 8-bit. The spec asks for **1–2 kHz** on this board.
+
 ## Start here
 
 Everything below is verified against the tools in `tools/`. Re-derive rather than inherit —
