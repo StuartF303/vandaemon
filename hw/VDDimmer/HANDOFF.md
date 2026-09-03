@@ -592,10 +592,18 @@ enough that etch tolerance could open it.
     or an Assembly field does not reach the BOM — five parts on this board were in that
     state and would all have been quoted and fitted.
 
-14. **`add_board_text` is a one-way door.** No tool deletes, moves or edits a board-level
+14. **`set_board_size` APPENDS an outline, it does not set one.** Despite the name it
+    leaves the existing Edge.Cuts lines in place and writes four more after
+    `(embedded_fonts no)`, two-space-indented in a tab-indented file, plus a stray closing
+    paren — the same malformed-append shape as `add_copper_pour` (gotcha 10). The return
+    value reports the *requested* rectangle, so it looks like it worked. The board ends up
+    with **two overlapping outlines**. A tab-anchored regex will not even see the new one;
+    grep the layer name and count, or you will "verify" the old outline and miss it.
+    Changing the board outline is a **GUI job**: no tool deletes a `gr_line` either.
+15. **`add_board_text` is a one-way door.** No tool deletes, moves or edits a board-level
     `gr_text` — only `add_board_text` exists. Get the position right the first time or the
     only remedy is a GUI delete. Verify the target area *before* adding, not after.
-15. **The silkscreen layer is `"F.SilkS"`, not `"F.Silkscreen"`.** The DRC report prints
+16. **The silkscreen layer is `"F.SilkS"`, not `"F.Silkscreen"`.** The DRC report prints
     "F.Silkscreen", so a filter written from the report matches **nothing** and every
     region reads as empty. That is exactly how two board texts were placed into J7/J8's
     connector outlines after a clearance check that "passed". `tools/silkspace.py` has the
@@ -603,7 +611,7 @@ enough that etch tolerance could open it.
     is wrong again. Occupancy must also include `fp_text` reference designators, which are
     silkscreen too.
 
-16. **Use KiCad's own F8 sync, not Konnect's `update_pcb_from_schematic`.** Konnect's
+17. **Use KiCad's own F8 sync, not Konnect's `update_pcb_from_schematic`.** Konnect's
     refuses this board outright with `reference_identity_conflict` on U4 and U5, because
     their board footprints carry a path built from a *non-unit-1* UUID and the sync expects
     unit 1. That state is byte-identical to what was committed, KiCad's own parity check
