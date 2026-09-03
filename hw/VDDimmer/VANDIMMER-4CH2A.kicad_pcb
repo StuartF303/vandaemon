@@ -2425,7 +2425,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C5156756"
+		(property "LCSC" "C33546018"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2438,7 +2438,7 @@
 				)
 			)
 		)
-		(property "MPN" "FS32X106K101EGG"
+		(property "MPN" "HGC1210R7106M500NSVK"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2451,7 +2451,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "PSA"
+		(property "Manufacturer" "Chinocera"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8135,7 +8135,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C5156756"
+		(property "LCSC" "C33546018"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8148,7 +8148,7 @@
 				)
 			)
 		)
-		(property "MPN" "FS32X106K101EGG"
+		(property "MPN" "HGC1210R7106M500NSVK"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -8161,7 +8161,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "PSA"
+		(property "Manufacturer" "Chinocera"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9734,7 +9734,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C5156756"
+		(property "LCSC" "C33546018"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9747,7 +9747,7 @@
 				)
 			)
 		)
-		(property "MPN" "FS32X106K101EGG"
+		(property "MPN" "HGC1210R7106M500NSVK"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9760,7 +9760,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "PSA"
+		(property "Manufacturer" "Chinocera"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12445,6 +12445,58 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Assembly" "MACHINE-PLACED. SMD (surface mount, right angle) so it belongs in the SMT assembly, unlike J2-J14 which are through-hole and correctly hand-fit. 16 pads at 0.5 mm pitch plus four shell legs is not sensibly hand-soldered"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "54bf7990-a8de-4f60-a847-df4cd30ec23c")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "LCSC" "C165948"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "fafea418-a572-4e63-98cd-24200ae6e3e6")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "MPN" "TYPE-C-31-M-12"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "c63cd855-d91d-4f5c-9af5-65ef4b4dc459")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Manufacturer" "Korean Hroparts Elec"
+			(at 0 0 270)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d1efeef2-ef67-4153-b315-65ec67eff998")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18097,7 +18149,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C5156756"
+		(property "LCSC" "C33546018"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18110,7 +18162,7 @@
 				)
 			)
 		)
-		(property "MPN" "FS32X106K101EGG"
+		(property "MPN" "HGC1210R7106M500NSVK"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -18123,7 +18175,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "PSA"
+		(property "Manufacturer" "Chinocera"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23368,7 +23420,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C5156756"
+		(property "LCSC" "C33546018"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23381,7 +23433,7 @@
 				)
 			)
 		)
-		(property "MPN" "FS32X106K101EGG"
+		(property "MPN" "HGC1210R7106M500NSVK"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -23394,7 +23446,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "PSA"
+		(property "Manufacturer" "Chinocera"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")

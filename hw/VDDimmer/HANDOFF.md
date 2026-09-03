@@ -34,8 +34,25 @@ bash hw/VDDimmer/tools/export-cpl.sh                           # CPL + JLC BOM
 | Assembly data | **CPL 77 parts / JLC BOM 34 lines**, reconciled — `tools/export-cpl.sh` |
 | Drills | **247 holes, 0 overlapping** — `tools/drill.py` |
 | Board | **100 × 84 mm**, y 56..140. N and S both clear 5 mm, so **no JLC assembly rails** |
-| Schematic parity | **0** — cleared entirely by KiCad's own F8 sync |
+| Schematic parity | **0** — F8 sync; read the clobber warning below before running it |
 | Decisions | `DECISIONS-2026-08-29.md` — settled, do not re-litigate |
+
+## KiCad will silently clobber an on-disk edit
+
+The board outline was edited on disk (three `gr_line` endpoints, y 60 → 56) with KiCad
+verified closed. A later KiCad session then saved the board and **wrote back its own
+in-memory copy, reverting the outline to 100 × 80**, while correctly applying the F8 field
+updates. Two things made it nearly invisible:
+
+- the save landed **53 seconds before** the commit meant to capture the extension, so
+  `git diff` against HEAD showed nothing and "proved" the file was untouched;
+- the only symptom was `silk_edge_clearance` rising 2 → 4, because H1/H2's reference text
+  was once again clipped by a y=60 edge.
+
+The commit was fine — `f9153df` does contain y=56 — but the working tree had regressed.
+**After any KiCad save, re-check anything edited on disk rather than through KiCad**, and
+prefer `git show <commit>:<file>` over `git diff` when timestamps are close. Better still,
+do not edit the file on disk while any KiCad session might still hold it.
 
 ## "DRC 0 errors" — now it means something
 
