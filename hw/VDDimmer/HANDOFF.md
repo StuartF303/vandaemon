@@ -25,7 +25,7 @@ bash hw/VDDimmer/tools/export-cpl.sh                           # CPL + JLC BOM
 | | |
 |---|---|
 | Schematic | 5 sheets, **98 parts**, **ERC 0 violations** |
-| DRC | **0 errors**, 165 warnings — drill checks now at **error** severity, so this means something |
+| DRC | **0 errors**, 163 warnings — drill checks at **error** severity, so this means something |
 | Unconnected | 15, every one benign — see the table below |
 | Nets split into >1 group | 12 of 61, all benign |
 | GND | **one connected group**; B.Cu pour 1 island, 7179.8 mm² |
@@ -33,6 +33,7 @@ bash hw/VDDimmer/tools/export-cpl.sh                           # CPL + JLC BOM
 | Buck gate (§8.5) | hot loop **2.51 mm²** (< 15), B.Cu GND **1 island, 7179.8 mm²** |
 | Assembly data | **CPL 77 parts / JLC BOM 34 lines**, reconciled — `tools/export-cpl.sh` |
 | Drills | **247 holes, 0 overlapping** — `tools/drill.py` |
+| Board | **100 × 84 mm**, y 56..140. N and S both clear 5 mm, so **no JLC assembly rails** |
 | Schematic parity | **0** — cleared entirely by KiCad's own F8 sync |
 | Decisions | `DECISIONS-2026-08-29.md` — settled, do not re-litigate |
 
@@ -318,14 +319,13 @@ Still outstanding:
 JLCPCB has **no public quoting API**; the quote is a manual upload. Regenerate with:
 
 ```bash
-# 1. gerbers only -- the tool's BOM and CPL are WRONG, see below
-export_manufacturing_package(board, schematic, output_dir="fab", fab_house="jlcpcb")
-# 2. our own, verified assembly data
-bash tools/export-cpl.sh
+bash hw/VDDimmer/tools/export-fab.sh     # gerbers + drills + BOM + CPL, self-checking
 ```
 
-Upload `fab/jlcpcb/`: gerber zip (9 layers), `VANDIMMER-4CH2A-BOM.csv`,
-`VANDIMMER-4CH2A-CPL.csv`.
+Upload `fab/jlcpcb/`: `VANDIMMER-4CH2A-gerbers.zip`, `VANDIMMER-4CH2A-BOM.csv`,
+`VANDIMMER-4CH2A-CPL.csv`. The script exits non-zero if the BOM and CPL designator sets
+disagree or any line lacks an LCSC code, and prints the board size and drill counts so a
+changed outline cannot slip through unnoticed.
 
 **`export_manufacturing_package`'s assembly files are unusable.** It reports "No warnings"
 and produces:
@@ -345,21 +345,32 @@ Verified good: outline **100.00 × 80.00 mm**, drills **241 PTH + 6 NPTH = 247**
 `drill.py`; the 6 NPTH are 4 mounting holes plus J1's 2 locating pegs), CPL and BOM both
 77 designators with no orphans on either side.
 
-### Assembly will likely need edge rails
+### ~~Assembly edge rails~~ — SOLVED by growing the board
 
 JLC wants ≥ 5 mm clear of machine-placed copper on **two opposite** edges, else it adds
-rails — extra panel area and cost. Closest machine-placed copper per edge:
+rails. The board was 100 × 80 (y 60..140) and only S qualified. It is now **100 × 84,
+y 56..140** — the north edge moved out 4 mm:
 
 ```
-W  4.55 mm (C44)    <- only 0.45 mm short
-E  3.45 mm (C63)
-N  2.80 mm (R23)
-S 12.30 mm (PF2)    ok
+W  1.80 mm (J1)     under 5
+E  3.45 mm (C63)    under 5
+N  6.80 mm (R23)    OK   <- was 2.80
+S 12.30 mm (PF2)    OK
 ```
 
-Only S qualifies, so there is no opposite pair. The cheapest fix would be pulling the W
-edge clear by 0.45 mm to pair with... nothing — E is 3.45. Realistically either accept
-rails, or in Rev B reserve 5 mm on N and S.
+N and S are now a qualifying opposite pair, so **no rails**. Chosen over moving R23/R24
+2.20 mm and L3 1.50 mm south (which was verified viable and needed 5 track repairs)
+because no case design exists yet, so the outline was still free to change and this touches
+no copper at all.
+
+The **pours were deliberately not extended** into the new 4 mm strip. They stay inset
+0.5 mm from the *old* edge, so no existing copper is lost — B.Cu GND is unchanged at
+7179.8 mm² — and the bare strip does exactly the job a rail would have. Extending them is
+a GUI zone drag and buys nothing electrically.
+
+H1/H2 were left at y = 64.5, now 8.5 mm from the north edge against 4.5 mm on the other
+three sides. Deliberate: the holes are already verified clear and the case is not designed,
+so re-verifying a move buys nothing. Note the asymmetry when the enclosure is drawn.
 
 ### Cost, from real LCSC prices
 
