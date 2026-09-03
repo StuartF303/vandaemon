@@ -62,7 +62,21 @@ def main(tmp, out):
     print("CPL / BOM  : %d / %d designators" % (len(cpl), len(bom)))
     print("orphans    : %s" % (", ".join(orphans) if orphans else "none"))
     print("no LCSC    : %s" % (", ".join(nolcsc) if nolcsc else "none"))
-    return 1 if orphans or nolcsc else 0
+
+    # One LCSC code must appear on exactly one BOM line. JLC keys on the part number:
+    # a code on two lines leaves it unable to resolve the quantity, so it sets Qty 0
+    # and unticks BOTH rows. That silently dropped eight lines on the first upload and
+    # looked like an out-of-stock problem.
+    codes = {}
+    for r in csv.DictReader(io.open(os.path.join(out, "VANDIMMER-4CH2A-BOM.csv"),
+                                    encoding="utf-8")):
+        codes.setdefault(r["LCSC Part #"].strip(), []).append(r["Designator"])
+    dups = {k: v for k, v in codes.items() if len(v) > 1}
+    print("dup LCSC   : %s" % (", ".join(dups) if dups else "none"))
+    for k, v in dups.items():
+        print("   %s appears on %d lines: %s" % (k, len(v), " | ".join(v)))
+
+    return 1 if orphans or nolcsc or dups else 0
 
 
 if __name__ == "__main__":

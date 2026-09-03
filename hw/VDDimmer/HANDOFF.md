@@ -362,6 +362,47 @@ Verified good: outline **100.00 × 80.00 mm**, drills **241 PTH + 6 NPTH = 247**
 `drill.py`; the 6 NPTH are 4 mounting holes plus J1's 2 locating pegs), CPL and BOM both
 77 designators with no orphans on either side.
 
+### JLC rejects a part number that appears on two BOM lines
+
+First upload showed 8 rows with **Qty 0 and unticked**, which reads as "out of stock" but
+is not. JLC keys the BOM on the **LCSC part number**: if one code appears on two lines it
+cannot resolve the quantity, so it zeroes and unticks **both**. Four codes were split
+because `cpl.py` grouped by Value+Footprint and cosmetic Value differences separated one
+physical part:
+
+```
+C33546018  "10uF/50V"    + "10uF/50V X7R"   -> C20,C63,C64 and C21,C22
+C2849537   "10uH 4.5A"   + "10uH"           -> L1 and L3
+C17414     "10k"         + "10k 1%"         -> R5..R44 and R22,R28,R29
+C149504    "100k"        + "100k 1%"        -> R20 and R23,R27
+```
+
+The fab BOM is now grouped by **LCSC code**, 35 lines -> 31, each code appearing exactly
+once. `fabcheck.py` fails the build on any duplicate. The internal KiCad BOM keeps its
+Value+Footprint grouping — that serves a different purpose and must not change (see the
+multi-unit symbol note in `export-bom.sh`).
+
+### A part can be in the catalogue but not assemblable
+
+F1 was matched but left unselected. LUTE `LTC2410-1800TSK` (`C54824501`) is a real 8 A
+2410 fuse with 22k in stock, but it carries **no EasyEDA library data**
+(`has_easyeda_footprint: false`, `datasheet: null`, `lcsc_url: null`) — a catalogue part,
+not an assembly part. Replaced with BHFUSE `BSMD2410C-1800T` (`C49305064`): same 8 A /
+250 V, better interrupt (100 A vs 50 A), cheaper, and it has library data.
+
+**Check `has_easyeda_footprint` before committing to a part.** It is the cheapest available
+proxy for "JLC will actually place this".
+
+Still 8 A deliberately: it must open *below* the 7.5 A blade fuse the spec requires
+upstream, so the 10 A parts in the same family are not substitutes, and the 5 A parts give
+only 3.75 A usable after derating — under the 5 A board cap.
+
+### "Standard only" is not an error
+
+D7 (WS2812B) and U1 (ESP32-S3 module) show as Standard-only in the matcher. JLC's
+**Economic** tier places a restricted parts list; a module and an addressable LED both need
+**Standard**. This board needs Standard regardless.
+
 ### ~~Assembly edge rails~~ — SOLVED by growing the board
 
 JLC wants ≥ 5 mm clear of machine-placed copper on **two opposite** edges, else it adds

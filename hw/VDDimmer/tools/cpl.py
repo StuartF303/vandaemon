@@ -180,15 +180,31 @@ def main():
                 "%.4f" % (float(row["Rot"]) % 360.0),
             ])
 
-    seen, jlc_lines = set(), []
-    for _, line in placed:
-        key = (line["Value"], line["Footprint"])
-        if key in seen:
-            continue
-        seen.add(key)
-        refs = [r["Ref"] for r, l in placed if (l["Value"], l["Footprint"]) == key]
-        jlc_lines.append((line, sorted(refs, key=lambda s: (re.sub(r"\d", "", s),
-                                                           int(re.sub(r"\D", "", s) or 0)))))
+    # Group the fab BOM by LCSC part number, NOT by Value+Footprint. JLC keys on the
+    # part number: if one code appears on two lines it cannot resolve the quantity, so
+    # it sets Qty 0 and unticks BOTH. That silently dropped eight lines -- the 10 uF
+    # caps, the inductors and two resistor values -- because cosmetic Value differences
+    # ("10k" vs "10k 1%") had split one part across two rows.
+    def refkey(r):
+        return (re.sub(r"\d", "", r), int(re.sub(r"\D", "", r) or 0))
+
+    groups = {}
+    for row, line in placed:
+        key = line["LCSC"].strip() or (line["Value"], line["Footprint"])
+        groups.setdefault(key, []).append((row["Ref"], line))
+
+    jlc_lines = []
+    for key, members in groups.items():
+        refs = sorted((r for r, _ in members), key=refkey)
+        # Label the row with the Value that covers the most parts, so a merged line
+        # reads as the part everyone recognises rather than an arbitrary variant.
+        counts = {}
+        for r, l in members:
+            counts[l["Value"]] = counts.get(l["Value"], 0) + 1
+        best = max(counts, key=lambda v: (counts[v], -len(v)))
+        line = dict(members[0][1], Value=best)
+        jlc_lines.append((line, refs))
+    jlc_lines.sort(key=lambda t: refkey(t[1][0]))
 
     with open(OUT_BOM, "w", newline="") as fh:
         w = csv.writer(fh)
