@@ -7875,7 +7875,7 @@
 				)
 			)
 		)
-		(property "Assembly" "8 A fuse - sized for the 5 A board cap with 25% continuous derating; opens below the 7.5 A blade fuse upstream"
+		(property "Assembly" "8 A fuse, 250 V, 100 A interrupt, I2t 192. Replaces LUTE LTC2410-1800TSK (C54824501) which JLC would not select for assembly - that part has no EasyEDA library data (has_easyeda_footprint false), so it is catalogue-only. Keep 8 A: it must open BELOW the 7.5 A blade fuse the spec requires upstream, so 10 A is not a substitute"
 			(at 59.69 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -7886,7 +7886,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C54824501"
+		(property "LCSC" "C49305064"
 			(at 59.69 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -7897,7 +7897,7 @@
 				)
 			)
 		)
-		(property "MPN" "LTC2410-1800TSK"
+		(property "MPN" "BSMD2410C-1800T"
 			(at 59.69 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -7908,7 +7908,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "LUTE"
+		(property "Manufacturer" "BHFUSE"
 			(at 59.69 44.45 0)
 			(hide yes)
 			(show_name no)
