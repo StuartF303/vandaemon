@@ -7,6 +7,42 @@ the critical path there is **assembly data, not copper**.
 State as of 2026-08-29. `git log --oneline -6 -- hw/VDDimmer` shows how it got here;
 the working tree was clean when this was written.
 
+## AS ORDERED — Rev A, 3 September 2026
+
+Ordered from JLCPCB, in production, 4-5 day delivery quoted. The board that was sent is
+commit **`37c12ab`** with a clean tree; tag **`ordered-revA`** points at it. `fab/` is
+gitignored, so regenerate with `bash tools/export-fab.sh` — it is deterministic from the
+board and should reproduce these:
+
+```
+VANDIMMER-4CH2A-gerbers.zip   237314 bytes  sha256:b7d19cc80eb26a27...
+VANDIMMER-4CH2A-BOM.csv         1463 bytes  sha256:c5de29886044701b...
+VANDIMMER-4CH2A-CPL.csv         3040 bytes  sha256:75f41362c3c6018b...
+```
+
+| | |
+|---|---|
+| Board | 100 × 84 mm, 2 layers, no assembly rails needed |
+| Assembly | Standard PCBA, top side only |
+| Placed | 78 parts, 302 joints, 31 BOM lines |
+| Not placed | 13 through-hole connectors (J2-J14) to hand-fit; R11/R12/R30 DNP |
+| Drills | 241 PTH + 6 NPTH = 247, 0 overlapping |
+| Verification | DRC 0 errors, parity 1, GND one group, hot loop 2.51 mm² |
+
+**When the boards arrive, check these first** — they are the things that were closest to
+going wrong:
+
+1. **J1 orientation.** Verified in JLC's placement preview before ordering, but it is the
+   part that has already been wrong once. Confirm a USB-C plug seats from the west edge.
+2. **F1 fitted and correct.** It was re-sourced late (BHFUSE `C49305064`) after the
+   original part turned out to be catalogue-only.
+3. **The five 10 µF caps are the 50 V part**, not the old 100 V one.
+4. **R30 must be ABSENT.** If it is fitted, the input LC filter is shorted out.
+
+**Do not power a board until the firmware is rebuilt** — U1's GPIO map changed twice and
+U5's buffer channels 3↔4 were swapped during layout, so anything built against the
+original pin plan will drive the wrong channels.
+
 ## Start here
 
 Everything below is verified against the tools in `tools/`. Re-derive rather than inherit —
