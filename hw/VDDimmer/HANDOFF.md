@@ -39,16 +39,20 @@ going wrong:
 3. **The five 10 µF caps are the 50 V part**, not the old 100 V one.
 4. **R30 must be ABSENT.** If it is fitted, the input LC filter is shorted out.
 
-**Do not power a board until the firmware is rebuilt** — U1's GPIO map changed twice and
-U5's buffer channels 3↔4 were swapped during layout, so anything built against the
-original pin plan will drive the wrong channels.
+**Do not power a board with anything but the firmware in `hw/VDDimmer/firmware/`** — U1's
+GPIO map changed twice and U5's buffer channels 3↔4 were swapped during layout, so
+anything built against the original pin plan will drive the wrong channels.
 
 ## Firmware: the current pin map, extracted from the netlist
 
-**There is no firmware for this board.** The only sketch in the repo is
-`hw/LEDDimmer-8ch/led_dimmer.ino` (268 lines, **untracked**), written for the older
-8-channel design with hardcoded pins that do **not** match this board. It is a useful
-starting point, not something to "regenerate".
+**The firmware lives in `hw/VDDimmer/firmware/`** — a PlatformIO project for the
+ESP32-S3, written against the table below and building clean as of 2026-09-05. Its README
+carries the MQTT contract, the bring-up order and the Windows toolchain traps. **It has
+not yet been flashed to hardware.**
+
+The only other sketch in the repo, `hw/LEDDimmer-8ch/led_dimmer.ino` (268 lines,
+**untracked**), was written for the older 8-channel design with hardcoded pins that do
+**not** match this board. It was a reference, not something to "regenerate".
 
 Verified against the exported netlist on 2026-09-03. Regenerate any time with
 `kicad-cli sch export netlist` and read U1's pins.
