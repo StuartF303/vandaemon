@@ -1,4 +1,4 @@
-# VanDaemon - Camper Van Control System
+﻿# VanDaemon - Camper Van Control System
 
 VanDaemon is an IoT control system for camper vans built with .NET 10, Blazor WebAssembly, and SignalR. It monitors and controls van systems (water tanks, LPG, lighting, heating, electrical) through a modular plugin architecture that supports multiple hardware integration methods including MQTT-based LED dimmers, Modbus devices, and Victron Cerbo GX. The system features a touch-friendly dashboard with draggable overlays, real-time sensor updates, and configurable alerts.
 
@@ -387,6 +387,14 @@ See `hw/archive/LEDDimmer-8ch/ARCHIVE-NOTE.md` and `README.md`.
 4. **SignalR Subscriptions:** Clients must call `SubscribeToTanks()` etc. before receiving group broadcasts
 
 5. **CORS in Development:** Frontend (5001) → API (5000) requires explicit CORS config (handled in Program.cs)
+
+5a. **Reaching the dev server from another device** (phone, tablet, the van's screen):
+   `dotnet run` honours `launchSettings.json`, which pins both apps to `localhost` and
+   **silently overrides `ASPNETCORE_URLS`** — the ports look open locally and refuse from the
+   LAN. Use `dotnet run --no-launch-profile --urls http://0.0.0.0:5000` (and 5001), and set
+   `ASPNETCORE_ENVIRONMENT=Development` yourself, since `--no-launch-profile` drops it too and
+   the frontend picks its API URL based on it. The frontend follows the host it was served
+   from, so no per-machine IP needs configuring.
 
 6. **Docker Networking:** Services use container names (`http://api:80`) not localhost
 

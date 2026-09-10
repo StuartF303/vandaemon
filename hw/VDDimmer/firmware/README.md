@@ -1,4 +1,4 @@
-# VANDIMMER-4CH+2A firmware
+﻿# VANDIMMER-4CH+2A firmware
 
 ESP32-S3 firmware for the VanDaemon 4-channel PWM dimmer with two addressable
 LED outputs. Targets **Rev A**, git tag `ordered-revA` (`37c12ab`).
@@ -35,14 +35,42 @@ API and the S3 RMT driver both need it). `platformio.ini` pins the pioarduino
 platform fork because Espressif's own PlatformIO platform stalled at core 2.0.x;
 `board_pins.h` has a `#error` guard so a wrong platform fails loudly.
 
-```bash
+**Build and flash with `tools/Build-Flash.ps1`, not a bare `pio run`.**
+
+```powershell
 cd hw/VDDimmer/firmware
 
+.\tools\Build-Flash.ps1                  # build, verify, flash, confirm on hardware
+.\tools\Build-Flash.ps1 -NoFlash         # build and verify only
+.\tools\Build-Flash.ps1 -Clean -Port COM4
+```
+
+This is not a convenience wrapper. `os.spawnve` is broken OS-wide on the
+development machine (see the traps below) and SCons routes every build action
+through it, so `pio run` could **fail while reporting success** -- producing
+`bootloader.bin` and `partitions.bin` but no `firmware.bin`, after which an
+upload flashes whatever stale image was already there and says nothing. The
+script deletes `firmware.bin` before building so its absence proves failure,
+pins the build identity so the upload cannot quietly rebuild something else,
+and confirms over serial that the board runs the binary just produced.
+
+Use **PowerShell**, never Git Bash -- `idf_tools.py` refuses MSYS.
+
+Underneath it runs, roughly:
+
+```
 pio run -e 4ch2a                 # build
 pio run -e 4ch2a -t upload       # flash over USB  (12 V MUST be applied)
 pio device monitor -e 4ch2a      # 115200 baud
 
 pio run -e 4ch2a-ota -t upload --upload-port vandimmer-a1b2c3.local
+```
+
+To clear stored settings without a reflash -- the only way back into the portal
+on Rev A, see *First boot* -- erase just the NVS partition:
+
+```powershell
+python -m esptool --chip esp32s3 --port COM4 erase-region 0x9000 0x5000
 ```
 
 If native USB auto-download ever misbehaves, `EN` and `IO0` are both broken out
@@ -75,9 +103,30 @@ is a 1.6 kB descriptor, and `idf_tools.py` fetches the real GCC. A
 `toolchain-xtensa-esp-elf` directory containing only `package.json` and
 `tools.json` means that fetch failed, whatever the log claimed.
 
-Finally, avoid running the build **detached from a console**. PlatformIO wraps
-every compilation unit in its own `cmd.exe`; with a console those reuse it,
-without one each allocates a new console window — hundreds of them per build.
+4. **`os.spawnve` is broken on this Windows build (11, 26200).** Any call
+   passing an environment dies with `0xC0000005`, measured identically under
+   CPython 3.6.8 and 3.11.5, with and without a real console attached. It is
+   not the venv, not `pythonw`, and not console-related; padding the
+   environment changes the *failure mode* rather than curing it, which is the
+   signature of heap corruption. SCons routes every build action through it, so
+   builds died partway with no `firmware.bin`, and every `cmd.exe` that did
+   launch allocated its own console window -- a full rebuild opened ~190 and
+   took the machine down.
+
+   Fixed permanently by `tools/scons_spawn_fix.py`, wired in through
+   `extra_scripts` in `platformio.ini`. It patches
+   `SCons.Platform.win32.spawnve` only, leaving SCons' own argument escaping
+   untouched, and adds `CREATE_NO_WINDOW`. **Do not remove it** unless the
+   preflight in `Build-Flash.ps1` reports `spawnve` healthy.
+
+   The trap inside that fix: never hand argv to `subprocess` as a list.
+   `list2cmdline()` re-quotes SCons' already-escaped `cmd /C` argument with
+   backslash escapes, which cmd.exe cannot parse -- it exits 1 printing
+   *nothing*, surfacing as a bare `Error 1` with no compiler diagnostics.
+   `VANDIMMER_SPAWN_DEBUG=<file>` logs every spawn if this needs re-diagnosing.
+
+An earlier note here blamed KiCad's `pythonw.exe` for the console storm. That
+was wrong, and it cost a session chasing the venv instead of the OS.
 
 ## First boot
 
@@ -85,8 +134,36 @@ With no stored WiFi credentials the board opens an unsecured AP named
 `VANDIMMER-<mac suffix>` with a captive-portal setup form covering identity,
 WiFi, MQTT, strip length and supply, and behaviour. Save reboots the board.
 
-Holding **both buttons for five seconds** clears the WiFi credentials and
-reboots back into the portal.
+Before switching to AP mode it **scans for networks** and lists them on the
+form with channel and signal strength; tapping one fills the SSID box. That
+list is the quickest diagnosis of a board that will not associate, because
+configuration happens from a phone or tablet where the serial log is not
+visible. Two things it makes obvious:
+
+- **Nothing listed at all** means no antenna. U1 is an `ESP32-S3-WROOM-1U`,
+  which has **no PCB antenna** -- only a U.FL connector. Without one fitted the
+  receiver is deaf: on the first Rev A board the scan found a single AP at
+  -94 dBm, the noise floor, and the requested SSID did not appear.
+- **A network you expected is missing** usually means it is 5 GHz-only. The
+  ESP32-S3 is 2.4 GHz only, so such an AP is invisible and the failure reads as
+  `NO_AP_FOUND` rather than an authentication error.
+
+### Getting back into the portal
+
+**On Rev A there is no button route.** `BTN_BOTH_LONG` needs BTN1, and J11.1 is
+one of the unrouted pads, so the "hold both buttons for five seconds" recovery
+does not exist on this hardware. The MQTT `forget-wifi` command only works when
+MQTT is already reachable, which it is not when the WiFi details are wrong.
+
+`net_tick()` also has **no portal fallback**: when WiFi never comes up,
+`s_wifiUp` is already false so the retry block never arms, and the board sits
+red indefinitely. The repeating `NO_AP_FOUND` lines are the ESP-IDF driver's
+own scanning, not the application retrying.
+
+So a wrong SSID strands the board until NVS is erased over USB (see *Building*).
+A nuisance on the bench; a dead board in the van, where there is no USB.
+**Rev B needs the BTN1 pad routed, a portal fallback after N failed attempts,
+or both.**
 
 ## Identity
 
@@ -120,7 +197,7 @@ Base topic `vandaemon/leddimmer`, so every topic below is prefixed
 | `telemetry` | pub, retained | `{"vin","tempC","derate","overTemp"}` — extension |
 | `addr/{1\|2}/state` | pub, retained | `{"on","brightness","rgb":[r,g,b],"length","supply5v"}` — extension |
 | `addr/{1\|2}/set` | sub, QoS 1 | same shape; any subset of the fields |
-| `cmd` | sub, QoS 1 | `reboot` / `identify` / `republish` / `forget-wifi` — extension |
+| `cmd` | sub, QoS 1 | `reboot` / `identify` / `republish` / `forget-wifi` / `status-bright <0-255>` — extension |
 
 Channel numbers are **0-based**: `channel/0` is physical channel 1.
 
@@ -170,6 +247,10 @@ meaning 50 % duty. Both the frequency and the gamma curve are settings.
 levels. BTN2 short: cycle 25 / 50 / 75 / 100 % across all channels. Both held
 5 s: clear WiFi credentials and reboot into the portal.
 
+> **Rev A: BTN1 does not exist.** J11.1 is unrouted, so anything needing BTN1 --
+> the off/restore toggle and the both-held credential reset -- is dead on this
+> hardware. Only BTN2 works. See *Getting back into the portal*.
+
 **Boot state.** Channel levels and strip colours are restored from NVS at
 power-up (`restoreOnBoot`, default on). Writes are debounced to one flush every
 five seconds so a slider drag does not chew through NVS endurance.
@@ -188,6 +269,19 @@ to match the actual J9/J10 shunt position — the firmware cannot detect it.
 **Status LED** (D7): dim white boot, magenta portal, blue WiFi, cyan MQTT,
 green ready, yellow button, orange over-temperature, red fault.
 
+Brightness is the `statusBrightness` setting, a 0-255 master scale over those
+colours, default 64 (25 %) because a WS2812B viewed directly on a bench is
+glaring. It is a setting rather than a constant because the right level is a
+judgement you make by looking at it, and on Rev A revisiting a constant would
+need a reflash *and* an NVS erase. Adjust it live, persisted immediately:
+
+```
+mosquitto_pub -t vandaemon/leddimmer/<deviceId>/cmd -m "status-bright 32"
+```
+
+A non-zero channel never scales to zero, so a low setting cannot turn the red
+of a fault into black.
+
 ## Bring-up order
 
 1. 12 V on J1/J2 before anything else — nothing works without it.
@@ -195,13 +289,21 @@ green ready, yellow button, orange over-temperature, red fault.
    ~0.2 V of the bench supply, board temperature near ambient. If `vin` reads
    about 11× wrong, R27/R28 are the wrong way round.
 3. Confirm the status LED lights. If not, D7 or U5 is suspect.
-4. Portal → WiFi and broker. Watch for `[mqtt] connected`.
-5. `mosquitto_sub -t 'vandaemon/leddimmer/#' -v` and confirm retained `config`
+4. **Fit the U.FL antenna.** U1 is a WROOM-1U with no PCB antenna; without one
+   the board associates with nothing.
+5. Portal to WiFi and broker. The scan list on the form should show your network
+   at a sane level (roughly -40 to -70 dBm indoors); one or two entries near
+   -90 dBm means the antenna is not seated. Watch for `[mqtt] connected`.
+6. `mosquitto_sub -t 'vandaemon/leddimmer/#' -v` and confirm retained `config`
    and four (or six) `channel/N/state` messages.
-6. One channel at a time into a resistive load before any LED strip, checking
-   the right physical channel responds to `channel/0..3/set`.
-7. Strips last, with the J9/J10 shunt position checked twice against the
-   silkscreen.
+7. One channel at a time into a resistive load before any LED strip, checking
+   the right physical channel responds to `channel/0..3/set`. Do this
+   deliberately: **U5's buffer channels 3 and 4 were swapped during layout**, so
+   a channel driving the wrong output is a known hazard, not paranoia.
+8. Strips last, with the J9/J10 shunt position checked twice against the
+   silkscreen. On Rev A the **12 V position of J9/J10 is dead** (J9.1/J10.1 are
+   unrouted), so the strips must be 5 V parts -- a WS2815 or any 12 V
+   addressable strip will not be powered at all.
 
 ## Layout
 

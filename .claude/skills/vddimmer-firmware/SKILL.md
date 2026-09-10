@@ -1,4 +1,4 @@
----
+﻿---
 name: vddimmer-firmware
 description: |
   Builds, flashes and verifies VANDIMMER-4CH+2A ESP32-S3 firmware in hw/VDDimmer/firmware/.
@@ -70,12 +70,28 @@ A red **FAIL** is real. Do not work around it — diagnose it.
   diagnostics. Build the command line by hand. `VANDIMMER_SPAWN_DEBUG=<file>` logs every spawn.
 - **The board has no USB power path.** Apply 12 V to J1/J2 before flashing; it will not
   enumerate from USB-C alone.
-- **Stale user-level `IDF_PATH=d:\esp32\esp-idf-v3.3.1`** points at a drive that no longer
-  exists and makes `idf_tools.py` abort with an unrelated-looking error.
+- **A stale user-level `IDF_PATH`** makes `idf_tools.py` abort with an unrelated-looking
+  error. This machine had `IDF_PATH=d:\esp32\esp-idf-v3.3.1`, pointing at a drive that no
+  longer exists; **removed 2026-09-10**. `Build-Flash.ps1` clears it per build regardless, so
+  if the preflight warning reappears something has put it back.
 - **`esptool` 5.0 requires `click` < 8.2.** Pin it if the venv is ever rebuilt.
 - **Read the MAC from the eFuse, not `WiFi.macAddress()`**, anywhere that runs before
   `net_begin()` — it returns zeros until the WiFi driver starts, which once made every board
   call itself `vandimmer-000000`.
+- **`NO_AP_FOUND` for an SSID that is definitely broadcasting means no antenna.** U1 is an
+  `ESP32-S3-WROOM-1U`: no PCB antenna, U.FL only. Deaf without one — the first board saw a
+  single AP at −94 dBm, the noise floor. The netlist symbol description says *"onboard
+  antenna"*; that is stale KiCad library text, not the ordered part. Trust the BOM
+  (`ESP32-S3-WROOM-1U-N16`, LCSC `C2980298`). The portal's scan list settles it in seconds:
+  empty or all near −90 dBm means antenna; a populated list missing one network means router.
+- **The ESP32-S3 is 2.4 GHz only.** A 5 GHz-only SSID is invisible and fails as
+  `NO_AP_FOUND`, not as an auth error — including SSIDs that *look* dual-band by name.
+- **A wrong SSID strands a Rev A board.** `BTN_BOTH_LONG` needs the dead BTN1, `forget-wifi`
+  needs MQTT, and `net_tick()` has no portal fallback — it sits red forever. Recover without
+  a reflash by erasing only NVS:
+  `python -m esptool --chip esp32s3 --port COM4 erase-region 0x9000 0x5000`
+- **The 12 V position of J9/J10 is dead on Rev A** (`J9.1`/`J10.1` unrouted). Addressable
+  strips must be 5 V parts; a WS2815 will not be powered at all.
 
 ## Status LED (D7, one WS2812B)
 
@@ -89,6 +105,40 @@ A red **FAIL** is real. Do not work around it — diagnose it.
 | yellow | button pressed |
 | orange | over-temperature |
 | red | error |
+
+Brightness is the `statusBrightness` setting (0-255 master scale, default 64 = 25 %), tunable
+live without a reflash — which matters because on Rev A revisiting a constant would need an
+NVS erase too:
+`mosquitto_pub -t vandaemon/leddimmer/<deviceId>/cmd -m "status-bright 32"`
+
+## Driving the board from VanDaemon
+
+The board is MQTT-only; there is no web UI on it after configuration. To exercise it from
+the dashboard you need a broker plus the API and web app, and all three must be reachable
+from whatever device you are holding.
+
+- **Broker**: mosquitto runs as a Windows service. mosquitto 2.x binds to loopback and
+  denies anonymous by default, so `mosquitto.conf` carries a `listener 1883 0.0.0.0` /
+  `allow_anonymous true` block (original saved as `.bak-vandaemon`). Anonymous is fine on a
+  bench; add a password file before it goes near the van.
+- **API and web**: run them with `--no-launch-profile --urls http://0.0.0.0:5000` (and
+  5001). Without that, `launchSettings.json` pins both to loopback and a tablet gets nothing
+  — the ports look open locally and refuse from the LAN.
+- Firewall rules for 1883/5000/5001 exist on **Private and Domain profiles only**.
+
+Topics are `vandaemon/leddimmer/{deviceId}/…`; `channel/{0-5}/set` takes a bare integer
+0-255, `addr/{1,2}/set` takes JSON (`on`, `brightness`, `rgb`) or a bare integer. Note the
+dashboard speaks **percent** and the board speaks **0-255** — the plugin converts, so
+50 % should land as 127. That conversion is a useful end-to-end assertion.
+
+Quick check that the whole chain is alive:
+
+```
+mosquitto_sub -h <broker> -t 'vandaemon/leddimmer/#' -v -W 10
+```
+
+Retained `status online`, a `config` message and six `channel/N/state` values mean the board
+is healthy regardless of what the UI shows.
 
 ## Keeping this current
 

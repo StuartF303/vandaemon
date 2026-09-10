@@ -1,4 +1,4 @@
-# VANDIMMER-4CH+2A — session handoff
+﻿# VANDIMMER-4CH+2A — session handoff
 
 Phase 3 (layout) is **electrically complete**. Schematic ERC 0/0, board DRC 0 errors, and
 every remaining unconnected item is accounted for. What is left is fab preparation, and
@@ -76,6 +76,92 @@ Rev A rework for the BTN1 pad, if a board needs it: bodge J11.1 (103.50, 119.50)
 pad 2 (122.91, 99.00), ~28 mm, top side, 30 AWG. The no-rework alternative is to move BTN1
 to `IO12` in firmware and wire the button to J13.3 / J13.2 — R45 already pulls SDA up at
 4.7 k and this firmware never uses I2C.
+
+## BRING-UP — Rev A, 10 September 2026: it works, with three caveats
+
+First board powered, flashed, joined WiFi, reached MQTT and was driven end to
+end from the VanDaemon dashboard on a tablet. `vin` reads 11.75-11.78 V against
+the bench supply, board temperature ~28 C, all four PWM channels attach, both
+strips initialise, and the WS2812 output works — so the RMT rewrite is good and
+the earlier boot loop is gone. **Nothing has yet been driven into a real load:**
+no lights were to hand, so channel mapping and strip colour order are still
+unverified. Both need checking deliberately — U5's buffer channels 3 and 4 were
+swapped during layout.
+
+### 1. The module needs an antenna, and the netlist says otherwise
+
+U1 is an **ESP32-S3-WROOM-1U-N16** (LCSC `C2980298`). The `-1U` suffix means
+**no PCB antenna** — a U.FL connector only. With nothing fitted the board found
+exactly one AP at **-94 dBm**, the noise floor, and reported `NO_AP_FOUND` for
+an SSID that was definitely broadcasting. It reads as a router or credentials
+fault and is neither.
+
+**The netlist actively misleads here.** The symbol description says *"RF Module,
+ESP32-S3 SoC, ... onboard antenna, SMD"*. That is stale KiCad library text
+carried by the symbol, not the ordered part. Trust the BOM line, not the
+description. The firmware now scans on portal start and says so explicitly when
+the scan comes back empty.
+
+Also worth knowing: the ESP32-S3 is **2.4 GHz only**, so a 5 GHz-only SSID is
+invisible and fails the same way.
+
+### 2. A wrong SSID strands the board — no route back without USB
+
+Confirmed by reading the code, not inferred:
+
+- `BTN_BOTH_LONG` needs BTN1, and **J11.1 is unrouted**, so the documented
+  "hold both buttons 5 s" credential reset does not exist on Rev A.
+- The MQTT `forget-wifi` command needs MQTT, which is unreachable precisely
+  when the WiFi details are wrong.
+- `net_tick()` has **no portal fallback**. When WiFi never comes up, `s_wifiUp`
+  is already false so the retry block never arms; the board sits red forever.
+  The repeating `NO_AP_FOUND` lines are the ESP-IDF driver scanning, not the
+  application retrying.
+
+Recovery is an NVS erase over USB, which does not need a reflash:
+
+```powershell
+python -m esptool --chip esp32s3 --port COM4 erase-region 0x9000 0x5000
+```
+
+On the bench that is a nuisance. **In the van it is a dead board** — there is no
+USB in the field, by design. This is the same J11.1 pad already listed in the
+Rev B ordering gate above, and it raises its severity: it is not only the WiFi
+recovery button, it is the *only* recovery. **Rev B must route J11.1, add a
+portal fallback after N failed WiFi attempts, or both.** The firmware change is
+free and should land regardless of what the next board looks like.
+
+### 3. deviceId was the same on every board
+
+`computeMacSuffix()` called `WiFi.macAddress()` from `store_begin()`, which runs
+long before `net_begin()` starts the WiFi driver — until then it returns zeros.
+Every board would have come up as `vandimmer-000000`, colliding on MQTT topic
+prefix, hostname and OTA hostname. Now reads the eFuse directly
+(`esp_efuse_mac_get_default`), which is what the existing comment already
+intended. Verified: `deviceId=vandimmer-6f98e4` from MAC `1c:db:d4:6f:98:e4`.
+
+Fixed before commissioning on purpose — changing `deviceId` later orphans the
+controls VanDaemon has persisted to `controls.json`.
+
+### The dashboard end of it
+
+Standing the backend up against real hardware for the first time exposed four
+defects in VanDaemon itself, three of them on one path, so the dimmer could not
+be driven from the UI at all — every attempt returned `400 "Failed to set
+control state"` with nothing in the log naming a cause. The simulated controls
+worked throughout, which is why it had gone unnoticed. Fixed in `cfa38c9`:
+plugin lookup by a name that never matched, a case-sensitive `controlId`
+lookup, `JsonElement` state collapsing every value to 0/off for *every* plugin,
+and discovery duplicating the whole device's controls on each restart because
+the dedupe guard was in memory while `controls.json` is not.
+
+Bench setup, for repeating this: mosquitto is installed as a Windows service
+with a `listener 1883 0.0.0.0` / `allow_anonymous true` block appended to
+`mosquitto.conf` (original saved alongside as `.bak-vandaemon`), and firewall
+rules allow 1883/5000/5001 on Private and Domain profiles only. The API and web
+run with `--no-launch-profile --urls http://0.0.0.0:5000` (and 5001) —
+`launchSettings.json` otherwise pins them to loopback and the tablet cannot
+reach them.
 
 ## Firmware: the current pin map, extracted from the netlist
 
