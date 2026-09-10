@@ -1,6 +1,6 @@
 #include "store.h"
 #include <Preferences.h>
-#include <WiFi.h>
+#include <esp_mac.h>
 
 Settings g_settings;
 
@@ -20,7 +20,12 @@ static void computeMacSuffix() {
     uint8_t mac[6] = {0};
     // Derived from the factory MAC rather than stored, so an NVS erase does not
     // change deviceId and orphan the controls VanDaemon has already persisted.
-    WiFi.macAddress(mac);
+    //
+    // Read the eFuse directly. WiFi.macAddress() returns all zeros until the
+    // WiFi driver has started, and store_begin() runs long before net_begin() --
+    // which made every board call itself vandimmer-000000 and collide on MQTT
+    // topics, hostname and OTA. Observed on the first Rev A board, 2026-09-10.
+    esp_efuse_mac_get_default(mac);
     snprintf(s_macSuffix, sizeof(s_macSuffix), "%02x%02x%02x", mac[3], mac[4], mac[5]);
 }
 
