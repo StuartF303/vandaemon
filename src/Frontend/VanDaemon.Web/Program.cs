@@ -1,4 +1,4 @@
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,6 +20,19 @@ if (builder.HostEnvironment.IsDevelopment())
     using var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
     var appSettings = await httpClient.GetFromJsonAsync<AppSettings>("appsettings.json");
     apiBaseUrl = appSettings?.ApiBaseUrl ?? "http://localhost:5000";
+
+    // "localhost" only means the API on the machine running it. Served to any
+    // other device -- a tablet on the LAN -- localhost is that device, so every
+    // API call and the SignalR connection fail. Keep the configured scheme and
+    // port, but follow the host the page actually came from. That also survives
+    // the dev machine's DHCP address changing, which hardcoding an IP does not.
+    var configured = new Uri(apiBaseUrl);
+    var servedFrom = new Uri(builder.HostEnvironment.BaseAddress);
+    if (configured.IsLoopback && !servedFrom.IsLoopback)
+    {
+        apiBaseUrl = new UriBuilder(configured) { Host = servedFrom.Host }
+                        .Uri.ToString().TrimEnd('/');
+    }
 }
 else
 {
