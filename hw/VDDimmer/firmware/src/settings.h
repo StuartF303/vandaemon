@@ -3,6 +3,13 @@
 
 static constexpr char FW_VERSION[] = "1.0.0";
 
+// Injected by tools/build_id.py as "<short-sha>[-dirty] <UTC timestamp>".
+// FW_VERSION is static across rebuilds and so cannot tell you which binary is
+// on a board; BUILD_ID can. tools/Build-Flash.ps1 matches it over serial.
+#ifndef BUILD_ID
+#define BUILD_ID "unknown"
+#endif
+
 // Type name, identical on every board of this design. NOT a device identity --
 // the backend only logs it. Uniqueness lives in Settings::deviceId.
 static constexpr char FW_VARIANT[] = "4CH2A";

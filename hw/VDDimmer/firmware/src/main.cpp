@@ -88,6 +88,7 @@ void setup() {
     Serial.begin(115200);
     delay(50);
     Serial.printf("\nVANDIMMER-4CH+2A  fw %s  variant %s\n", FW_VERSION, FW_VARIANT);
+    Serial.printf("[build] %s\n", BUILD_ID);
 
     store_begin();
     Serial.printf("[cfg] deviceId=%s name='%s' channels=%u\n",
