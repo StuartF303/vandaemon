@@ -262,6 +262,14 @@ static void handleCommand(const char *body) {
         net_publishAllStates();
     } else if (!strcmp(body, "forget-wifi")) {
         net_forgetWifiAndReboot();
+    } else if (!strncmp(body, "status-bright ", 14)) {
+        // Live-tunable so bench brightness can be dialled in without a reflash,
+        // and without an NVS erase to get back into the portal.
+        long v = atol(body + 14);
+        g_settings.statusBrightness = (uint8_t)constrain(v, 0L, 255L);
+        store_saveSettings();
+        Serial.printf("[mqtt] status LED brightness -> %u\n",
+                      (unsigned)g_settings.statusBrightness);
     }
 }
 

@@ -45,6 +45,13 @@ struct Settings {
     // from controls.json once.
     bool exposeStripsAsChannels = true;
 
+    // Master scale for the on-board status pixel, 0-255. The colours in
+    // statusRgb() are already low (12-24), but a WS2812B viewed directly is
+    // still glaring on a bench. 64 = 25%, which is legible without being a
+    // distraction. Adjustable live over MQTT so it can be dialled in without a
+    // reflash: publish "status-bright <0-255>" to .../cmd
+    uint8_t  statusBrightness = 64;
+
     bool     restoreOnBoot = true;   // reload last levels from NVS at power-up
     uint16_t pwmFreqHz     = 1200;   // spec asks for 1-2 kHz
     bool     gammaCorrect  = true;   // CIE 1931 curve over the 0-255 wire value

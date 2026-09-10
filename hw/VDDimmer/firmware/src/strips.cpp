@@ -118,6 +118,15 @@ static void stripShow(RmtStrip &strip) {
 
 // --- colour ------------------------------------------------------------------
 
+// Scale a status colour by g_settings.statusBrightness. Rounds up any non-zero
+// channel to 1 so a dim setting never silently turns a colour into black --
+// losing the red of STATUS_ERROR would hide a fault rather than soften it.
+static uint8_t statusScale(uint8_t v) {
+    if (v == 0) return 0;
+    uint16_t out = ((uint16_t)v * g_settings.statusBrightness) / 255;
+    return out ? (uint8_t)out : 1;
+}
+
 static Rgb statusRgb(StatusColour c) {
     switch (c) {
         case STATUS_BOOT:      return Rgb(12, 12, 12);
@@ -168,7 +177,8 @@ static void renderStrip(uint8_t index) {
 
 void strips_begin() {
     if (stripBegin(s_status, PIN_STATUS_DIN, 1)) {
-        stripFill(s_status, statusRgb(STATUS_BOOT));
+        Rgb bc = statusRgb(STATUS_BOOT);
+        stripFill(s_status, Rgb(statusScale(bc.r), statusScale(bc.g), statusScale(bc.b)));
         stripShow(s_status);
     }
 
@@ -195,7 +205,8 @@ void strips_tick() {
     }
     if (millis() - s_lastStatusRender > 250) {
         s_lastStatusRender = millis();
-        stripFill(s_status, statusRgb(s_statusColour));
+        Rgb sc = statusRgb(s_statusColour);
+        stripFill(s_status, Rgb(statusScale(sc.r), statusScale(sc.g), statusScale(sc.b)));
         stripShow(s_status);
     }
 

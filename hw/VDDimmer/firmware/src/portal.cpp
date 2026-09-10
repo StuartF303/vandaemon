@@ -185,6 +185,8 @@ static void handleRoot() {
     p += "<h2>Behaviour</h2>";
     p += field("PWM frequency (Hz, 200-20000)", "pwmfreq",
                String(g_settings.pwmFreqHz).c_str(), "number");
+    p += field("Status LED brightness (0-255)", "statbri",
+               String(g_settings.statusBrightness).c_str(), "number");
     p += checkbox("Gamma-corrected dimming", "gamma", g_settings.gammaCorrect);
     p += checkbox("Restore last levels at power-up", "restore", g_settings.restoreOnBoot);
     p += checkbox("Expose strips as channels 5 and 6", "expstrip",
@@ -236,6 +238,10 @@ static void handleSave() {
         if (f < 200) f = 200;
         if (f > 20000) f = 20000;
         g_settings.pwmFreqHz = (uint16_t)f;
+    }
+    if (s_server->hasArg("statbri")) {
+        long b = s_server->arg("statbri").toInt();
+        g_settings.statusBrightness = (uint8_t)constrain(b, 0L, 255L);
     }
     g_settings.gammaCorrect           = s_server->hasArg("gamma");
     g_settings.restoreOnBoot          = s_server->hasArg("restore");

@@ -68,6 +68,7 @@ void store_begin() {
     g_settings.restoreOnBoot          = s_prefs.getBool("restore", true);
     g_settings.pwmFreqHz              = s_prefs.getUShort("pwmfreq", 1200);
     g_settings.gammaCorrect           = s_prefs.getBool("gamma", true);
+    g_settings.statusBrightness       = s_prefs.getUChar("statbri", 64);
 
     // A malformed frequency would silently produce a board that flickers, so
     // clamp to the range the spec allows rather than trusting NVS.
@@ -98,6 +99,7 @@ void store_saveSettings() {
     s_prefs.putBool("restore",  g_settings.restoreOnBoot);
     s_prefs.putUShort("pwmfreq", g_settings.pwmFreqHz);
     s_prefs.putBool("gamma",    g_settings.gammaCorrect);
+    s_prefs.putUChar("statbri", g_settings.statusBrightness);
 }
 
 void store_clearWifi() {
