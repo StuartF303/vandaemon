@@ -11,6 +11,59 @@ static DNSServer *s_dns    = nullptr;
 static bool       s_active = false;
 static uint32_t   s_rebootAt = 0;
 
+// What the radio could hear when the portal started. Recorded because you
+// configure this board from a phone or tablet, where the serial log is not
+// available -- and because "SSID not found" has two very different causes that
+// only a scan can tell apart: a router problem, or no antenna.
+//
+// U1 is an ESP32-S3-WROOM-1U: it has NO PCB antenna, only a U.FL connector.
+// With nothing fitted the receiver is deaf and every scan comes back empty.
+struct ScanEntry {
+    char    ssid[33];
+    int8_t  rssi;
+    uint8_t channel;
+    bool    open;
+};
+static constexpr uint8_t SCAN_MAX = 16;
+static ScanEntry s_scan[SCAN_MAX];
+static uint8_t   s_scanCount = 0;
+static bool      s_scanRan   = false;
+
+static void scanNetworks() {
+    // Must be in station mode to scan; portal_begin() switches to AP after.
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect(false, false);
+    delay(100);
+
+    int n = WiFi.scanNetworks(false, true);   // blocking, include hidden
+    s_scanCount = 0;
+    s_scanRan   = true;
+
+    if (n < 0) n = 0;
+    for (int i = 0; i < n && s_scanCount < SCAN_MAX; i++) {
+        ScanEntry &e = s_scan[s_scanCount];
+        String ss = WiFi.SSID(i);
+        if (ss.length() == 0) ss = "(hidden)";
+        strlcpy(e.ssid, ss.c_str(), sizeof(e.ssid));
+        e.rssi    = (int8_t)WiFi.RSSI(i);
+        e.channel = (uint8_t)WiFi.channel(i);
+        e.open    = (WiFi.encryptionType(i) == WIFI_AUTH_OPEN);
+        s_scanCount++;
+    }
+    WiFi.scanDelete();
+
+    Serial.printf("[scan] %d network(s) visible\n", n);
+    for (uint8_t i = 0; i < s_scanCount; i++) {
+        Serial.printf("[scan]   %-32s ch%-3u %4d dBm%s\n",
+                      s_scan[i].ssid, (unsigned)s_scan[i].channel,
+                      (int)s_scan[i].rssi, s_scan[i].open ? "  open" : "");
+    }
+    if (n == 0) {
+        Serial.println("[scan] NOTHING HEARD. U1 is a WROOM-1U with no PCB antenna --");
+        Serial.println("[scan] check that an antenna is fitted to the U.FL connector.");
+    }
+}
+
 static String htmlEscape(const char *s) {
     String out;
     for (const char *p = s; *p; p++) {
@@ -59,7 +112,12 @@ static const char PORTAL_HEAD[] =
     "input[type=text],input[type=password],input[type=number]{width:100%;box-sizing:border-box;"
     "padding:.5rem;margin-top:.2rem;background:#222;color:#eee;border:1px solid #444;border-radius:4px}"
     "button{margin-top:1.2rem;padding:.7rem 1.2rem;font-size:1rem;background:#2a7;color:#000;"
-    "border:0;border-radius:4px;width:100%}small{color:#999}</style>"
+    "border:0;border-radius:4px;width:100%}small{color:#999}"
+    "ul.aps{list-style:none;padding:0;margin:.2rem 0}"
+    "ul.aps li{padding:.35rem 0;border-bottom:1px solid #333}"
+    "ul.aps a{color:#8bc;text-decoration:none}"
+    "p.warn{background:#402; border:1px solid #a44; padding:.6rem; border-radius:4px}"
+    "</style>"
     "<h1>VANDIMMER-4CH+2A</h1><form method=post action=/save>";
 
 static void handleRoot() {
@@ -70,6 +128,35 @@ static void handleRoot() {
     p += field("Display name", "devname", g_settings.deviceName);
 
     p += "<h2>WiFi</h2>";
+
+    // Show what the radio can actually hear. Tapping a row fills the SSID box,
+    // which removes the commonest configuration mistake -- a typo, or picking a
+    // band this radio cannot use. The ESP32-S3 is 2.4 GHz only, so anything
+    // broadcasting solely on 5 GHz will simply not appear here.
+    if (s_scanRan) {
+        if (s_scanCount == 0) {
+            p += "<p class=\"warn\"><b>No networks visible.</b> This module "
+                 "(ESP32-S3-WROOM-1U) has no PCB antenna &mdash; check that an "
+                 "antenna is fitted to the U.FL connector on U1.</p>";
+        } else {
+            p += "<p><small>Visible networks &mdash; tap to fill in:</small></p><ul class=\"aps\">";
+            for (uint8_t i = 0; i < s_scanCount; i++) {
+                p += "<li><a href=\"#\" onclick=\"document.getElementsByName('ssid')[0].value=this.dataset.s;return false\" data-s=\"";
+                p += htmlEscape(s_scan[i].ssid);
+                p += "\">";
+                p += htmlEscape(s_scan[i].ssid);
+                p += "</a> <small>ch";
+                p += String((unsigned)s_scan[i].channel);
+                p += ", ";
+                p += String((int)s_scan[i].rssi);
+                p += " dBm";
+                p += s_scan[i].open ? ", open" : "";
+                p += "</small></li>";
+            }
+            p += "</ul>";
+        }
+    }
+
     p += field("SSID", "ssid", g_settings.wifiSsid);
     p += field("Password (blank = unchanged)", "wpass", "", "password");
 
@@ -166,6 +253,8 @@ static void handleSave() {
 void portal_begin() {
     char ap[32];
     snprintf(ap, sizeof(ap), "VANDIMMER-%s", store_macSuffix());
+
+    scanNetworks();          // while still in station mode
 
     WiFi.mode(WIFI_AP);
     WiFi.softAP(ap);
