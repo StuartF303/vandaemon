@@ -2,7 +2,7 @@
 name: platformio
 description: |
   Builds and deploys ESP32 firmware with PlatformIO for the VanDaemon LED dimmer hardware.
-  Use when: Building, uploading, or debugging ESP32 firmware in hw/LEDDimmer/
+  Use when: Building, uploading, or debugging ESP32 firmware in hw/archive/LEDDimmer-8ch/
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 
@@ -21,20 +21,20 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash
 > `hw/VDDimmer/firmware/tools/Build-Flash.ps1`, which gates build, verification, flash and
 > on-hardware confirmation.
 >
-> For **hw/LEDDimmer** (this skill's board) the same machine defect applies. Port
+> For **hw/archive/LEDDimmer-8ch** (this skill's board) the same machine defect applies. Port
 > `tools/scons_spawn_fix.py` across before trusting a build here, and use the PowerShell tool
 > rather than Bash — Git Bash is MSYS and `idf_tools.py` refuses it.
 >
 > Root cause and evidence: memory `pio-spawnve-broken-windows`.
 
-PlatformIO manages the ESP32 firmware for VanDaemon's 8-channel PWM LED dimmer. The firmware handles MQTT communication, WiFi provisioning via captive portal, and NVS state persistence. All firmware lives in `hw/LEDDimmer/firmware/`.
+PlatformIO manages the ESP32 firmware for VanDaemon's 8-channel PWM LED dimmer. The firmware handles MQTT communication, WiFi provisioning via captive portal, and NVS state persistence. All firmware lives in `hw/archive/LEDDimmer-8ch/firmware/`.
 
 ## Quick Start
 
 ### Build and Upload
 
 ```bash
-cd hw/LEDDimmer/firmware
+cd hw/archive/LEDDimmer-8ch/firmware
 
 # Build for 8-channel variant (default)
 pio run -e 8ch

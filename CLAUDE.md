@@ -73,7 +73,10 @@ vandaemon/
 │   ├── VanDaemon.Plugins.Modbus.Tests/
 │   └── VanDaemon.E2E.Tests/         # Playwright browser tests
 ├── hw/
-│   └── LEDDimmer/                   # ESP32 8-channel PWM LED dimmer (KiCad + Arduino)
+│   ├── VDDimmer/                    # ACTIVE: VANDIMMER-4CH+2A ESP32-S3 (KiCad + PlatformIO)
+│   │   └── firmware/tools/          # Build-Flash.ps1 -- the only supported build/flash path
+│   └── archive/
+│       └── LEDDimmer-8ch/           # superseded 8-channel dimmer; not under development
 ├── docker/                          # Dockerfile.api, Dockerfile.web, Dockerfile.combined
 ├── tools/
 │   └── CerboGXTest/                 # Victron MQTT test tool
@@ -324,18 +327,29 @@ Auto-deployment via `.github/workflows/deploy-fly.yml`
 
 ## Hardware Subprojects
 
-### hw/LEDDimmer
+### hw/VDDimmer - ACTIVE
 
-ESP32-based 8-channel PWM LED controller with MQTT communication:
+VANDIMMER-4CH+2A: ESP32-S3, 4 PWM channels + 2 addressable outputs. Rev A ordered from
+JLCPCB 2026-09-03.
 
-- **Firmware:** Arduino/PlatformIO (`led_dimmer.ino`)
-- **PCB Design:** KiCad (see `HARDWARE_V2_DESIGN.md`, `PCB_LAYOUT_GUIDE.md`)
-- **Build:** `pio run -e 8ch -t upload`
-- **MQTT Topics:** `vandaemon/leddimmer/{deviceId}/channel/{N}/set`
+- **Firmware:** PlatformIO, `hw/VDDimmer/firmware/`
+- **Build/flash:** `tools/Build-Flash.ps1` - **never a bare `pio run -t upload`.**
+  `os.spawnve` is broken OS-wide on this machine, so a build can fail while reporting
+  success and the upload then flashes a stale image silently. Invoke the
+  `vddimmer-firmware` skill.
+- **PCB Design:** KiCad (see `HANDOFF.md`, `VANDIMMER-4CH-2ADDR-SPEC-v2.0.md`)
 
 **Note:** KiCad doesn't support semicolon comments
 
-See `hw/LEDDimmer/README.md` for full documentation.
+### hw/archive/LEDDimmer-8ch - ARCHIVED
+
+Superseded 8-channel PWM LED controller. Not under development; kept for reference. Older
+docs call this `hw/LEDDimmer`, a path that has never existed in this repo.
+
+- **Firmware:** Arduino (`led_dimmer.ino`)
+- **MQTT Topics:** `vandaemon/leddimmer/{deviceId}/channel/{N}/set`
+
+See `hw/archive/LEDDimmer-8ch/ARCHIVE-NOTE.md` and `README.md`.
 
 ## Conventions
 
@@ -401,7 +415,7 @@ See `hw/LEDDimmer/README.md` for full documentation.
 - @PROJECT_PLAN.md - Development roadmap
 - @DEPLOYMENT.md - Fly.io deployment guide
 - @DOCKER.md - Docker configuration details
-- @hw/LEDDimmer/README.md - LED dimmer hardware and MQTT integration
+- @hw/archive/LEDDimmer-8ch/README.md - archived 8-channel dimmer hardware and MQTT integration
 
 
 ## Skill Usage Guide
@@ -422,7 +436,7 @@ When working on tasks involving these technologies, invoke the corresponding ski
 | fluent-assertions | Writes fluent, readable test assertions and validations |
 | serilog | Implements structured logging and configures Serilog sinks |
 | vddimmer-firmware | **Any** VDDimmer firmware build/flash, or any PlatformIO build on this machine — `os.spawnve` is broken OS-wide here, so a raw `pio run` can fail while reporting success |
-| platformio | Legacy hw/LEDDimmer board only; read its STOP warning first |
+| platformio | Archived hw/archive/LEDDimmer-8ch board only; read its STOP warning first |
 | mqttnet | Manages MQTT broker connections and message publishing/subscription |
 | kicad | Designs PCB schematics and circuit layouts for hardware projects |
 | docker | Configures containerization with Docker and Docker Compose |
