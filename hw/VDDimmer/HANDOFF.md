@@ -43,6 +43,40 @@ going wrong:
 GPIO map changed twice and U5's buffer channels 3↔4 were swapped during layout, so
 anything built against the original pin plan will drive the wrong channels.
 
+## TASK — Rev B ordering gate: every net one connected group
+
+**Do not order another batch until `connect.py` reports one connected group for every net
+that is supposed to be one**, package-internal splits excepted. Rev A shipped with three
+pads that are on a net in the schematic and isolated in copper. All three had been read as
+benign and carried in the "unroutable without placement changes" list; all three are dead
+features on the delivered hardware:
+
+| Pad | What it cost |
+|---|---|
+| `J11.1` | BTN1 header is dead. The two-button "hold 5 s to clear WiFi credentials" recovery does not exist — and it is the recovery you need precisely when MQTT is unreachable |
+| `J9.1`, `J10.1` | The 12 V position of both strip selectors is dead. WS2815 / 12 V strips cannot be powered from J7/J8 at all |
+| `D9.1` | USB power OR-ing diode fitted but unrouted. Consistent with the 12 V-only decision, so this one is harmless — but it is the same defect class |
+
+Root cause is the floorplan, not routing carelessness: §8.3 puts power at the north edge
+and outputs at the south with the MCU between, so on 2 layers the ~5 A VIN_PROT rail has
+to cross the board, and the 4.1 × 39 mm B.Cu strip it needs blocks everything else through
+that corridor. **Rev B fixes this by moving J1 off the west edge or going 4-layer** — see
+the EMC section, which has the same cause.
+
+The gate, to run before any reorder:
+
+1. `connect.py` with no arguments, and account for **every** split by name. "Known" is not
+   an acceptance criterion — write down what feature dies if the split is real.
+2. A split that reaches a **connector pin** is a blocker, not a note. Package-internal
+   splits (DPAK centre leads, D8's bonded pin pairs, U3's SOT-223 tab) are the only
+   category that may be waved through.
+3. Re-run after the final zone refill, not before it.
+
+Rev A rework for the BTN1 pad, if a board needs it: bodge J11.1 (103.50, 119.50) to R43
+pad 2 (122.91, 99.00), ~28 mm, top side, 30 AWG. The no-rework alternative is to move BTN1
+to `IO12` in firmware and wire the button to J13.3 / J13.2 — R45 already pulls SDA up at
+4.7 k and this firmware never uses I2C.
+
 ## Firmware: the current pin map, extracted from the netlist
 
 **The firmware lives in `hw/VDDimmer/firmware/`** — a PlatformIO project for the
