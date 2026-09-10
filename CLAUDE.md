@@ -421,7 +421,8 @@ When working on tasks involving these technologies, invoke the corresponding ski
 | signalr | Implements real-time WebSocket communication and SignalR hub subscriptions |
 | fluent-assertions | Writes fluent, readable test assertions and validations |
 | serilog | Implements structured logging and configures Serilog sinks |
-| platformio | Builds and deploys ESP32 firmware with PlatformIO |
+| vddimmer-firmware | **Any** VDDimmer firmware build/flash, or any PlatformIO build on this machine — `os.spawnve` is broken OS-wide here, so a raw `pio run` can fail while reporting success |
+| platformio | Legacy hw/LEDDimmer board only; read its STOP warning first |
 | mqttnet | Manages MQTT broker connections and message publishing/subscription |
 | kicad | Designs PCB schematics and circuit layouts for hardware projects |
 | docker | Configures containerization with Docker and Docker Compose |
