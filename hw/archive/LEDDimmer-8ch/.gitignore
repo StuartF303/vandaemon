@@ -1,0 +1,23 @@
+# Archived project -- see ARCHIVE-NOTE.md.
+#
+# Everything listed here stays on disk; it is simply kept out of git history.
+# It is all regenerable from the sources that ARE committed, and together it
+# came to 22 MB against 8 MB of actual sources. This repo otherwise tracks no
+# zip files at all and its largest tracked file is 1.4 MB.
+
+# Snapshot zips
+pcb.zip
+pcb/gerber.zip
+.archive/
+
+# KiCad generated cache (4 MB) and editor auto-backups (5 MB)
+pcb/fp-info-cache
+fp-info-cache
+*-backups/
+*.bk
+
+# Fabrication and CNC output, regenerable from the .kicad_pcb and the .mkc files
+pcb/gerber/
+pcb/nc/
+*.nc
+*.nc.lz

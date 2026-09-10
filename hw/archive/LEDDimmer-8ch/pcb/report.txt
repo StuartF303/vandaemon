@@ -1,0 +1,12 @@
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-F_Cu.gbr'.
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-B_Cu.gbr'.
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-F_Paste.gbr'.
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-B_Paste.gbr'.
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-F_Silkscreen.gbr'.
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-B_Silkscreen.gbr'.
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-F_Mask.gbr'.
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-B_Mask.gbr'.
+Plotted to 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-Edge_Cuts.gbr'.
+Created Gerber job file 'C:\Projects\vandaemon\hw\LEDDimmer\pcb\gerber\VANDIMMER-8CH-job.gbrjob'.
+Info: Done.
+Info: Done.
