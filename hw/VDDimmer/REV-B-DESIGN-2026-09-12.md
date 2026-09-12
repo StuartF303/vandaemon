@@ -205,6 +205,10 @@ bottom-left, which sits where `VIN_PROT` carries full input current before it fa
 **The bottom-left corner hole provides the J2-to-J3 separation** that was originally going
 to need a fifth, inline hole. It does that job without consuming harness-edge length.
 
+**M2.5 fixings** — 2.7 mm clearance hole, ~5.9 mm keepout diameter allowing a 1.6 mm
+annulus. Chosen over M3 partly because the smaller keepout leaves more copper at the plane
+necks.
+
 **Electrically isolated** — no copper connection, keepout around each hole. The enclosure
 is plastic, so there is no chassis path to worry about; this also avoids any future
 enclosure creating a second return path in parallel with J2's negative wire.
@@ -248,7 +252,7 @@ Independent of the board, and worth landing regardless of what Rev B's copper lo
 | item | note |
 |---|---|
 | Connector family for J3–J6 | JST XH for now. Molex was fitted to the XH land by hand without difficulty, so a 2.54 mm Molex is viable in practice; the pitch error is 0.04 mm per pin and cumulative, reaching ~0.12 mm across the 4-way J7/J8. Revisit on inventory and cost. |
-| Mounting hardware | M3 or M2.5 not yet chosen. Affects keepout diameter and therefore plane necks. |
+| ~~Mounting hardware~~ | **Resolved 2026-09-12: M2.5.** 2.7 mm clearance hole, ~5.9 mm keepout diameter with a 1.6 mm annulus. Slightly gentler on the plane necks than M3's 6.4 mm. |
 | Enclosure | PLA for the prototype with vents; PETG (~80 °C) or ASA (~100 °C, UV-stable) for the vehicle. Board dissipates ~2.5–3 W, concentrated top-left — U2 at 1.1–1.4 W and Q_REV at 0.75 W are ~70 % of it. PLA's glass transition is ~60 °C and a van interior reaches 40 °C+, so vents belong over that corner and the buck wants to be uppermost if the case mounts vertically. RT1 derates from 70 °C, which protects the board, not the case. |
 | ~~Stale `VANDIMMER-4CH2A.net`~~ | **Resolved 2026-09-12.** Was dated 17 Aug and predated two GPIO map changes, still showing gate inputs on IO4–IO7. Regenerated from `VANDIMMER-4CH2A.kicad_sch` and now agrees with the firmware's `PIN_GATE = {3, 9, 11, 13}`. Regenerate it again after any schematic change — it is an export, not a source. |
 
