@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "C:\\Projects\\vandaemon\\hw\\VDDimmer\\VANDIMMER-4CH2A.kicad_sch")
-		(date "2026-09-12T16:00:22")
+		(date "2026-09-12T18:04:34")
 		(tool "Eeschema 10.0.5")
 		(sheet
 			(number "1")
@@ -4294,19 +4294,19 @@
 		)
 		(comp
 			(ref "U1")
-			(value "ESP32-S3-WROOM-1U-N16")
-			(footprint "RF_Module:ESP32-S3-WROOM-1U")
+			(value "ESP32-S3-WROOM-1-N16R8")
+			(footprint "RF_Module:ESP32-S3-WROOM-1")
 			(fields
 				(field
 					(name "Assembly") "355 mA TX / 95 mA RX - this is the load U3 must carry")
 				(field
-					(name "LCSC") "C2980298")
+					(name "LCSC") "C2913202")
 				(field
-					(name "MPN") "ESP32-S3-WROOM-1U-N16")
+					(name "MPN") "ESP32-S3-WROOM-1-N16R8")
 				(field
 					(name "Manufacturer") "Espressif Systems")
 				(field
-					(name "Footprint") "RF_Module:ESP32-S3-WROOM-1U")
+					(name "Footprint") "RF_Module:ESP32-S3-WROOM-1")
 				(field
 					(name "Datasheet")
 				)
@@ -4325,11 +4325,11 @@
 			)
 			(property
 				(name "LCSC")
-				(value "C2980298")
+				(value "C2913202")
 			)
 			(property
 				(name "MPN")
-				(value "ESP32-S3-WROOM-1U-N16")
+				(value "ESP32-S3-WROOM-1-N16R8")
 			)
 			(property
 				(name "Manufacturer")
@@ -4921,7 +4921,7 @@
 		)
 		(comp
 			(ref "J3")
-			(value "CH1 V+/LED-")
+			(value "CH1 LED-/V+")
 			(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal")
 			(fields
 				(field
@@ -4975,7 +4975,7 @@
 		)
 		(comp
 			(ref "J4")
-			(value "CH2 V+/LED-")
+			(value "CH2 LED-/V+")
 			(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal")
 			(fields
 				(field
@@ -5029,7 +5029,7 @@
 		)
 		(comp
 			(ref "J5")
-			(value "CH3 V+/LED-")
+			(value "CH3 LED-/V+")
 			(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal")
 			(fields
 				(field
@@ -5083,7 +5083,7 @@
 		)
 		(comp
 			(ref "J6")
-			(value "CH4 V+/LED-")
+			(value "CH4 LED-/V+")
 			(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal")
 			(fields
 				(field
@@ -6058,8 +6058,8 @@
 				(names "/PWM/")
 				(tstamps "/a2332e94-aa8c-4f2f-8845-69c86e434212/")
 			)
-			(tstamps "67ad5e47-b245-4f8b-9896-e50c9da77e1e" "f06e42d4-d10b-4d8e-b7a9-4e7166656b60"
-				"d83ca4a3-8a2b-443c-926b-209b96cf5740" "d9d08430-eccc-40e5-abc7-7ca54237a08b"
+			(tstamps "f06e42d4-d10b-4d8e-b7a9-4e7166656b60" "d83ca4a3-8a2b-443c-926b-209b96cf5740"
+				"d9d08430-eccc-40e5-abc7-7ca54237a08b" "67ad5e47-b245-4f8b-9896-e50c9da77e1e"
 				"1e866d8a-1dc4-4092-8e98-6df890084fe6"
 			)
 			(units
@@ -6812,13 +6812,13 @@
 		)
 		(comp
 			(ref "PF1")
-			(value "PTC 2A 30V")
+			(value "PTC 3A 30V")
 			(footprint "Resistor_SMD:R_1812_4532Metric")
 			(fields
 				(field
-					(name "LCSC") "C18198342")
+					(name "LCSC") "C48985875")
 				(field
-					(name "MPN") "1812L200/30GR")
+					(name "MPN") "1812L300/30GR")
 				(field
 					(name "Manufacturer") "LUTE")
 				(field
@@ -6837,11 +6837,11 @@
 			)
 			(property
 				(name "LCSC")
-				(value "C18198342")
+				(value "C48985875")
 			)
 			(property
 				(name "MPN")
-				(value "1812L200/30GR")
+				(value "1812L300/30GR")
 			)
 			(property
 				(name "Manufacturer")
@@ -6884,13 +6884,13 @@
 		)
 		(comp
 			(ref "PF2")
-			(value "PTC 2A 30V")
+			(value "PTC 3A 30V")
 			(footprint "Resistor_SMD:R_1812_4532Metric")
 			(fields
 				(field
-					(name "LCSC") "C18198342")
+					(name "LCSC") "C48985875")
 				(field
-					(name "MPN") "1812L200/30GR")
+					(name "MPN") "1812L300/30GR")
 				(field
 					(name "Manufacturer") "LUTE")
 				(field
@@ -6909,11 +6909,11 @@
 			)
 			(property
 				(name "LCSC")
-				(value "C18198342")
+				(value "C48985875")
 			)
 			(property
 				(name "MPN")
-				(value "1812L200/30GR")
+				(value "1812L300/30GR")
 			)
 			(property
 				(name "Manufacturer")
@@ -9452,8 +9452,8 @@
 			)
 			(node
 				(ref "J3")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
@@ -9475,8 +9475,8 @@
 			)
 			(node
 				(ref "J4")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
@@ -9498,8 +9498,8 @@
 			)
 			(node
 				(ref "J5")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
@@ -9521,8 +9521,8 @@
 			)
 			(node
 				(ref "J6")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
@@ -10450,26 +10450,26 @@
 			)
 			(node
 				(ref "J3")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
 				(ref "J4")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
 				(ref "J5")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
 				(ref "J6")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
