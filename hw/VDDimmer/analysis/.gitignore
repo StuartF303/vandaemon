@@ -2,3 +2,6 @@
 *
 !.gitignore
 !manifest.json
+
+# Rev A -> Rev B rework: committed baseline every later task compares against
+!rev-a-baseline.txt
