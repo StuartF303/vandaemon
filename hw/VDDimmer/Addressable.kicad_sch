@@ -2530,7 +2530,7 @@
 				)
 			)
 		)
-		(property "Value" "PTC 2A 30V"
+		(property "Value" "PTC 3A 30V"
 			(at 252.73 59.69 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2572,7 +2572,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C18198342"
+		(property "LCSC" "C48985875"
 			(at 250.19 59.69 0)
 			(hide yes)
 			(show_name no)
@@ -2583,7 +2583,7 @@
 				)
 			)
 		)
-		(property "MPN" "1812L200/30GR"
+		(property "MPN" "1812L300/30GR"
 			(at 250.19 59.69 0)
 			(hide yes)
 			(show_name no)
@@ -3244,7 +3244,7 @@
 				)
 			)
 		)
-		(property "Value" "PTC 2A 30V"
+		(property "Value" "PTC 3A 30V"
 			(at 252.73 119.38 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3286,7 +3286,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C18198342"
+		(property "LCSC" "C48985875"
 			(at 250.19 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -3297,7 +3297,7 @@
 				)
 			)
 		)
-		(property "MPN" "1812L200/30GR"
+		(property "MPN" "1812L300/30GR"
 			(at 250.19 119.38 0)
 			(hide yes)
 			(show_name no)
