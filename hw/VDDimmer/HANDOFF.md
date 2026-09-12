@@ -40,8 +40,47 @@ going wrong:
 4. **R30 must be ABSENT.** If it is fitted, the input LC filter is shorted out.
 
 **Do not power a board with anything but the firmware in `hw/VDDimmer/firmware/`** — U1's
-GPIO map changed twice and U5's buffer channels 3↔4 were swapped during layout, so
-anything built against the original pin plan will drive the wrong channels.
+GPIO map changed twice, so anything built against the original pin plan will drive the
+wrong channels.
+
+**Correction, 2026-09-12.** Earlier notes here said "U5's buffer channels 3↔4 were
+swapped during layout" and treated that as a hazard to the four PWM outputs. Traced from
+a freshly exported netlist: **U5 is not in the PWM path at all.** The PWM buffer is
+**U4**; U5 is the second 74HCT125 and level-shifts only `ADDR1_DIN`, `ADDR2_DIN`,
+`ADDR_CLK` and `STATUS_DIN`. Its channels 3 and 4 carry CLK and STATUS. The PWM chain is
+straight through and matches the firmware:
+
+| firmware ch | GPIO | buffer | drain | terminal |
+|---|---|---|---|---|
+| 0 | IO3 | U4.2→3 | DRAIN1 | J3 |
+| 1 | IO9 | U4.5→6 | DRAIN2 | J4 |
+| 2 | IO11 | U4.9→8 | DRAIN3 | J5 |
+| 3 | IO13 | U4.12→11 | DRAIN4 | J6 |
+
+## REV B — required changes, decided during bring-up
+
+### 1. J3–J6 pin order swaps: pin 1 becomes LED−
+
+Decided 2026-09-12 while wiring lamps. Pin 1 becomes the switched low side (the lamp's
+negative), pin 2 becomes V+. Topology is unchanged — still low-side N-channel — and the
+spec §5.1 now carries it.
+
+**Pin 1 is still not ground and must never be silkscreened `GND`.** It is the MOSFET
+drain: open when the channel is off, so it floats to roughly +12 V through the load, and
+to ~7 V on an open terminal from flyback-diode and FET leakage alone. Mark the terminals
+**−** and **+**. All four channels share pin 2, so the outputs are common-positive.
+
+**The Rev A boards already built are the opposite way round** — pin 1 is VIN_PROT.
+Grounding pin 1 on a Rev A board is a dead short across the supply. Anything that
+documents the pinout has to say which revision it means.
+
+### 2. Route J11.1, or add a firmware portal fallback, or both
+
+Already listed in the ordering gate below as a dead feature. Bring-up raised its
+severity: with no USB in the field it is not merely *a* recovery route, it is the
+**only** one, and `net_tick()` has no portal fallback either. A wrong SSID or a router
+change would permanently strand a shipped board. The firmware half is cheap and should
+land regardless of what the next board's copper looks like.
 
 ## TASK — Rev B ordering gate: every net one connected group
 

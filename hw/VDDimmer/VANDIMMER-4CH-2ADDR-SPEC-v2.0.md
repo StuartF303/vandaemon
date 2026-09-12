@@ -1,4 +1,4 @@
-# VANDIMMER-4CH+2A — Hardware Specification v2.0
+﻿# VANDIMMER-4CH+2A — Hardware Specification v2.0
 
 **Board:** 4-channel PWM LED dimmer + 2 addressable LED outputs
 **MCU:** ESP32-S3-WROOM-1U
@@ -12,6 +12,11 @@
 > two disagree. The substantive changes: the board is **12 V only** (was "10–30 V"),
 > D5 is an **SMBJ18A** (was SMBJ33A), F1 is an **8 A** fuse (was 7 A), and the per-channel
 > FET loss is **0.116 W** (was 0.06 W). See also §12's parts list.
+
+> **Rev B change (2026-09-12).** The J3–J6 pin order is **swapped**: pin 1 becomes the
+> LED− return and pin 2 becomes V+, so the lamp's negative lands on pin 1. Topology is
+> unchanged — still low-side N-channel, and pin 1 is still *not* ground. See §5.1, which
+> also states what the as-built Rev A boards do, because they are the opposite way round.
 
 ---
 
@@ -140,13 +145,36 @@ GPIO ──[R_gate 100Ω]──┬── MOSFET gate
                       │
                      GND
 
-VIN_PROT ──┬── terminal V+
+VIN_PROT ──┬── terminal pin 2  (V+)
            │
         [D_fly]      (cathode to VIN_PROT, anode to drain)
            │
-MOSFET drain ── terminal LED−
+MOSFET drain ── terminal pin 1  (LED−)
 MOSFET source ── GND
 ```
+
+### 5.1 Output terminal pinout (J3–J6) — CHANGED FOR REV B
+
+| pin | net | wire |
+|---|---|---|
+| **1** | `DRAINn` | lamp **negative** |
+| **2** | `VIN_PROT` | lamp **positive**, +12 V |
+
+> **This is the reverse of Rev A.** On the boards fabricated 2026-09-03, **pin 1 is
+> VIN_PROT (+12 V)** and pin 2 is the drain. Verified against
+> `VANDIMMER-4CH2A.kicad_pcb` on 2026-09-12. Wiring a Rev A board to this table puts
+> +12 V where you expect the return — and **grounding pin 1 on a Rev A board is a dead
+> short across the supply.** Check which revision is in front of you before wiring.
+
+**Pin 1 is not ground, on either revision.** It is the switched low side. With the
+channel off the MOSFET is open and pin 1 floats up to roughly +12 V through the load;
+with nothing connected it sits at whatever the flyback-diode and FET leakage currents
+divide to (measured 7.26 V on an open terminal, which is normal, not a fault). Bonding
+it to chassis or to a shared negative busbar shorts the channel.
+
+Silkscreen accordingly: mark the terminals **−** and **+**, never `GND`. All four
+channels share pin 2, so the outputs are **common-positive**: independent lamps and
+common-anode strips are fine, a common-negative load is not.
 
 | Ref | Part | Spec |
 |---|---|---|
@@ -492,15 +520,43 @@ At 60 °C ambient worst case, hottest junction ≈ 95 °C. Acceptable margin.
 
 **Hand-fitted after assembly:**
 
-| Qty | Ref | Part |
-|---|---|---|
-| 1 | J2 | 2-pos screw terminal, 5.08 mm — VIN |
-| 4 | J3–J6 | 2-pos screw terminal, 5.08 mm — PWM out |
-| 2 | J7–J8 | 3-pos screw terminal, 5.08 mm — addressable out |
-| 2 | J9–J10 | 3-pin header + shunt — V+ select |
-| 2 | J11–J12 | 2-pin header — buttons |
-| 1 | J13 | 4-pin header — I²C expansion |
-| 1 | J14 | 3-pin header — UART1 expansion |
+> **Corrected 2026-09-12 against `VANDIMMER-4CH2A.kicad_pcb`.** Four of the seven rows
+> below were wrong: J3–J6 and J7–J8 were described as 5.08 mm screw terminals when the
+> board carries JST XH, J7–J8 are 4-way not 3-way, J13 is 6-way not 4-way, and J14 is
+> 4-way not 3-way. The table now states what was actually fabricated.
+
+| Qty | Ref | Part (as fabricated) | Purpose |
+|---|---|---|---|
+| 1 | J2 | Phoenix MC 1,5/2-G-5.08, 2-pos screw terminal, 5.08 mm, right-angle | VIN |
+| 4 | J3–J6 | **JST XH S2B-XH-A**, 1×2, 2.50 mm, **right-angle** | PWM out |
+| 2 | J7–J8 | **JST XH S4B-XH-A**, 1×**4**, 2.50 mm, **right-angle** | Addressable out |
+| 2 | J9–J10 | 1×3 pin header, 2.54 mm, vertical, + shunt | Strip V+ select |
+| 2 | J11–J12 | 1×2 pin header, 2.54 mm, vertical | Buttons |
+| 1 | J13 | 1×**6** pin header, 2.54 mm, vertical | I²C + EN/BOOT |
+| 1 | J14 | 1×**4** pin header, 2.54 mm, vertical | UART1 |
+
+**J3–J6 stay JST XH on Rev B — only the pin order changes** (§5.1). The footprint is
+unchanged; the connector family is an **open question deferred to inventory and cost**,
+not a closed decision.
+
+Molex was considered on 2026-09-12 and the XH land was kept for now because it is already
+right-angle, already rated 3 A against a 2 A channel, and proven on two built boards.
+**Stuart then fitted Molex connectors to this land by hand with no difficulty**, so the
+earlier concern that the pitch made it "not a designed fit" overstated the problem in
+practice: a 2.54 mm Molex (KK / SL) is 0.04 mm per pin off the 2.50 mm XH pitch, which a
+1.0 mm drill absorbs easily over two pins.
+
+Two caveats if that becomes the plan rather than a field substitution:
+
+- The error is cumulative. Over the **4-way J7/J8** it reaches ~0.12 mm across the span.
+  Worth checking on a real part before relying on it there.
+- **Micro-Fit 3.0 is a genuinely different land** (3.00 mm) and, at the existing 11.00 mm
+  connector centres, leaves about 1.35 mm between adjacent bodies — it would force the
+  whole row to be re-spaced, which is a layout change rather than a part swap.
+
+Connector centres along the south edge are J3 111.00, J4 122.00, J5 133.00, J6 144.00,
+J7 156.00, J8 172.00 mm — i.e. **11.00 mm** between PWM outputs. Anything wider than the
+XH body needs that pitch revisited.
 
 ---
 
