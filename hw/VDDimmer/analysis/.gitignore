@@ -5,3 +5,7 @@
 
 # Rev A -> Rev B rework: committed baseline every later task compares against
 !rev-a-baseline.txt
+
+# Rev B Task 8: measured antenna keepout, U1 placement window and hole geometry.
+# Phase 4 applies these numbers; the decisions in it are not regenerable.
+!rev-b-task8-geometry.md

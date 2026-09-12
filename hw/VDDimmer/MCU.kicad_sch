@@ -5067,7 +5067,7 @@
 				)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5"
 			(at 90.17 250.19 0)
 			(hide yes)
 			(show_name no)
@@ -6087,7 +6087,7 @@
 				)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5"
 			(at 64.77 250.19 0)
 			(hide yes)
 			(show_name no)
@@ -6854,7 +6854,7 @@
 				)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5"
 			(at 39.37 250.19 0)
 			(hide yes)
 			(show_name no)
@@ -7520,7 +7520,7 @@
 				)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5"
 			(at 115.57 250.19 0)
 			(hide yes)
 			(show_name no)
