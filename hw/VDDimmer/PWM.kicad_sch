@@ -102,7 +102,10 @@
 			(symbol "74AHCT125_1_0"
 				(polyline
 					(pts
-						(xy -3.81 3.81) (xy -3.81 -3.81) (xy 3.81 0) (xy -3.81 3.81)
+						(xy -3.81 3.81)
+						(xy -3.81 -3.81)
+						(xy 3.81 0)
+						(xy -3.81 3.81)
 					)
 					(stroke
 						(width 0.254)
@@ -170,7 +173,10 @@
 			(symbol "74AHCT125_2_0"
 				(polyline
 					(pts
-						(xy -3.81 3.81) (xy -3.81 -3.81) (xy 3.81 0) (xy -3.81 3.81)
+						(xy -3.81 3.81)
+						(xy -3.81 -3.81)
+						(xy 3.81 0)
+						(xy -3.81 3.81)
 					)
 					(stroke
 						(width 0.254)
@@ -238,7 +244,10 @@
 			(symbol "74AHCT125_3_0"
 				(polyline
 					(pts
-						(xy -3.81 3.81) (xy -3.81 -3.81) (xy 3.81 0) (xy -3.81 3.81)
+						(xy -3.81 3.81)
+						(xy -3.81 -3.81)
+						(xy 3.81 0)
+						(xy -3.81 3.81)
 					)
 					(stroke
 						(width 0.254)
@@ -306,7 +315,10 @@
 			(symbol "74AHCT125_4_0"
 				(polyline
 					(pts
-						(xy -3.81 3.81) (xy -3.81 -3.81) (xy 3.81 0) (xy -3.81 3.81)
+						(xy -3.81 3.81)
+						(xy -3.81 -3.81)
+						(xy 3.81 0)
+						(xy -3.81 3.81)
 					)
 					(stroke
 						(width 0.254)
@@ -674,7 +686,8 @@
 			(symbol "C_0_1"
 				(polyline
 					(pts
-						(xy -2.032 0.762) (xy 2.032 0.762)
+						(xy -2.032 0.762)
+						(xy 2.032 0.762)
 					)
 					(stroke
 						(width 0.508)
@@ -686,7 +699,8 @@
 				)
 				(polyline
 					(pts
-						(xy -2.032 -0.762) (xy 2.032 -0.762)
+						(xy -2.032 -0.762)
+						(xy 2.032 -0.762)
 					)
 					(stroke
 						(width 0.508)
@@ -828,7 +842,12 @@
 			(symbol "D_Schottky_0_1"
 				(polyline
 					(pts
-						(xy -1.905 0.635) (xy -1.905 1.27) (xy -1.27 1.27) (xy -1.27 -1.27) (xy -0.635 -1.27) (xy -0.635 -0.635)
+						(xy -1.905 0.635)
+						(xy -1.905 1.27)
+						(xy -1.27 1.27)
+						(xy -1.27 -1.27)
+						(xy -0.635 -1.27)
+						(xy -0.635 -0.635)
 					)
 					(stroke
 						(width 0.254)
@@ -840,7 +859,10 @@
 				)
 				(polyline
 					(pts
-						(xy 1.27 1.27) (xy 1.27 -1.27) (xy -1.27 0) (xy 1.27 1.27)
+						(xy 1.27 1.27)
+						(xy 1.27 -1.27)
+						(xy -1.27 0)
+						(xy 1.27 1.27)
 					)
 					(stroke
 						(width 0.254)
@@ -852,7 +874,8 @@
 				)
 				(polyline
 					(pts
-						(xy 1.27 0) (xy -1.27 0)
+						(xy 1.27 0)
+						(xy -1.27 0)
 					)
 					(stroke
 						(width 0)
@@ -1122,7 +1145,8 @@
 			(symbol "Q_NMOS_GDS_0_1"
 				(polyline
 					(pts
-						(xy 0.254 1.905) (xy 0.254 -1.905)
+						(xy 0.254 1.905)
+						(xy 0.254 -1.905)
 					)
 					(stroke
 						(width 0.254)
@@ -1134,7 +1158,8 @@
 				)
 				(polyline
 					(pts
-						(xy 0.254 0) (xy -2.54 0)
+						(xy 0.254 0)
+						(xy -2.54 0)
 					)
 					(stroke
 						(width 0)
@@ -1146,7 +1171,8 @@
 				)
 				(polyline
 					(pts
-						(xy 0.762 2.286) (xy 0.762 1.27)
+						(xy 0.762 2.286)
+						(xy 0.762 1.27)
 					)
 					(stroke
 						(width 0.254)
@@ -1158,7 +1184,8 @@
 				)
 				(polyline
 					(pts
-						(xy 0.762 0.508) (xy 0.762 -0.508)
+						(xy 0.762 0.508)
+						(xy 0.762 -0.508)
 					)
 					(stroke
 						(width 0.254)
@@ -1170,7 +1197,8 @@
 				)
 				(polyline
 					(pts
-						(xy 0.762 -1.27) (xy 0.762 -2.286)
+						(xy 0.762 -1.27)
+						(xy 0.762 -2.286)
 					)
 					(stroke
 						(width 0.254)
@@ -1182,7 +1210,10 @@
 				)
 				(polyline
 					(pts
-						(xy 0.762 -1.778) (xy 3.302 -1.778) (xy 3.302 1.778) (xy 0.762 1.778)
+						(xy 0.762 -1.778)
+						(xy 3.302 -1.778)
+						(xy 3.302 1.778)
+						(xy 0.762 1.778)
 					)
 					(stroke
 						(width 0)
@@ -1194,7 +1225,10 @@
 				)
 				(polyline
 					(pts
-						(xy 1.016 0) (xy 2.032 0.381) (xy 2.032 -0.381) (xy 1.016 0)
+						(xy 1.016 0)
+						(xy 2.032 0.381)
+						(xy 2.032 -0.381)
+						(xy 1.016 0)
 					)
 					(stroke
 						(width 0)
@@ -1217,7 +1251,8 @@
 				)
 				(polyline
 					(pts
-						(xy 2.54 2.54) (xy 2.54 1.778)
+						(xy 2.54 2.54)
+						(xy 2.54 1.778)
 					)
 					(stroke
 						(width 0)
@@ -1251,7 +1286,9 @@
 				)
 				(polyline
 					(pts
-						(xy 2.54 -2.54) (xy 2.54 0) (xy 0.762 0)
+						(xy 2.54 -2.54)
+						(xy 2.54 0)
+						(xy 0.762 0)
 					)
 					(stroke
 						(width 0)
@@ -1263,7 +1300,8 @@
 				)
 				(polyline
 					(pts
-						(xy 2.921 0.381) (xy 3.683 0.381)
+						(xy 2.921 0.381)
+						(xy 3.683 0.381)
 					)
 					(stroke
 						(width 0)
@@ -1275,7 +1313,10 @@
 				)
 				(polyline
 					(pts
-						(xy 3.302 0.381) (xy 2.921 -0.254) (xy 3.683 -0.254) (xy 3.302 0.381)
+						(xy 3.302 0.381)
+						(xy 2.921 -0.254)
+						(xy 3.683 -0.254)
+						(xy 3.302 0.381)
 					)
 					(stroke
 						(width 0)
@@ -1426,7 +1467,8 @@
 			(symbol "+5V_0_1"
 				(polyline
 					(pts
-						(xy -0.762 1.27) (xy 0 2.54)
+						(xy -0.762 1.27)
+						(xy 0 2.54)
 					)
 					(stroke
 						(width 0)
@@ -1438,7 +1480,8 @@
 				)
 				(polyline
 					(pts
-						(xy 0 2.54) (xy 0.762 1.27)
+						(xy 0 2.54)
+						(xy 0.762 1.27)
 					)
 					(stroke
 						(width 0)
@@ -1450,7 +1493,8 @@
 				)
 				(polyline
 					(pts
-						(xy 0 0) (xy 0 2.54)
+						(xy 0 0)
+						(xy 0 2.54)
 					)
 					(stroke
 						(width 0)
@@ -1565,7 +1609,12 @@
 			(symbol "GND_0_1"
 				(polyline
 					(pts
-						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+						(xy 0 0)
+						(xy 0 -1.27)
+						(xy 1.27 -1.27)
+						(xy 0 -2.54)
+						(xy -1.27 -1.27)
+						(xy 0 -1.27)
 					)
 					(stroke
 						(width 0)
@@ -1601,17 +1650,8 @@
 	)
 	(wire
 		(pts
-			(xy 245.11 58.42) (xy 242.57 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "07b213f7-218f-44af-862d-65aad21b4f88")
-	)
-	(wire
-		(pts
-			(xy 59.69 270.51) (xy 59.69 273.05)
+			(xy 59.69 270.51)
+			(xy 59.69 273.05)
 		)
 		(stroke
 			(width 0)
@@ -1621,7 +1661,8 @@
 	)
 	(wire
 		(pts
-			(xy 52.07 160.02) (xy 49.53 160.02)
+			(xy 52.07 160.02)
+			(xy 49.53 160.02)
 		)
 		(stroke
 			(width 0)
@@ -1631,7 +1672,8 @@
 	)
 	(wire
 		(pts
-			(xy 52.07 110.49) (xy 49.53 110.49)
+			(xy 52.07 110.49)
+			(xy 49.53 110.49)
 		)
 		(stroke
 			(width 0)
@@ -1641,7 +1683,8 @@
 	)
 	(wire
 		(pts
-			(xy 59.69 245.11) (xy 59.69 242.57)
+			(xy 59.69 245.11)
+			(xy 59.69 242.57)
 		)
 		(stroke
 			(width 0)
@@ -1651,7 +1694,8 @@
 	)
 	(wire
 		(pts
-			(xy 52.07 209.55) (xy 49.53 209.55)
+			(xy 52.07 209.55)
+			(xy 49.53 209.55)
 		)
 		(stroke
 			(width 0)
@@ -1661,7 +1705,8 @@
 	)
 	(wire
 		(pts
-			(xy 52.07 59.69) (xy 49.53 59.69)
+			(xy 52.07 59.69)
+			(xy 49.53 59.69)
 		)
 		(stroke
 			(width 0)
@@ -1769,26 +1814,6 @@
 		)
 		(uuid "2cfadc5f-defc-4c38-acfc-8fbc465f0922")
 	)
-	(label "DRAIN1"
-		(at 245.11 60.96 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "311120c9-fd5e-4fd4-98c6-61dfcf4fc014")
-	)
-	(label "DRAIN2"
-		(at 245.11 110.49 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "3306392f-28dd-42f3-82bd-0c97ec6ea948")
-	)
 	(label "GND"
 		(at 119.38 175.26 0)
 		(effects
@@ -1888,26 +1913,6 @@
 			(justify left bottom)
 		)
 		(uuid "53d9b18a-98f7-4ff5-a5f2-88130c995ee3")
-	)
-	(label "DRAIN3"
-		(at 245.11 160.02 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "5edab4ce-0219-4b09-98d3-f6ced78879cb")
-	)
-	(label "DRAIN4"
-		(at 245.11 210.82 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "7dc168a5-600a-499f-a1a9-50ba2846232f")
 	)
 	(label "DRAIN2"
 		(at 199.39 100.33 0)
@@ -2169,71 +2174,45 @@
 		)
 		(uuid "f785e017-2adb-40e7-87a0-3f5b9fae7410")
 	)
-	(global_label "VIN_PROT"
-		(shape input)
-		(at 245.11 208.28 180)
+	(label "DRAIN1"
+		(at 245.11 58.42 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify right bottom)
 		)
-		(uuid "0c6a64c7-f8a0-4fdd-97ff-302493a7d3d8")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 245.11 208.28 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
+		(uuid "d120195f-85ee-41d7-9c95-566a3d96e062")
 	)
-	(global_label "VIN_PROT"
-		(shape input)
-		(at 245.11 157.48 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "24ee5ece-47e5-44cb-935d-cc225ee8085c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 245.11 157.48 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "VIN_PROT"
-		(shape input)
+	(label "DRAIN2"
 		(at 245.11 107.95 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify right bottom)
 		)
-		(uuid "38bde789-8833-430d-96f0-4abdffe6297a")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 245.11 107.95 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
+		(uuid "68270a3f-b694-4caa-a3fb-8f603e2b3964")
+	)
+	(label "DRAIN3"
+		(at 245.11 157.48 180)
+		(effects
+			(font
+				(size 1.27 1.27)
 			)
+			(justify right bottom)
 		)
+		(uuid "23dc81e2-a98c-4b61-8d14-f11d2b764c8c")
+	)
+	(label "DRAIN4"
+		(at 245.11 208.28 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "5effb37d-10d7-41b2-9ee5-e4885a1e171f")
 	)
 	(global_label "VIN_PROT"
 		(shape input)
@@ -2247,28 +2226,6 @@
 		(uuid "7ac2930f-7149-4aa9-8282-621934d5b158")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 191.77 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "VIN_PROT"
-		(shape input)
-		(at 242.57 58.42 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "7e937be0-930d-4981-9d6f-4bd519e52322")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 242.57 58.42 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2433,15 +2390,57 @@
 			)
 		)
 	)
+	(global_label "VIN_PROT"
+		(shape input)
+		(at 245.11 60.96 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e0921a14-5a5f-47f1-98f5-980566086f46")
+	)
+	(global_label "VIN_PROT"
+		(shape input)
+		(at 245.11 110.49 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "99cfc758-55ea-4e0c-823c-36490d28050a")
+	)
+	(global_label "VIN_PROT"
+		(shape input)
+		(at 245.11 160.02 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "487947f8-c625-4cc2-82c8-249954c63eb4")
+	)
+	(global_label "VIN_PROT"
+		(shape input)
+		(at 245.11 210.82 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1d6aad25-9afe-4402-823f-549060fb27f9")
+	)
 	(symbol
 		(lib_id "Device:D_Schottky")
 		(at 195.58 149.86 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "07b81cc2-9524-4e1a-9794-b5be227477a2")
 		(property "Reference" "D3"
@@ -2529,6 +2528,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "eaf29e23-ad0e-4f1a-831a-78f2107bd09d")
 		)
@@ -2554,11 +2555,9 @@
 		(lib_id "Device:R")
 		(at 119.38 222.25 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "0d484378-846a-43e1-b85e-cf0960033501")
 		(property "Reference" "R8"
@@ -2646,6 +2645,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "2"
 			(uuid "5ede6570-ab42-4bb3-84dd-c270be3b9daf")
 		)
@@ -2671,11 +2672,9 @@
 		(lib_id "Connector_Generic:Conn_01x02")
 		(at 250.19 107.95 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "0e2c8041-7b09-4c6f-a79d-ad1e8391641c")
 		(property "Reference" "J4"
@@ -2688,7 +2687,7 @@
 				)
 			)
 		)
-		(property "Value" "CH2 V+/LED-"
+		(property "Value" "CH2 LED-/V+"
 			(at 250.19 113.03 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2730,6 +2729,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "2"
 			(uuid "b6c37d35-5a21-4a33-a037-0b5ab6279464")
 		)
@@ -2755,11 +2756,9 @@
 		(lib_id "Device:C")
 		(at 320.04 59.69 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "16144c29-ea1f-486a-82a0-5ee449b74ad5")
 		(property "Reference" "C50"
@@ -2849,6 +2848,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "9677fc0c-3ced-4f19-9037-ba1f0a1d5e68")
 		)
@@ -2874,11 +2875,9 @@
 		(lib_id "74xx:74AHCT125")
 		(at 59.69 160.02 0)
 		(unit 3)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "1e866d8a-1dc4-4092-8e98-6df890084fe6")
 		(property "Reference" "U4"
@@ -2966,6 +2965,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "8"
 			(uuid "64365902-85d7-481a-b6ef-72cd3999acfd")
 		)
@@ -3027,11 +3028,9 @@
 		(lib_id "Transistor_FET:Q_NMOS_GDS")
 		(at 149.86 110.49 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "326269db-6b7e-4e9f-b24c-9835f0f7c0ba")
 		(property "Reference" "Q2"
@@ -3121,6 +3120,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "d6a08954-9bcd-40ea-ba40-21b40efa1e28")
 		)
@@ -3149,11 +3150,9 @@
 		(lib_id "Connector_Generic:Conn_01x02")
 		(at 250.19 208.28 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "340c4848-3d59-45c2-9561-ba0c18c9b092")
 		(property "Reference" "J6"
@@ -3166,7 +3165,7 @@
 				)
 			)
 		)
-		(property "Value" "CH4 V+/LED-"
+		(property "Value" "CH4 LED-/V+"
 			(at 250.19 213.36 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3208,6 +3207,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "0b03b031-736e-4a0e-928a-6353bf45db4b")
 		)
@@ -3233,11 +3234,9 @@
 		(lib_id "Device:R")
 		(at 100.33 59.69 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "472de3e7-b7e9-4c7b-a4fc-d9fc7abc8dcf")
 		(property "Reference" "R1"
@@ -3325,6 +3324,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "f486995d-f020-4b48-b9b6-be4b0b8cdb5e")
 		)
@@ -3350,11 +3351,9 @@
 		(lib_id "Device:R")
 		(at 100.33 209.55 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "54d8eeb0-57b0-4d12-8987-e338bfe9f71c")
 		(property "Reference" "R4"
@@ -3442,6 +3441,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "7f60f46b-6826-428a-98c5-3696f7b86f6a")
 		)
@@ -3467,11 +3468,9 @@
 		(lib_id "Device:D_Schottky")
 		(at 195.58 49.53 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "560d4ced-35a2-424f-83c5-30a9c2355cda")
 		(property "Reference" "D1"
@@ -3559,6 +3558,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "2"
 			(uuid "8a778c28-21d8-45b7-b99b-8eafc5793036")
 		)
@@ -3584,11 +3585,9 @@
 		(lib_id "Device:D_Schottky")
 		(at 195.58 199.39 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "56441a2a-7547-4b1e-95de-bbf6213f099c")
 		(property "Reference" "D4"
@@ -3676,6 +3675,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "4a7ef7c6-9f2f-4d4b-99d0-2aae7cb53a69")
 		)
@@ -3701,11 +3702,9 @@
 		(lib_id "74xx:74AHCT125")
 		(at 59.69 257.81 0)
 		(unit 5)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "67ad5e47-b245-4f8b-9896-e50c9da77e1e")
 		(property "Reference" "U4"
@@ -3760,6 +3759,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "10"
 			(uuid "ea42554a-9a20-45ab-9a83-f6ffea0732bd")
 		)
@@ -3821,11 +3822,9 @@
 		(lib_id "power:GND")
 		(at 59.69 273.05 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "70abb76c-2402-4418-b7d5-6c761380c623")
 		(property "Reference" "#PWR021"
@@ -3881,6 +3880,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "df8e1440-a362-480e-a720-7a21a22c9ba0")
 		)
@@ -3903,11 +3904,9 @@
 		(lib_id "Transistor_FET:Q_NMOS_GDS")
 		(at 149.86 160.02 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "7616f7b3-524e-4e87-909a-8bbd0354f753")
 		(property "Reference" "Q3"
@@ -3997,6 +3996,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "21cf4319-4988-4951-99cf-ef30c5dddc8a")
 		)
@@ -4025,11 +4026,9 @@
 		(lib_id "Device:C")
 		(at 340.36 59.69 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "7d4a3746-e805-46a5-8baf-5f0db8114c9b")
 		(property "Reference" "C51"
@@ -4119,6 +4118,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "4c68f80d-e0d2-4392-bdc8-853a9c2eef05")
 		)
@@ -4144,11 +4145,9 @@
 		(lib_id "Device:R")
 		(at 119.38 72.39 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "af7da9dd-d6b1-4395-b083-9b868bd0c555")
 		(property "Reference" "R5"
@@ -4236,6 +4235,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "1034f81e-b3b1-4aa0-87f2-59c1156f2b10")
 		)
@@ -4261,11 +4262,9 @@
 		(lib_id "Connector_Generic:Conn_01x02")
 		(at 250.19 157.48 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "b7439257-bf6f-433d-b1dd-38d53a8cfcd2")
 		(property "Reference" "J5"
@@ -4278,7 +4277,7 @@
 				)
 			)
 		)
-		(property "Value" "CH3 V+/LED-"
+		(property "Value" "CH3 LED-/V+"
 			(at 250.19 162.56 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4320,6 +4319,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "2"
 			(uuid "b1e47cde-2014-4fbd-b8b5-f0443f815f39")
 		)
@@ -4345,11 +4346,9 @@
 		(lib_id "Device:D_Schottky")
 		(at 195.58 100.33 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "ba8e2196-0efd-401c-8947-fde8fb93c7ef")
 		(property "Reference" "D2"
@@ -4437,6 +4436,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "2"
 			(uuid "26c0ada5-b833-4845-962e-7c9e36d14a21")
 		)
@@ -4462,11 +4463,9 @@
 		(lib_id "Device:R")
 		(at 119.38 171.45 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "ca2ac051-12ff-41a1-bfad-8b4e5f5f72c4")
 		(property "Reference" "R7"
@@ -4554,6 +4553,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "25b00ff2-2858-4509-b16c-3ba6f41d5a22")
 		)
@@ -4579,11 +4580,9 @@
 		(lib_id "74xx:74AHCT125")
 		(at 59.69 59.69 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "d83ca4a3-8a2b-443c-926b-209b96cf5740")
 		(property "Reference" "U4"
@@ -4638,6 +4637,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "3"
 			(uuid "5c261b97-67e4-41a5-9a2d-8fa9e98516f3")
 		)
@@ -4699,11 +4700,9 @@
 		(lib_id "74xx:74AHCT125")
 		(at 59.69 110.49 0)
 		(unit 2)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "d9d08430-eccc-40e5-abc7-7ca54237a08b")
 		(property "Reference" "U4"
@@ -4758,6 +4757,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "0c0fdc0a-9154-45d7-b3ca-aef530104a62")
 		)
@@ -4819,11 +4820,9 @@
 		(lib_id "Connector_Generic:Conn_01x02")
 		(at 250.19 58.42 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "dae3f3a6-e6cd-4c36-907b-ac049300ee60")
 		(property "Reference" "J3"
@@ -4836,7 +4835,7 @@
 				)
 			)
 		)
-		(property "Value" "CH1 V+/LED-"
+		(property "Value" "CH1 LED-/V+"
 			(at 250.19 63.5 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4878,6 +4877,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "6afbf712-0b6f-4cd8-84fa-c39d93f6610f")
 		)
@@ -4903,11 +4904,9 @@
 		(lib_id "Transistor_FET:Q_NMOS_GDS")
 		(at 149.86 59.69 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "e218b37f-9e57-4c7c-bc8b-c1ebbe862ff8")
 		(property "Reference" "Q1"
@@ -5008,6 +5007,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "83bdd6f8-6853-4fc4-bae4-5f113254dbde")
 		)
@@ -5036,11 +5037,9 @@
 		(lib_id "power:+5V")
 		(at 59.69 242.57 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "e327f266-2130-49d2-9ac6-e3e44ff49102")
 		(property "Reference" "#PWR022"
@@ -5096,6 +5095,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "ff33e7cf-dd3b-49c7-8bf5-2387d36a9734")
 		)
@@ -5118,11 +5119,9 @@
 		(lib_id "Device:R")
 		(at 100.33 160.02 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "e4def4ad-72ca-441e-b296-86c3e3d7bc5e")
 		(property "Reference" "R3"
@@ -5210,6 +5209,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "1f02ff09-459c-4725-b9d3-aef786bc7345")
 		)
@@ -5235,11 +5236,9 @@
 		(lib_id "Device:R")
 		(at 100.33 110.49 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "eefc6dba-d449-4aa9-89b5-ec4efc41e428")
 		(property "Reference" "R2"
@@ -5327,6 +5326,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "2"
 			(uuid "19219076-7472-423e-8d70-70190969186e")
 		)
@@ -5352,11 +5353,9 @@
 		(lib_id "74xx:74AHCT125")
 		(at 59.69 209.55 0)
 		(unit 4)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "f06e42d4-d10b-4d8e-b7a9-4e7166656b60")
 		(property "Reference" "U4"
@@ -5411,6 +5410,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "3"
 			(uuid "ee08da72-d9a5-4f62-9615-b5bf32d9ebbe")
 		)
@@ -5472,11 +5473,9 @@
 		(lib_id "Transistor_FET:Q_NMOS_GDS")
 		(at 149.86 209.55 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "f1d2c5a1-f7bc-4309-9006-0d2170e2fa32")
 		(property "Reference" "Q4"
@@ -5566,6 +5565,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "3ef0f802-38c6-422f-8c29-91d3b9660e8e")
 		)
@@ -5594,11 +5595,9 @@
 		(lib_id "Device:R")
 		(at 119.38 121.92 0)
 		(unit 1)
-		(body_style 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
 		(dnp no)
 		(uuid "f5cd626d-4e94-4b53-9992-6e1bdd3ed40a")
 		(property "Reference" "R6"
@@ -5686,6 +5685,8 @@
 				)
 			)
 		)
+		(body_style 1)
+		(in_pos_files yes)
 		(pin "1"
 			(uuid "a2ec7dfa-efdf-40db-a280-23453e8b394e")
 		)
