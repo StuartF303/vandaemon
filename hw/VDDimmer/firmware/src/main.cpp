@@ -1,4 +1,4 @@
-// =============================================================================
+﻿// =============================================================================
 // VANDIMMER-4CH+2A firmware
 //
 // Board: hw/VDDimmer, Rev A, git tag `ordered-revA` (37c12ab).
@@ -134,7 +134,73 @@ void setup() {
     net_begin();
 }
 
+// ---------------------------------------------------------------------------
+// Serial console
+//
+// The board is MQTT-only once configured, so with no WiFi credentials there is
+// no way to drive it at all -- and on Rev A there is no way back into the
+// portal either, because BTN1 is the unrouted J11.1 pad and `forget-wifi`
+// needs the broker. USB is present on the bench regardless, so expose the few
+// commands that matter over it.
+//
+//   all <0-255>        every PWM channel
+//   ch <0-3> <0-255>   one channel
+//   off                all channels off
+//   bright <0-255>     status LED brightness
+//   portal             clear WiFi credentials and reboot into the portal
+//   ?                  this list
+// ---------------------------------------------------------------------------
+static void serialConsole() {
+    static char buf[48];
+    static uint8_t len = 0;
+
+    while (Serial.available()) {
+        char c = (char)Serial.read();
+        if (c == '\r') continue;
+        if (c != '\n') {
+            if (len < sizeof(buf) - 1) buf[len++] = c;
+            continue;
+        }
+        buf[len] = '\0';
+        len = 0;
+        if (buf[0] == '\0') continue;
+
+        unsigned a = 0, b = 0;
+        if (!strcmp(buf, "?")) {
+            Serial.println("[con] all <0-255> | ch <0-3> <0-255> | off | "
+                           "bright <0-255> | portal");
+        } else if (sscanf(buf, "all %u", &a) == 1) {
+            pwm_setAll((uint8_t)(a > 255 ? 255 : a));
+            s_allOff = false;
+            persistAndPublish();
+            Serial.printf("[con] all channels = %u\n", a > 255 ? 255 : a);
+        } else if (sscanf(buf, "ch %u %u", &a, &b) == 2 && a < PWM_CHANNELS) {
+            pwm_set((uint8_t)a, (uint8_t)(b > 255 ? 255 : b));
+            s_allOff = false;
+            persistAndPublish();
+            Serial.printf("[con] channel %u = %u\n", a, b > 255 ? 255 : b);
+        } else if (!strcmp(buf, "off")) {
+            pwm_allOff();
+            s_allOff = true;
+            persistAndPublish();
+            Serial.println("[con] all channels off");
+        } else if (sscanf(buf, "bright %u", &a) == 1) {
+            g_settings.statusBrightness = (uint8_t)(a > 255 ? 255 : a);
+            store_saveSettings();
+            Serial.printf("[con] status brightness = %u\n",
+                          g_settings.statusBrightness);
+        } else if (!strcmp(buf, "portal")) {
+            Serial.println("[con] clearing WiFi credentials, rebooting");
+            delay(100);
+            net_forgetWifiAndReboot();
+        } else {
+            Serial.printf("[con] ? unknown: '%s'\n", buf);
+        }
+    }
+}
+
 void loop() {
+    serialConsole();
     portal_tick();
     handleButton(buttons_poll());
     telemetry_tick();
