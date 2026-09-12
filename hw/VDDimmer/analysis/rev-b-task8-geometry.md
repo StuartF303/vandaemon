@@ -73,3 +73,34 @@ H1-H4 currently sit 4.5 mm in from each corner:
 
 Positions are reviewed again in Phase 4 against the real placement, and plane necks are
 measured at every hole before routing (Rev A pinched to 1.9 mm ~ 3.8 A at H2/H3).
+
+---
+
+# Prep for Task 10 — harness row, measured from the board
+
+Courtyard widths read from the live footprints with `pcbnew`, which differ slightly from
+the plan's figures (the plan quotes body widths measured off the fabricated board):
+
+| ref | footprint | plan | **measured** |
+|---|---|---:|---:|
+| J3-J6 | JST_XH_S2B-XH-A 1x02 horizontal | 8.40 | **8.49** each |
+| J7, J8 | JST_XH_S4B-XH-A 1x04 horizontal | 13.40 | **13.49** each |
+| J1 | USB_C_Receptacle_HRO_TYPE-C-31-M-12 | 10.64 | **10.73** (facing the bottom edge) |
+| J2 | PhoenixContact_MC_1,5_2-G-5.08 | 11.28 | **11.37** |
+
+Harness row total: 4(8.49) + 2(13.49) + 10.73 = **71.67 mm**, not the plan's 71.04.
+In 100 mm with 2 mm edge margins the six gaps get (96 - 71.67) / 6 = **4.06 mm** each,
+against the plan's 4.16. Still comfortable; use the measured number.
+
+**Conflict to resolve in Phase 4:** H4, the bottom-left mounting hole, is at (104.5,
+135.5) with a 5.90 mm keepout spanning x 101.55..107.45, y 132.55..138.45. A JST XH
+horizontal placed against the bottom edge has a 12.60 mm tall courtyard reaching y
+~127.4..140, so H4 as currently positioned **overlaps where J3 wants to sit**.
+
+Spec section 5's floorplan draws that hole above-left of J3, between J2's left-edge
+column and J3's harness-edge row - "it does that job without consuming harness-edge
+length". So H4 moves up and inboard rather than the harness row starting to its right.
+Resolve with `fpspace.py --courtyards` once J2 and J3 are placed.
+
+**J1 rotation:** currently -90 (left edge, Rev A). Facing the bottom harness edge it wants
+0 or 180, which makes its courtyard 10.73 wide x 9.51 tall rather than 9.51 x 10.73.
