@@ -22,7 +22,7 @@ Value,Footprint,Refs,Qty,MPN,LCSC,JLC_Library,Stock,Price_USD,Notes
 8A 250V,Fuse_2410_6125Metric,F1,1,BSMD2410C-1800T,C49305064,extended,8740,0.0684,"8 A per the 2026-08-29 decision. 250 V, 100 A interrupt, I2t 192. Replaces LUTE LTC2410-1800TSK (C54824501), which JLC refused to select for assembly: that part has no EasyEDA library data, so it is catalogue-only. KEEP 8 A - it must open below the 7.5 A blade fuse the spec requires upstream, so the 10 A parts are not substitutes"
 BL1117-33CX,SOT-223-3_TabPin2,U3,1,BL1117-33CX,C5400,extended,99728,0.06,CHANGED per 2026-08-29 decision - 2 mA Iq vs 5 mA. Update Value to 'BL1117-33CX'
 74HCT125,SOIC-14_3.9x8.7mm_P1.27mm,"U4,U5",2,"74HCT125D,653",C5962,extended,88003,0.2047,"Nexperia - the only SOIC-14 option at JLC. 160 uA Iq, 6 mA drive"
-ESP32-S3-WROOM-1U-N16,ESP32-S3-WROOM-1U,U1,1,ESP32-S3-WROOM-1U-N16,C2980298,extended,4667,5.0206,"355 mA TX / 95 mA RX - confirms U3 must carry ~350 mA, which is why no SOT-23 LDO can serve"
+ESP32-S3-WROOM-1-N16R8,ESP32-S3-WROOM-1,U1,1,ESP32-S3-WROOM-1-N16R8,C2913202,extended,37918,5.1394,"355 mA TX / 95 mA RX - confirms U3 must carry ~350 mA, which is why no SOT-23 LDO can serve"
 AP63301WU-7,TSOT-23-6,U2,1,AP63301WU-7,C2158003,extended,6114,0.8641,"3.8-32 V in, 3 A, 500 kHz, 22 uA Iq, spread-spectrum. Stock recovered from 417 at original selection"
 USBLC6-2SC6,SOT-23-6,D8,1,USBLC6-2SC6,C2687116,extended,103997,0.0475,UMW second source. Genuine ST is C7519 at $0.18 / 46k stock if preferred
 SS34,D_SMA,"D1,D2,D3,D4,D9",5,SS34,C8678,basic,4943085,0.0351,"40 V 3 A, Vf 550 mV @ 3 A"

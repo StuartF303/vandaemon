@@ -4812,7 +4812,7 @@
 				)
 			)
 		)
-		(property "Value" "ESP32-S3-WROOM-1U-N16"
+		(property "Value" "ESP32-S3-WROOM-1-N16R8"
 			(at 212.09 92.71 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4822,7 +4822,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RF_Module:ESP32-S3-WROOM-1U"
+		(property "Footprint" "RF_Module:ESP32-S3-WROOM-1"
 			(at 199.39 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -4865,7 +4865,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C2980298"
+		(property "LCSC" "C2913202"
 			(at 199.39 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -4876,7 +4876,7 @@
 				)
 			)
 		)
-		(property "MPN" "ESP32-S3-WROOM-1U-N16"
+		(property "MPN" "ESP32-S3-WROOM-1-N16R8"
 			(at 199.39 119.38 0)
 			(hide yes)
 			(show_name no)
