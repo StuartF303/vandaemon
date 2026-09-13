@@ -5057,7 +5057,7 @@
 				)
 			)
 		)
-		(property "Value" "M3"
+		(property "Value" "M2.5"
 			(at 90.17 247.015 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6077,7 +6077,7 @@
 				)
 			)
 		)
-		(property "Value" "M3"
+		(property "Value" "M2.5"
 			(at 64.77 247.015 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6844,7 +6844,7 @@
 				)
 			)
 		)
-		(property "Value" "M3"
+		(property "Value" "M2.5"
 			(at 39.37 247.015 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7510,7 +7510,7 @@
 				)
 			)
 		)
-		(property "Value" "M3"
+		(property "Value" "M2.5"
 			(at 115.57 247.015 0)
 			(show_name no)
 			(do_not_autoplace no)
