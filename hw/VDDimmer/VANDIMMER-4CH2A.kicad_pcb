@@ -2559,7 +2559,7 @@
 	(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "1eb14efb-ac49-4c4f-980b-bdad4e998554")
-		(at 111 129.5)
+		(at 105 129.5)
 		(descr "JST XH series connector, S2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf)")
 		(tags "connector JST XH horizontal")
 		(property "Reference" "J3"
@@ -2625,12 +2625,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/dae3f3a6-e6cd-4c36-907b-ac049300ee60")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -2.56 -2.41)
@@ -5859,7 +5853,7 @@
 	(footprint "Connector_JST:JST_XH_S4B-XH-A_1x04_P2.50mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "3cb70a8f-0e26-46fc-b6de-22ed0b43b959")
-		(at 156 129.5)
+		(at 155.18 129.5)
 		(descr "JST XH series connector, S4B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf)")
 		(tags "connector JST XH horizontal")
 		(property "Reference" "J7"
@@ -5925,12 +5919,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/81befcbf-aa32-41c8-8641-5c7ec89139d2")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -2.56 -2.41)
@@ -12336,11 +12324,11 @@
 	(footprint "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12"
 		(layer "F.Cu")
 		(uuid "96f23f23-9bec-4bc2-909e-5432b1a28632")
-		(at 103.65 112 -90)
+		(at 192.64 135.05)
 		(descr "USB Type-C receptacle for USB 2.0 and PD, http://www.krhro.com/uploads/soft/180320/1-1P320120243.pdf")
 		(tags "usb usb-c 2.0 pd")
 		(property "Reference" "J1"
-			(at 0 -5.645 270)
+			(at 0 -5.645 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "2dbdac76-8964-49db-92d9-9ac38ed07915")
@@ -12352,7 +12340,7 @@
 			)
 		)
 		(property "Value" "USB-C 16P"
-			(at 0 5.1 270)
+			(at 0 5.1 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(hide yes)
@@ -12365,7 +12353,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 90)
+			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "1a040389-5d7d-4f4d-900f-cbbe768a3ae1")
@@ -12376,7 +12364,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 0 0 90)
+			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "2677c4b6-db9c-4f10-bf53-41985cc8807a")
@@ -12387,7 +12375,7 @@
 			)
 		)
 		(property "Assembly" "MACHINE-PLACED. SMD (surface mount, right angle) so it belongs in the SMT assembly, unlike J2-J14 which are through-hole and correctly hand-fit. 16 pads at 0.5 mm pitch plus four shell legs is not sensibly hand-soldered"
-			(at 0 0 270)
+			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
@@ -12400,7 +12388,7 @@
 			)
 		)
 		(property "LCSC" "C165948"
-			(at 0 0 270)
+			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
@@ -12413,7 +12401,7 @@
 			)
 		)
 		(property "MPN" "TYPE-C-31-M-12"
-			(at 0 0 270)
+			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
@@ -12426,7 +12414,7 @@
 			)
 		)
 		(property "Manufacturer" "Korean Hroparts Elec"
-			(at 0 0 270)
+			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
@@ -12442,24 +12430,16 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/e43e82b9-32e5-4730-b0dd-c611f0f39b63")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "SH" "A1" "A12" "B1" "B12" "A4" "A9" "B4" "B9" "A5" "B5" "A7" "B7"
-					"A6" "B6" "A8" "B8"
-				)
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start -4.7 3.9)
-			(end 4.7 3.9)
+			(start -4.7 -1.9)
+			(end -4.7 0.1)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "e3e7a1ab-9586-484d-a92a-871fc49fdbe4")
+			(uuid "405d13a0-77ee-4043-b16f-9a4949ff6493")
 		)
 		(fp_line
 			(start -4.7 2)
@@ -12472,24 +12452,14 @@
 			(uuid "da5919b6-102b-4532-aca0-69aaedbebb43")
 		)
 		(fp_line
-			(start 4.7 2)
+			(start -4.7 3.9)
 			(end 4.7 3.9)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "f1a20136-afa5-41e5-8edb-f9c8c45d82cd")
-		)
-		(fp_line
-			(start -4.7 -1.9)
-			(end -4.7 0.1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "405d13a0-77ee-4043-b16f-9a4949ff6493")
+			(uuid "e3e7a1ab-9586-484d-a92a-871fc49fdbe4")
 		)
 		(fp_line
 			(start 4.7 -1.9)
@@ -12502,14 +12472,14 @@
 			(uuid "65ce364b-c142-445d-87cf-b53d28982294")
 		)
 		(fp_line
-			(start -5.32 4.15)
-			(end 5.32 4.15)
+			(start 4.7 2)
+			(end 4.7 3.9)
 			(stroke
-				(width 0.05)
+				(width 0.12)
 				(type solid)
 			)
-			(layer "F.CrtYd")
-			(uuid "bfea4bdd-6d48-4c1d-891e-bb8f50c8de3c")
+			(layer "F.SilkS")
+			(uuid "f1a20136-afa5-41e5-8edb-f9c8c45d82cd")
 		)
 		(fp_line
 			(start -5.32 -5.27)
@@ -12532,6 +12502,16 @@
 			(uuid "ed17a51e-c609-465d-bb49-5547a3a28def")
 		)
 		(fp_line
+			(start -5.32 4.15)
+			(end 5.32 4.15)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "bfea4bdd-6d48-4c1d-891e-bb8f50c8de3c")
+		)
+		(fp_line
 			(start 5.32 -5.27)
 			(end 5.32 4.15)
 			(stroke
@@ -12540,16 +12520,6 @@
 			)
 			(layer "F.CrtYd")
 			(uuid "b07d871c-230e-44e5-9b4d-54cb2f9b9cd5")
-		)
-		(fp_line
-			(start -4.47 3.65)
-			(end 4.47 3.65)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "90a7623f-e028-4966-840b-3a8084020cde")
 		)
 		(fp_line
 			(start -4.47 -3.65)
@@ -12572,6 +12542,16 @@
 			(uuid "93d870cb-9ba9-4685-b4d2-da7113a5ced0")
 		)
 		(fp_line
+			(start -4.47 3.65)
+			(end 4.47 3.65)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "90a7623f-e028-4966-840b-3a8084020cde")
+		)
+		(fp_line
 			(start 4.47 -3.65)
 			(end 4.47 3.65)
 			(stroke
@@ -12582,7 +12562,7 @@
 			(uuid "255754c6-29c9-4131-a2c3-32149fef0b8c")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 270)
+			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(uuid "8502cf67-8989-4916-b9e7-ec5a2ef16b72")
@@ -12594,21 +12574,21 @@
 			)
 		)
 		(pad "" np_thru_hole circle
-			(at -2.89 -2.6 270)
+			(at -2.89 -2.6)
 			(size 0.65 0.65)
 			(drill 0.65)
 			(layers "*.Cu" "*.Mask")
 			(uuid "03dc86e5-eee3-4d6a-8f26-c78622f5820d")
 		)
 		(pad "" np_thru_hole circle
-			(at 2.89 -2.6 270)
+			(at 2.89 -2.6)
 			(size 0.65 0.65)
 			(drill 0.65)
 			(layers "*.Cu" "*.Mask")
 			(uuid "2aef3f03-9d2f-428e-a709-74cd34ddc174")
 		)
 		(pad "A1" smd roundrect
-			(at -3.25 -4.045 270)
+			(at -3.25 -4.045)
 			(size 0.6 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12618,7 +12598,7 @@
 			(uuid "98ad278a-9e3e-436e-8a35-782c411fae56")
 		)
 		(pad "A4" smd roundrect
-			(at -2.45 -4.045 270)
+			(at -2.45 -4.045)
 			(size 0.6 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12628,7 +12608,7 @@
 			(uuid "79abe6c0-9ac2-4734-bf35-9054c9f2a989")
 		)
 		(pad "A5" smd roundrect
-			(at -1.25 -4.045 270)
+			(at -1.25 -4.045)
 			(size 0.3 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12638,7 +12618,7 @@
 			(uuid "da9a2d84-9796-4a00-94b3-d908253fa47f")
 		)
 		(pad "A6" smd roundrect
-			(at -0.25 -4.045 270)
+			(at -0.25 -4.045)
 			(size 0.3 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12648,7 +12628,7 @@
 			(uuid "ea80bc60-893b-455b-9d2b-9fa53f174b85")
 		)
 		(pad "A7" smd roundrect
-			(at 0.25 -4.045 270)
+			(at 0.25 -4.045)
 			(size 0.3 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12658,7 +12638,7 @@
 			(uuid "ba60949a-86c0-45c5-b507-acfba0806f9a")
 		)
 		(pad "A8" smd roundrect
-			(at 1.25 -4.045 270)
+			(at 1.25 -4.045)
 			(size 0.3 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12668,7 +12648,7 @@
 			(uuid "0d3ec5dc-d909-4e66-b7ec-7baa4d6ee818")
 		)
 		(pad "A9" smd roundrect
-			(at 2.45 -4.045 270)
+			(at 2.45 -4.045)
 			(size 0.6 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12678,7 +12658,7 @@
 			(uuid "ea53aa61-8eff-41b5-97c8-d2909a3eb9c7")
 		)
 		(pad "A12" smd roundrect
-			(at 3.25 -4.045 270)
+			(at 3.25 -4.045)
 			(size 0.6 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12688,7 +12668,7 @@
 			(uuid "b4e7a379-d884-4035-ad50-34baa8dc2db7")
 		)
 		(pad "B1" smd roundrect
-			(at 3.25 -4.045 270)
+			(at 3.25 -4.045)
 			(size 0.6 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12698,7 +12678,7 @@
 			(uuid "2bac64a9-772d-4982-9231-a064e03f5e51")
 		)
 		(pad "B4" smd roundrect
-			(at 2.45 -4.045 270)
+			(at 2.45 -4.045)
 			(size 0.6 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12708,7 +12688,7 @@
 			(uuid "13d25f64-2c51-493d-9b39-f9a7cef1fe66")
 		)
 		(pad "B5" smd roundrect
-			(at 1.75 -4.045 270)
+			(at 1.75 -4.045)
 			(size 0.3 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12718,7 +12698,7 @@
 			(uuid "de955e85-1a32-47c4-8de2-c9cbae768311")
 		)
 		(pad "B6" smd roundrect
-			(at 0.75 -4.045 270)
+			(at 0.75 -4.045)
 			(size 0.3 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12728,7 +12708,7 @@
 			(uuid "e4bac7d8-6e68-46f3-a116-7024ef69d3ad")
 		)
 		(pad "B7" smd roundrect
-			(at -0.75 -4.045 270)
+			(at -0.75 -4.045)
 			(size 0.3 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12738,7 +12718,7 @@
 			(uuid "7c5519a9-dbe2-461e-90b8-b9fb6b5b3576")
 		)
 		(pad "B8" smd roundrect
-			(at -1.75 -4.045 270)
+			(at -1.75 -4.045)
 			(size 0.3 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12748,7 +12728,7 @@
 			(uuid "fe7558a3-756d-4df1-a9f9-215e06c41c73")
 		)
 		(pad "B9" smd roundrect
-			(at -2.45 -4.045 270)
+			(at -2.45 -4.045)
 			(size 0.6 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12758,7 +12738,7 @@
 			(uuid "e80a7509-4634-4bbb-ad02-247663d89289")
 		)
 		(pad "B12" smd roundrect
-			(at -3.25 -4.045 270)
+			(at -3.25 -4.045)
 			(size 0.6 1.45)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
@@ -12768,7 +12748,7 @@
 			(uuid "e5c3804c-04d0-412a-b534-1715cb7f1343")
 		)
 		(pad "SH" thru_hole oval
-			(at -4.32 -3.13 270)
+			(at -4.32 -3.13)
 			(size 1 2.1)
 			(drill oval 0.6 1.7)
 			(layers "*.Cu" "*.Mask")
@@ -12779,7 +12759,7 @@
 			(uuid "69eeba71-d01e-4417-a605-26696ece1c65")
 		)
 		(pad "SH" thru_hole oval
-			(at -4.32 1.05 270)
+			(at -4.32 1.05)
 			(size 1 1.6)
 			(drill oval 0.6 1.2)
 			(layers "*.Cu" "*.Mask")
@@ -12790,7 +12770,7 @@
 			(uuid "c9118196-649a-46b3-ad5e-893d9e54305f")
 		)
 		(pad "SH" thru_hole oval
-			(at 4.32 -3.13 270)
+			(at 4.32 -3.13)
 			(size 1 2.1)
 			(drill oval 0.6 1.7)
 			(layers "*.Cu" "*.Mask")
@@ -12801,7 +12781,7 @@
 			(uuid "ba49c371-bab3-44da-816d-7ef9e9ca81c8")
 		)
 		(pad "SH" thru_hole oval
-			(at 4.32 1.05 270)
+			(at 4.32 1.05)
 			(size 1 1.6)
 			(drill oval 0.6 1.2)
 			(layers "*.Cu" "*.Mask")
@@ -13235,7 +13215,7 @@
 	(footprint "Connector_JST:JST_XH_S4B-XH-A_1x04_P2.50mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "9bbea298-a26a-465f-8416-f8f845b2e97e")
-		(at 172 129.5)
+		(at 172.73 129.5)
 		(descr "JST XH series connector, S4B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf)")
 		(tags "connector JST XH horizontal")
 		(property "Reference" "J8"
@@ -13301,12 +13281,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/e6a786e2-4922-4aba-8ac1-0f87cdc96159")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -2.56 -2.41)
@@ -13686,7 +13660,7 @@
 	(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "a0c59736-c340-471d-a311-44cc20d62260")
-		(at 144 129.5)
+		(at 142.64 129.5)
 		(descr "JST XH series connector, S2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf)")
 		(tags "connector JST XH horizontal")
 		(property "Reference" "J6"
@@ -13752,12 +13726,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/340c4848-3d59-45c2-9561-ba0c18c9b092")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -2.56 -2.41)
@@ -14969,7 +14937,7 @@
 	(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "ac6f80ee-cc2b-4451-a9db-f07aebe0bb73")
-		(at 122 129.5)
+		(at 117.55 129.5)
 		(descr "JST XH series connector, S2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf)")
 		(tags "connector JST XH horizontal")
 		(property "Reference" "J4"
@@ -15035,12 +15003,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/0e2c8041-7b09-4c6f-a79d-ad1e8391641c")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -2.56 -2.41)
@@ -23398,7 +23360,7 @@
 	(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal"
 		(layer "F.Cu")
 		(uuid "f43aedfb-a724-4c6b-8d33-8f406fa445e5")
-		(at 133 129.5)
+		(at 130.09 129.5)
 		(descr "JST XH series connector, S2B-XH-A (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf)")
 		(tags "connector JST XH horizontal")
 		(property "Reference" "J5"
@@ -23464,12 +23426,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/b7439257-bf6f-433d-b1dd-38d53a8cfcd2")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -2.56 -2.41)
@@ -26127,14 +26083,6 @@
 		(uuid "3273e56f-f25d-4767-b7b1-83d71ae153e9")
 	)
 	(via
-		(at 117.75 128.553)
-		(size 0.8)
-		(drill 0.4)
-		(layers "F.Cu" "B.Cu")
-		(net "GND")
-		(uuid "3284c4fd-5d2a-45a5-a311-052bf40b04c6")
-	)
-	(via
 		(at 136.678 100.482)
 		(size 0.8)
 		(drill 0.4)
@@ -28269,6 +28217,14 @@
 		(layer "F.Cu")
 		(net "/PWM/DRAIN2")
 		(uuid "e89c64d8-d29c-4bfa-a2aa-1618317efb10")
+	)
+	(via
+		(at 117.75 128.553)
+		(size 0.8)
+		(drill 0.4)
+		(layers "F.Cu" "B.Cu")
+		(net "/PWM/DRAIN2")
+		(uuid "3284c4fd-5d2a-45a5-a311-052bf40b04c6")
 	)
 	(segment
 		(start 134.13 90.75)
