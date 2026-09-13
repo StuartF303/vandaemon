@@ -86,7 +86,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "0252a31f-c65b-4e25-88ad-4fab231315e9")
-		(at 194 110)
+		(at 188 122.1)
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J10"
@@ -152,12 +152,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/09fce5a7-a4d3-4853-bf78-60a9bcde26d0")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.38 -1.38)
@@ -341,7 +335,7 @@
 	(footprint "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm"
 		(layer "F.Cu")
 		(uuid "060e0f51-41ea-4a9d-b2fb-8dfbd08b17e6")
-		(at 185 112)
+		(at 132 61)
 		(descr "5.0mm x 5.0mm Addressable RGB LED NeoPixel, https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf")
 		(tags "LED RGB NeoPixel PLCC-4 5050")
 		(property "Reference" "D7"
@@ -447,19 +441,13 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/b7db5649-0622-442a-b666-36f1bd9fbd90")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "4" "1" "3" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.5 -2.75)
 			(end -3.5 2.75)
 			(stroke
 				(width 0.12)
-				(type default)
+				(type solid)
 			)
 			(layer "F.SilkS")
 			(uuid "59897839-0b92-4e65-b0cb-18db5f753939")
@@ -489,7 +477,7 @@
 			(end -2.7 -0.9)
 			(stroke
 				(width 0.12)
-				(type default)
+				(type solid)
 			)
 			(layer "F.SilkS")
 			(uuid "8d7a6d0c-8ad5-4115-a413-c1f75a6c5011")
@@ -499,7 +487,7 @@
 			(end 2.7 -0.9)
 			(stroke
 				(width 0.12)
-				(type default)
+				(type solid)
 			)
 			(layer "F.SilkS")
 			(uuid "4306c467-b7d4-4a71-bfee-e226c37b9948")
@@ -509,7 +497,7 @@
 			(end 3.5 2.3)
 			(stroke
 				(width 0.12)
-				(type default)
+				(type solid)
 			)
 			(layer "F.SilkS")
 			(uuid "916d8eaf-f0a4-4f75-bd1f-eb20b5086714")
@@ -519,7 +507,7 @@
 			(end 3.5 -2.75)
 			(stroke
 				(width 0.12)
-				(type default)
+				(type solid)
 			)
 			(layer "F.SilkS")
 			(uuid "584690c1-c53c-43c3-9326-f7308e54abce")
@@ -1827,7 +1815,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "15d587dc-8191-4dd4-8d83-00072cbb450c")
-		(at 156 95)
+		(at 176 80)
 		(descr "Through hole straight pin header, 1x06, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x06 2.54mm single row")
 		(property "Reference" "J13"
@@ -1893,12 +1881,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/23bc4e5b-78d8-4704-ab32-badbb9fc07a4")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.38 -1.38)
@@ -2115,7 +2097,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "16bc7a8c-cfb3-4e87-a5c3-f959882ab157")
-		(at 103.5 119.5)
+		(at 112 60)
 		(descr "Through hole straight pin header, 1x02, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x02 2.54mm single row")
 		(property "Reference" "J11"
@@ -2181,12 +2163,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/e85fc623-f92e-4903-b3ec-68bcb03e3a04")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.38 -1.38)
@@ -8642,7 +8618,7 @@
 	(footprint "Resistor_SMD:R_1812_4532Metric"
 		(layer "F.Cu")
 		(uuid "5f38f068-bc93-4d53-a646-d4f22576e4c7")
-		(at 188.5 126 180)
+		(at 180 120 180)
 		(descr "Resistor SMD 1812 (4532 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: https://www.nikhef.nl/pub/departments/mt/projects/detectorR_D/dtddice/ERJ2G.pdf)")
 		(tags "resistor")
 		(property "Reference" "PF2"
@@ -8747,12 +8723,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/2223eda1-3d0d-4865-a4da-5dbfe8cd1a21")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.386252 1.71)
@@ -9036,7 +9006,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "649e74ea-a342-4ead-9cc3-5705ec0f6cf1")
-		(at 194 100)
+		(at 188 112.6)
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J9"
@@ -9102,12 +9072,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/942486e4-2c8e-49d8-b1e1-48dc6b790a7d")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.38 -1.38)
@@ -10404,11 +10368,11 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "7b7d6a81-8509-4a23-9ee6-354ea20ac36e")
-		(at 108 100 90)
+		(at 176 98)
 		(descr "Through hole straight pin header, 1x04, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x04 2.54mm single row")
 		(property "Reference" "J14"
-			(at 0 -2.38 90)
+			(at 0 -2.38 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "d76347b6-26c2-49fc-b04d-3d52e8d86588")
@@ -10420,7 +10384,7 @@
 			)
 		)
 		(property "Value" "UART1 3V3/GND/TX/RX"
-			(at 0 10 90)
+			(at 0 10 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(hide yes)
@@ -10433,7 +10397,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ef355e33-a1a1-4f43-a33a-d7bb82fb569b")
@@ -10444,7 +10408,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "6f429a38-e678-4810-976b-257211347f3d")
@@ -10455,7 +10419,7 @@
 			)
 		)
 		(property "KiLib_Generator" "connector/pin_header_socket"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "ead2fae8-5572-4d7c-9f29-a2200fc4661a")
@@ -10470,12 +10434,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/cabad7cb-4733-487b-aaba-e6469f4c3803")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.38 -1.38)
@@ -10498,14 +10456,14 @@
 			(uuid "ea5409e5-e784-4644-b1b9-9d368b160080")
 		)
 		(fp_line
-			(start 1.38 1.27)
-			(end 1.38 9)
+			(start -1.38 1.27)
+			(end -1.38 9)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "a8d68525-4b36-43fa-80f0-f3f620f38798")
+			(uuid "631bce89-022a-460f-a337-ca1330afa5e6")
 		)
 		(fp_line
 			(start -1.38 1.27)
@@ -10518,16 +10476,6 @@
 			(uuid "bacfe4e5-750b-4281-b802-b35d9b3dfbe9")
 		)
 		(fp_line
-			(start -1.38 1.27)
-			(end -1.38 9)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "631bce89-022a-460f-a337-ca1330afa5e6")
-		)
-		(fp_line
 			(start -1.38 9)
 			(end 1.38 9)
 			(stroke
@@ -10536,6 +10484,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "8ccc4e5b-e402-44b0-830d-f45334b0198a")
+		)
+		(fp_line
+			(start 1.38 1.27)
+			(end 1.38 9)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "a8d68525-4b36-43fa-80f0-f3f620f38798")
 		)
 		(fp_rect
 			(start -1.77 -1.77)
@@ -10549,14 +10507,24 @@
 			(uuid "5f7d26c8-1d0a-4157-98e6-7b785e4922d1")
 		)
 		(fp_line
-			(start 1.27 -1.27)
-			(end 1.27 8.89)
+			(start -1.27 -0.635)
+			(end -0.635 -1.27)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "a496b379-f67f-4d0c-83f9-1518720ee1c7")
+			(uuid "d29dd051-1522-40c2-8f89-47a296caca42")
+		)
+		(fp_line
+			(start -1.27 8.89)
+			(end -1.27 -0.635)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "881d3423-4c47-449c-b5b9-047f261f3ec3")
 		)
 		(fp_line
 			(start -0.635 -1.27)
@@ -10569,14 +10537,14 @@
 			(uuid "bd2cc307-c658-48b7-9d1f-c7d0c55540f2")
 		)
 		(fp_line
-			(start -1.27 -0.635)
-			(end -0.635 -1.27)
+			(start 1.27 -1.27)
+			(end 1.27 8.89)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "d29dd051-1522-40c2-8f89-47a296caca42")
+			(uuid "a496b379-f67f-4d0c-83f9-1518720ee1c7")
 		)
 		(fp_line
 			(start 1.27 8.89)
@@ -10588,18 +10556,8 @@
 			(layer "F.Fab")
 			(uuid "0c4adc2c-4c42-48dd-93be-6cb6aad004d8")
 		)
-		(fp_line
-			(start -1.27 8.89)
-			(end -1.27 -0.635)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "881d3423-4c47-449c-b5b9-047f261f3ec3")
-		)
 		(fp_text user "${REFERENCE}"
-			(at 0 3.81 180)
+			(at 0 3.81 90)
 			(unlocked yes)
 			(layer "F.Fab")
 			(uuid "30c5cf52-625c-4c1a-ac5d-c190810237f0")
@@ -10611,7 +10569,7 @@
 			)
 		)
 		(pad "1" thru_hole rect
-			(at 0 0 90)
+			(at 0 0)
 			(size 1.7 1.7)
 			(drill 1)
 			(layers "*.Cu" "*.Mask")
@@ -10622,7 +10580,7 @@
 			(uuid "58260451-dd77-48b7-b89b-ec295dd6f7bc")
 		)
 		(pad "2" thru_hole circle
-			(at 0 2.54 90)
+			(at 0 2.54)
 			(size 1.7 1.7)
 			(drill 1)
 			(layers "*.Cu" "*.Mask")
@@ -10633,7 +10591,7 @@
 			(uuid "9970e998-5494-4dd7-9d92-d37acc12f0ad")
 		)
 		(pad "3" thru_hole circle
-			(at 0 5.08 90)
+			(at 0 5.08)
 			(size 1.7 1.7)
 			(drill 1)
 			(layers "*.Cu" "*.Mask")
@@ -10644,7 +10602,7 @@
 			(uuid "669485fb-b700-4682-a1c1-595e349662a9")
 		)
 		(pad "4" thru_hole circle
-			(at 0 7.62 90)
+			(at 0 7.62)
 			(size 1.7 1.7)
 			(drill 1)
 			(layers "*.Cu" "*.Mask")
@@ -11680,7 +11638,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "844d6695-70cb-4c25-ac84-d31bcc02da0f")
-		(at 103.5 126.6)
+		(at 119 60)
 		(descr "Through hole straight pin header, 1x02, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x02 2.54mm single row")
 		(property "Reference" "J12"
@@ -11746,12 +11704,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/f4bc9f73-2b2d-4009-91b8-b12d0b715bdc")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.38 -1.38)
@@ -16136,7 +16088,7 @@
 	(footprint "Resistor_SMD:R_1812_4532Metric"
 		(layer "F.Cu")
 		(uuid "b5416b7a-1e58-4862-8c84-985abaff4b97")
-		(at 188.5 120 180)
+		(at 180 113 180)
 		(descr "Resistor SMD 1812 (4532 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: https://www.nikhef.nl/pub/departments/mt/projects/detectorR_D/dtddice/ERJ2G.pdf)")
 		(tags "resistor")
 		(property "Reference" "PF1"
@@ -16241,12 +16193,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/010024e5-9848-4cb9-a65f-7ae11000f01c")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.386252 1.71)
@@ -25355,6 +25301,14 @@
 		(uuid "18d52de2-5e78-4108-a70e-a5bade7087c8")
 	)
 	(via
+		(at 188.45 113.65)
+		(size 0.8)
+		(drill 0.4)
+		(layers "F.Cu" "B.Cu")
+		(net "VIN_PROT")
+		(uuid "21f87f4e-66ea-436a-a561-5701ea735f1a")
+	)
+	(via
 		(at 119.15 92.453)
 		(size 0.8)
 		(drill 0.4)
@@ -25483,6 +25437,14 @@
 		(uuid "0907f0d0-35ab-485e-9797-e4761af9fd19")
 	)
 	(segment
+		(start 113.08 96.6)
+		(end 113.08 99.15)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "+5V")
+		(uuid "0ff49aa2-c9a5-4a11-b19c-58713b7bd789")
+	)
+	(segment
 		(start 191.025 79)
 		(end 196.5 79)
 		(width 1.5)
@@ -25497,6 +25459,14 @@
 		(layer "F.Cu")
 		(net "+5V")
 		(uuid "29ed422d-3926-43df-be36-7122a69e2579")
+	)
+	(segment
+		(start 137.94 90.75)
+		(end 137.94 96.6)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "+5V")
+		(uuid "4618bb75-1b7d-41d6-8c1c-46dcced63980")
 	)
 	(segment
 		(start 182.05 90.3)
@@ -25537,6 +25507,14 @@
 		(layer "F.Cu")
 		(net "+5V")
 		(uuid "a1422003-66e4-496c-a166-2caa34117edf")
+	)
+	(segment
+		(start 137.94 96.6)
+		(end 113.08 96.6)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "+5V")
+		(uuid "dae23759-d4b7-4cbd-9ddc-d76dc5306314")
 	)
 	(segment
 		(start 191.025 71.5)
@@ -25651,6 +25629,14 @@
 		(uuid "34424e6a-bd57-4bc6-8f12-a83f6615aff9")
 	)
 	(segment
+		(start 130.5 69)
+		(end 134.85 69)
+		(width 3)
+		(layer "F.Cu")
+		(net "GND")
+		(uuid "34d44656-19f9-4c03-bec3-78a6c080f964")
+	)
+	(segment
 		(start 184.3 93.5)
 		(end 184.95 93.5)
 		(width 0.4)
@@ -25707,6 +25693,14 @@
 		(uuid "85a61706-4058-4363-9050-06457f826190")
 	)
 	(segment
+		(start 132 69)
+		(end 132 64.5)
+		(width 3)
+		(layer "F.Cu")
+		(net "GND")
+		(uuid "8ac756d3-02eb-48d8-8f67-c3642776abca")
+	)
+	(segment
 		(start 111.275 103)
 		(end 111.912 103)
 		(width 0.4)
@@ -25723,6 +25717,14 @@
 		(uuid "8eaace93-a793-4f99-ad47-c6219c3117c8")
 	)
 	(segment
+		(start 132 64.5)
+		(end 147 64.5)
+		(width 3)
+		(layer "F.Cu")
+		(net "GND")
+		(uuid "960c4cc6-8f85-457c-966b-a0796f360aef")
+	)
+	(segment
 		(start 145.786 125.6)
 		(end 145.786 127)
 		(width 0.25)
@@ -25737,6 +25739,14 @@
 		(layer "F.Cu")
 		(net "GND")
 		(uuid "9a8ddaee-f813-4371-b819-e8d21c308e5c")
+	)
+	(segment
+		(start 147 64.5)
+		(end 147 68.5)
+		(width 3)
+		(layer "F.Cu")
+		(net "GND")
+		(uuid "a3bf4234-bfd6-4505-b379-3140028b2f04")
 	)
 	(segment
 		(start 185.3 105)
@@ -25969,14 +25979,6 @@
 		(layers "F.Cu" "B.Cu")
 		(net "GND")
 		(uuid "21bc4e96-def2-46be-ac0c-3f80ba951208")
-	)
-	(via
-		(at 188.45 113.65)
-		(size 0.8)
-		(drill 0.4)
-		(layers "F.Cu" "B.Cu")
-		(net "GND")
-		(uuid "21f87f4e-66ea-436a-a561-5701ea735f1a")
 	)
 	(via
 		(at 126.234 106.966)
@@ -26329,14 +26331,6 @@
 		(layers "F.Cu" "B.Cu")
 		(net "GND")
 		(uuid "745ca2cc-5018-4436-8c31-224bbb0573e1")
-	)
-	(via
-		(at 104.5 129.139999)
-		(size 0.8)
-		(drill 0.4)
-		(layers "F.Cu" "B.Cu")
-		(net "GND")
-		(uuid "757bd99c-7680-4834-ae2c-7acf25973d1c")
 	)
 	(via
 		(at 188.1 94.8)
@@ -26979,6 +26973,14 @@
 		(uuid "b9187877-600c-4075-86f5-b841df72c59b")
 	)
 	(segment
+		(start 148.1 90.75)
+		(end 148.1 104)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "/Power/QREV_G")
+		(uuid "31f8e9c9-6cd9-4973-abc0-d72ece035834")
+	)
+	(segment
 		(start 142.96 67.72)
 		(end 145 67.72)
 		(width 0.25)
@@ -27001,6 +27003,14 @@
 		(layer "F.Cu")
 		(net "/Power/QREV_G")
 		(uuid "5f4eced6-187b-4275-84d1-bedb30cf9c76")
+	)
+	(segment
+		(start 151.6 107.7)
+		(end 155.15 107.7)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "/Power/QREV_G")
+		(uuid "92ea4114-ce74-4521-9e8c-d87d7d803ef0")
 	)
 	(segment
 		(start 145 67.72)
@@ -27033,6 +27043,38 @@
 		(layer "F.Cu")
 		(net "/Power/QREV_G")
 		(uuid "f4053e4c-6503-45b5-b15e-66901a0b383c")
+	)
+	(via
+		(at 151.6 107.7)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(net "/Power/QREV_G")
+		(uuid "472fe84f-c6c7-41da-8fba-605994824b05")
+	)
+	(via
+		(at 148.1 104)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(net "/Power/QREV_G")
+		(uuid "f38b6797-8e4d-4bcd-a8b9-d50fc1c31252")
+	)
+	(segment
+		(start 151.6 104)
+		(end 151.6 107.7)
+		(width 0.25)
+		(layer "B.Cu")
+		(net "/Power/QREV_G")
+		(uuid "2c9164d4-827f-4f08-b4e1-6bc753a674fc")
+	)
+	(segment
+		(start 148.1 104)
+		(end 151.6 104)
+		(width 0.25)
+		(layer "B.Cu")
+		(net "/Power/QREV_G")
+		(uuid "2dc3f5f9-7a1b-4b76-aef8-1f3bcf3ada93")
 	)
 	(segment
 		(start 108.75 105.6)
@@ -27627,60 +27669,12 @@
 		(uuid "62e7fb13-dd43-4b2c-8678-34be83f8b158")
 	)
 	(segment
-		(start 148.1 90.75)
-		(end 148.1 104)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/MCU/BOOT_IO0")
-		(uuid "31f8e9c9-6cd9-4973-abc0-d72ece035834")
-	)
-	(segment
-		(start 151.6 107.7)
-		(end 155.15 107.7)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/MCU/BOOT_IO0")
-		(uuid "92ea4114-ce74-4521-9e8c-d87d7d803ef0")
-	)
-	(segment
 		(start 182.05 96.5)
 		(end 182.05 94.2)
 		(width 0.5)
 		(layer "F.Cu")
 		(net "/MCU/BOOT_IO0")
 		(uuid "dd122b21-d5a9-4728-82ac-ce0e1b6ea175")
-	)
-	(via
-		(at 151.6 107.7)
-		(size 0.6)
-		(drill 0.3)
-		(layers "F.Cu" "B.Cu")
-		(net "/MCU/BOOT_IO0")
-		(uuid "472fe84f-c6c7-41da-8fba-605994824b05")
-	)
-	(via
-		(at 148.1 104)
-		(size 0.6)
-		(drill 0.3)
-		(layers "F.Cu" "B.Cu")
-		(net "/MCU/BOOT_IO0")
-		(uuid "f38b6797-8e4d-4bcd-a8b9-d50fc1c31252")
-	)
-	(segment
-		(start 151.6 104)
-		(end 151.6 107.7)
-		(width 0.25)
-		(layer "B.Cu")
-		(net "/MCU/BOOT_IO0")
-		(uuid "2c9164d4-827f-4f08-b4e1-6bc753a674fc")
-	)
-	(segment
-		(start 148.1 104)
-		(end 151.6 104)
-		(width 0.25)
-		(layer "B.Cu")
-		(net "/MCU/BOOT_IO0")
-		(uuid "2dc3f5f9-7a1b-4b76-aef8-1f3bcf3ada93")
 	)
 	(segment
 		(start 122.912 97.9)
@@ -27777,6 +27771,14 @@
 		(layer "F.Cu")
 		(net "/PWM/DRAIN1")
 		(uuid "a0126da6-ee48-4d2b-bfbd-8058391f0f36")
+	)
+	(via
+		(at 104.5 129.139999)
+		(size 0.8)
+		(drill 0.4)
+		(layers "F.Cu" "B.Cu")
+		(net "/PWM/DRAIN1")
+		(uuid "757bd99c-7680-4834-ae2c-7acf25973d1c")
 	)
 	(segment
 		(start 173.45 74)
@@ -28081,38 +28083,6 @@
 		(layer "F.Cu")
 		(net "/Power/VIN_RAW")
 		(uuid "72411a4e-c8c1-4ce2-b5e4-87dd21697b76")
-	)
-	(segment
-		(start 130.5 69)
-		(end 134.85 69)
-		(width 3)
-		(layer "F.Cu")
-		(net "/Power/VIN_FUSED")
-		(uuid "34d44656-19f9-4c03-bec3-78a6c080f964")
-	)
-	(segment
-		(start 132 69)
-		(end 132 64.5)
-		(width 3)
-		(layer "F.Cu")
-		(net "/Power/VIN_FUSED")
-		(uuid "8ac756d3-02eb-48d8-8f67-c3642776abca")
-	)
-	(segment
-		(start 132 64.5)
-		(end 147 64.5)
-		(width 3)
-		(layer "F.Cu")
-		(net "/Power/VIN_FUSED")
-		(uuid "960c4cc6-8f85-457c-966b-a0796f360aef")
-	)
-	(segment
-		(start 147 64.5)
-		(end 147 68.5)
-		(width 3)
-		(layer "F.Cu")
-		(net "/Power/VIN_FUSED")
-		(uuid "a3bf4234-bfd6-4505-b379-3140028b2f04")
 	)
 	(via
 		(at 132.154 106.892)
@@ -28593,30 +28563,6 @@
 		(layer "B.Cu")
 		(net "/MCU/USB_CC2")
 		(uuid "22a226e8-fb50-418b-bbea-519e4e020e9b")
-	)
-	(segment
-		(start 113.08 96.6)
-		(end 113.08 99.15)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/MCU/UART1_TX")
-		(uuid "0ff49aa2-c9a5-4a11-b19c-58713b7bd789")
-	)
-	(segment
-		(start 137.94 90.75)
-		(end 137.94 96.6)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/MCU/UART1_TX")
-		(uuid "4618bb75-1b7d-41d6-8c1c-46dcced63980")
-	)
-	(segment
-		(start 137.94 96.6)
-		(end 113.08 96.6)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/MCU/UART1_TX")
-		(uuid "dae23759-d4b7-4cbd-9ddc-d76dc5306314")
 	)
 	(segment
 		(start 115.62 97.2)
