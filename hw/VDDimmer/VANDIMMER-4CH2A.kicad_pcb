@@ -86,7 +86,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "0252a31f-c65b-4e25-88ad-4fab231315e9")
-		(at 188 122.1)
+		(at 186 122.1)
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J10"
@@ -693,7 +693,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "089ab476-0fe5-4ce8-a154-e5b5ba2e1548")
-		(at 164 111)
+		(at 158 102.5)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C51"
@@ -798,12 +798,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/7d4a3746-e805-46a5-8baf-5f0db8114c9b")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -1215,7 +1209,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "110e4bf2-1441-41b4-ae45-1630f10db992")
-		(at 114 103)
+		(at 191 124)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R41"
@@ -1320,12 +1314,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/f10e8428-f28f-4751-9ff4-fb226b781726")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -1415,7 +1403,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "136b933a-f0fd-4f78-8903-e42af1f7c5b6")
-		(at 152 88)
+		(at 160 66)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R28"
@@ -1520,12 +1508,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/2627f2c3-b901-4ca2-8da4-361e2c897ca2")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -1615,7 +1597,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "159af2a3-ac90-41af-ac25-5a7faa1d143a")
-		(at 110.973 125.6)
+		(at 120.65 124.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R5"
@@ -1720,12 +1702,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/af7da9dd-d6b1-4395-b083-9b868bd0c555")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -2335,7 +2311,7 @@
 	(footprint "Capacitor_SMD:C_1210_3225Metric"
 		(layer "F.Cu")
 		(uuid "1a29fe18-6a88-459a-871b-f876ec99b565")
-		(at 194.5 120)
+		(at 194 112)
 		(descr "Capacitor SMD 1210 (3225 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C63"
@@ -2440,12 +2416,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/0ef36de5-f711-47c5-9e37-3c6e0403d59c")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.711252 -1.36)
@@ -2936,7 +2906,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "1ee0952e-2c81-4d8c-8ab0-fbe4a9fe87fc")
-		(at 174.2 63.5)
+		(at 150 66)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R24"
@@ -3041,12 +3011,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/3c94cacb-ce4a-49ff-9495-b02b1d61c708")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -3136,7 +3100,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "219ca9c7-e148-4c23-a786-2e8534a9514d")
-		(at 176 105)
+		(at 166 122.5)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C60"
@@ -3241,12 +3205,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/a117970b-5ceb-4478-aba7-f6bd48e01e2b")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -3336,7 +3294,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "276b9734-5b74-4a9e-9ab4-1844aa0ccc8d")
-		(at 126.5 99)
+		(at 170 75)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C41"
@@ -3441,12 +3399,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/5b0f1afb-e902-446c-b976-6bfe0c14e644")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -4132,7 +4084,7 @@
 	(footprint "Diode_SMD:D_SMA"
 		(layer "F.Cu")
 		(uuid "2d94f69e-945c-473d-84db-624310016d7d")
-		(at 120 106.5)
+		(at 141 95)
 		(descr "Diode SMA (DO-214AC)")
 		(tags "Diode SMA (DO-214AC)")
 		(property "Reference" "D9"
@@ -4225,12 +4177,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/829d68b4-fd79-436a-8b4e-7781e836adca")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.51 -1.65)
@@ -4450,7 +4396,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "37800e45-4b35-49fe-884f-cfd173b9e7a2")
-		(at 122 99)
+		(at 165 85)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R43"
@@ -4555,12 +4501,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/c8b6f293-b22b-4fa5-9933-8de21481a120")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -4650,7 +4590,7 @@
 	(footprint "VANDIMMER:L_cjiang_FXL0630_7.0x6.6mm"
 		(layer "F.Cu")
 		(uuid "39089b7c-7f7b-4b95-93d6-1c6f7c06c9f3")
-		(at 158 66.5)
+		(at 160 72)
 		(descr "Molded shielded power inductor, cjiang FXL0630 series, 7.0x6.6x3.0mm")
 		(property "Reference" "L3"
 			(at 0 -4.25 0)
@@ -4752,12 +4692,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/05ce3538-64fd-4cbc-a934-1d1058dab9f7")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
@@ -4830,7 +4764,7 @@
 	(footprint "Package_TO_SOT_SMD:TO-252-3_TabPin2"
 		(layer "F.Cu")
 		(uuid "391a4587-5142-42e2-9bde-eb17138bb11d")
-		(at 124.3 121)
+		(at 126.3 118.5)
 		(descr "TO-252/DPAK SMD package, http://www.infineon.com/cms/en/product/packages/PG-TO252/PG-TO252-3-1/")
 		(tags "DPAK TO-252 DPAK-3 TO-252-3 SOT-428")
 		(property "Reference" "Q2"
@@ -4934,12 +4868,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/326269db-6b7e-4e9f-b24c-9835f0f7c0ba")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.31 -3.45)
@@ -5232,7 +5160,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "393d15c5-ac1b-4b63-8da0-e2cd15c1c9c0")
-		(at 172 90)
+		(at 150 76)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C34"
@@ -5337,12 +5265,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/7afd0900-58c8-4a81-bb98-2d02b22cb8bb")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -5432,7 +5354,7 @@
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "3a4ed0f3-e158-49f2-9630-cb85c6b2a26b")
-		(at 106 96)
+		(at 170 90)
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing)")
 		(tags "capacitor")
 		(property "Reference" "C44"
@@ -5537,12 +5459,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/782a0703-4940-49a3-a204-b492bd8ad841")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.261252 -0.735)
@@ -5632,7 +5548,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "3ca02c8a-2155-4843-97fd-f2293495fcd2")
-		(at 161 100 180)
+		(at 170 95 180)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R45"
@@ -5734,12 +5650,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/ec04fb75-f322-4963-ab9b-05e527d78030")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6274,7 +6184,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "3e80b84a-eeb6-4c32-b7ad-2717fcac7bae")
-		(at 125.2 106)
+		(at 170 85)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C43"
@@ -6379,12 +6289,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/8e094406-863c-4a39-9931-7d90e08b8711")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -6474,7 +6378,7 @@
 	(footprint "Package_TO_SOT_SMD:TO-252-3_TabPin2"
 		(layer "F.Cu")
 		(uuid "46585867-7bd1-4347-8fcf-0f832b79ccf0")
-		(at 113 121)
+		(at 115 118.5)
 		(descr "TO-252/DPAK SMD package, http://www.infineon.com/cms/en/product/packages/PG-TO252/PG-TO252-3-1/")
 		(tags "DPAK TO-252 DPAK-3 TO-252-3 SOT-428")
 		(property "Reference" "Q1"
@@ -6591,12 +6495,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/e218b37f-9e57-4c7c-bc8b-c1ebbe862ff8")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.31 -3.45)
@@ -6889,7 +6787,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "49d0535e-9df8-4cf5-81e1-bb34c16a98ff")
-		(at 129.9 114.6)
+		(at 137.6 124.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R3"
@@ -6994,12 +6892,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/e4def4ad-72ca-441e-b296-86c3e3d7bc5e")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -7089,7 +6981,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "4afa8a7f-5198-4fe7-b7ab-eff65abd7808")
-		(at 122.273 125.6)
+		(at 131.949999 124.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R6"
@@ -7194,12 +7086,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/f5cd626d-4e94-4b53-9992-6e1bdd3ed40a")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -7289,7 +7175,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "4bbbc205-1cee-4392-a8a0-cff0e451216e")
-		(at 172 88 180)
+		(at 165 66 180)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R29"
@@ -7394,12 +7280,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/b23876cb-2d5c-4f4d-8b82-739bc802bc2b")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 0.735)
@@ -7489,7 +7369,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "4e926253-3fa7-4040-aa9d-2e967788d650")
-		(at 144.873 125.6)
+		(at 154.55 124.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R8"
@@ -7594,12 +7474,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/0d484378-846a-43e1-b85e-cf0960033501")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -7689,7 +7563,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "553b9732-3623-494f-8e46-111467c825af")
-		(at 180 105)
+		(at 174.5 122.5)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C62"
@@ -7794,12 +7668,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/156492ab-e92c-42fe-aec7-3fa3a0fd1e0a")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -8205,7 +8073,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "5b920fac-923f-480f-8645-ec076121ebb6")
-		(at 170.5 63.5)
+		(at 145 66)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R23"
@@ -8323,12 +8191,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/43ff3c7f-7354-484d-b709-bcf7daca784d")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -8418,7 +8280,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "5bf4f14b-0b24-40bb-a350-2d2f81ede75c")
-		(at 141.2 114.6)
+		(at 148.9 124.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R4"
@@ -8523,12 +8385,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/54d8eeb0-57b0-4d12-8987-e338bfe9f71c")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -8618,7 +8474,7 @@
 	(footprint "Resistor_SMD:R_1812_4532Metric"
 		(layer "F.Cu")
 		(uuid "5f38f068-bc93-4d53-a646-d4f22576e4c7")
-		(at 180 120 180)
+		(at 179.5 119 180)
 		(descr "Resistor SMD 1812 (4532 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: https://www.nikhef.nl/pub/departments/mt/projects/detectorR_D/dtddice/ERJ2G.pdf)")
 		(tags "resistor")
 		(property "Reference" "PF2"
@@ -9006,7 +8862,7 @@
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "649e74ea-a342-4ead-9cc3-5705ec0f6cf1")
-		(at 188 112.6)
+		(at 186 112.6)
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J9"
@@ -9580,7 +9436,7 @@
 	(footprint "Capacitor_SMD:C_1210_3225Metric"
 		(layer "F.Cu")
 		(uuid "6eaf3d60-6255-40ed-b475-07a5abadb23b")
-		(at 194.5 126)
+		(at 196 125.5)
 		(descr "Capacitor SMD 1210 (3225 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C64"
@@ -9685,12 +9541,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/1365825d-6d14-4775-bdb7-adf623c515af")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.711252 -1.36)
@@ -10168,7 +10018,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "79a5836f-ce02-49b7-b087-e3257ee92b49")
-		(at 110 103)
+		(at 191 127)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R42"
@@ -10273,12 +10123,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/a5d8687c-24dd-4a56-88e4-e1d40f5ba91b")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -10628,7 +10472,7 @@
 	(footprint "Diode_SMD:D_SMA"
 		(layer "F.Cu")
 		(uuid "825d3574-258b-43a8-8d6e-b4560fcfc6be")
-		(at 113 114.6)
+		(at 116 112.2)
 		(descr "Diode SMA (DO-214AC)")
 		(tags "Diode SMA (DO-214AC)")
 		(property "Reference" "D1"
@@ -10721,12 +10565,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/560d4ced-35a2-424f-83c5-30a9c2355cda")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.51 -1.65)
@@ -11120,7 +10958,7 @@
 	(footprint "Diode_SMD:D_SMA"
 		(layer "F.Cu")
 		(uuid "838dd643-b4d8-4bb0-8d52-6f4e1f0d5411")
-		(at 135.6 114.6)
+		(at 137.6 112.2)
 		(descr "Diode SMA (DO-214AC)")
 		(tags "Diode SMA (DO-214AC)")
 		(property "Reference" "D3"
@@ -11213,12 +11051,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/07b81cc2-9524-4e1a-9794-b5be227477a2")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.51 -1.65)
@@ -11438,7 +11270,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "83b3030b-4a4d-40e4-a59e-84d968879ebb")
-		(at 156.5 88)
+		(at 145 76)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C33"
@@ -11543,12 +11375,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/beacd5f7-21b9-4bd7-a21b-c7acdd37a9cf")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -11876,7 +11702,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "862ba8b0-46a5-455e-85bc-6e67427cf74c")
-		(at 177 117)
+		(at 163 106.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R13"
@@ -11981,12 +11807,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/bbd4ac74-ab47-4aef-bbec-0f834b2403c4")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -12076,7 +11896,7 @@
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "8ce6d407-21fa-4b75-b8f9-41326b41d2cd")
-		(at 126.5 95)
+		(at 170 70)
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing)")
 		(tags "capacitor")
 		(property "Reference" "C40"
@@ -12181,12 +12001,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/5b4290bd-72a5-4884-a627-751ad6fdbd81")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.261252 -0.735)
@@ -12953,7 +12767,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "99f95291-8ec1-408d-b421-170b147cf1f4")
-		(at 177 125)
+		(at 158 106.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R12"
@@ -13071,12 +12885,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/afc2aabd-7b38-4132-8605-1deca8edcaf8")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -15691,7 +15499,7 @@
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "b160a641-333d-4f82-9e69-30966ebae9f1")
-		(at 164 108.5)
+		(at 153 102.5)
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing)")
 		(tags "capacitor")
 		(property "Reference" "C50"
@@ -15796,12 +15604,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/16144c29-ea1f-486a-82a0-5ee449b74ad5")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.261252 -0.735)
@@ -15891,7 +15693,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "b33c2bd6-b034-435d-8697-cd5b835c0857")
-		(at 161 102.5 180)
+		(at 170 99 180)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R46"
@@ -15993,12 +15795,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/f08843af-bae2-4262-8d74-caf2d635a9ee")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -16088,7 +15884,7 @@
 	(footprint "Resistor_SMD:R_1812_4532Metric"
 		(layer "F.Cu")
 		(uuid "b5416b7a-1e58-4862-8c84-985abaff4b97")
-		(at 180 113 180)
+		(at 179.5 113 180)
 		(descr "Resistor SMD 1812 (4532 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: https://www.nikhef.nl/pub/departments/mt/projects/detectorR_D/dtddice/ERJ2G.pdf)")
 		(tags "resistor")
 		(property "Reference" "PF1"
@@ -16282,7 +16078,7 @@
 	(footprint "Package_TO_SOT_SMD:TO-252-3_TabPin2"
 		(layer "F.Cu")
 		(uuid "b6271345-4303-4c1d-9981-bd2fa1bc292e")
-		(at 146.9 121)
+		(at 148.9 118.5)
 		(descr "TO-252/DPAK SMD package, http://www.infineon.com/cms/en/product/packages/PG-TO252/PG-TO252-3-1/")
 		(tags "DPAK TO-252 DPAK-3 TO-252-3 SOT-428")
 		(property "Reference" "Q4"
@@ -16386,12 +16182,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/f1d2c5a1-f7bc-4309-9006-0d2170e2fa32")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.31 -3.45)
@@ -16684,7 +16474,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "b7698b9c-c2fe-4a23-9950-9ba5da170c6b")
-		(at 168 88 180)
+		(at 159 121.5 180)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "RT1"
@@ -16802,12 +16592,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/a4691e2b-cc92-4deb-bdd8-0fb37f1358ca")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 0.735)
@@ -17385,7 +17169,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "be1ee7c1-a2ce-47de-a335-051369340c88")
-		(at 152 84)
+		(at 155 66)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R27"
@@ -17503,12 +17287,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/1691a88d-5b97-4e3a-8926-2ce9cbf92f8f")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -18091,7 +17869,7 @@
 	(footprint "Diode_SMD:D_SMA"
 		(layer "F.Cu")
 		(uuid "c21771a5-cc52-4888-b87b-b232dda438e5")
-		(at 124.3 114.6)
+		(at 126.3 112.2)
 		(descr "Diode SMA (DO-214AC)")
 		(tags "Diode SMA (DO-214AC)")
 		(property "Reference" "D2"
@@ -18184,12 +17962,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/ba8e2196-0efd-401c-8947-fde8fb93c7ef")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.51 -1.65)
@@ -18409,7 +18181,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "c2abcfea-bdd6-4515-9040-d09fbbe2968b")
-		(at 128.4 106)
+		(at 165 80)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R40"
@@ -18514,12 +18286,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/85a20d81-3a10-401b-976e-8bbbe90b4b52")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -18609,7 +18375,7 @@
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "c35bbcee-4757-40f1-ad63-85c271527a05")
-		(at 184 105)
+		(at 170.5 122.5)
 		(descr "Capacitor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf, https://docs.google.com/spreadsheets/d/1BsfQQcO9C6DZCsRaXUlFlo91Tg2WpOkGARC1WS5S8t0/edit?usp=sharing)")
 		(tags "capacitor")
 		(property "Reference" "C61"
@@ -18714,12 +18480,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/308d8d9a-3d62-4199-8c80-79a71a930f57")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.261252 -0.735)
@@ -18809,7 +18569,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "c467e398-2b5b-4628-ba26-2cd77e3b7813")
-		(at 122 103)
+		(at 165 90)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R44"
@@ -18914,12 +18674,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/f94aa097-e844-442f-aaa2-c600d05002da")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -19326,7 +19080,7 @@
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
 		(uuid "ca7e34fb-de60-47f2-9447-2a2a03b42c3a")
-		(at 126.5 103)
+		(at 170 80)
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C42"
@@ -19431,12 +19185,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/4485a801-ac73-491d-9407-7ee4e7f2a6c5")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -19526,7 +19274,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "cdc6fccd-2bba-4959-ad36-9a04c9748dbc")
-		(at 118.6 114.6)
+		(at 126.3 124.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R2"
@@ -19631,12 +19379,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/eefc6dba-d449-4aa9-89b5-ec4efc41e428")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -19920,7 +19662,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "d40fd6d8-8008-4453-9faa-4a5452146e91")
-		(at 156.5 125)
+		(at 163 102.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R9"
@@ -20025,12 +19767,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/d420dad3-d393-43ae-ad36-aeae3ef1e720")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -20120,7 +19856,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "d9d3913e-44c3-4503-922e-2befa4571091")
-		(at 160 82)
+		(at 150 71)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R31"
@@ -20238,12 +19974,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/8a3828c8-4f1a-4a97-bbb9-9eaaf5094e69")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -20333,7 +20063,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "dac60862-738a-4232-8e5e-98a25341f02f")
-		(at 158 72.5)
+		(at 145 71)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R30"
@@ -20451,12 +20181,6 @@
 		(path "/43933695-3e83-477a-8f28-1084f7012535/e32dfa54-0107-477d-9962-e6ab667a351d")
 		(sheetname "/Power/")
 		(sheetfile "Power.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -21150,7 +20874,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "e419f5b6-54e0-45be-b7ed-f9ee9af7f808")
-		(at 113.5 111.5 180)
+		(at 115 124.5 180)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R1"
@@ -21255,12 +20979,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/472de3e7-b7e9-4c7b-a4fc-d9fc7abc8dcf")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 0.735)
@@ -21350,7 +21068,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "e62469bb-e6f0-4065-8c70-7e3c16088397")
-		(at 133.573 125.6)
+		(at 143.25 124.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R7"
@@ -21455,12 +21173,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/ca2ac051-12ff-41a1-bfad-8b4e5f5f72c4")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -21550,7 +21262,7 @@
 	(footprint "Diode_SMD:D_SMA"
 		(layer "F.Cu")
 		(uuid "e88635a5-4b35-4174-a7bf-d1cd5c16661a")
-		(at 146.9 114.6)
+		(at 148.9 112.2)
 		(descr "Diode SMA (DO-214AC)")
 		(tags "Diode SMA (DO-214AC)")
 		(property "Reference" "D4"
@@ -21643,12 +21355,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/56441a2a-7547-4b1e-95de-bbf6213f099c")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.51 -1.65)
@@ -22075,7 +21781,7 @@
 	(footprint "Package_TO_SOT_SMD:TO-252-3_TabPin2"
 		(layer "F.Cu")
 		(uuid "eb5b315f-b930-42cd-91e0-783392c9c748")
-		(at 135.6 121)
+		(at 137.6 118.5)
 		(descr "TO-252/DPAK SMD package, http://www.infineon.com/cms/en/product/packages/PG-TO252/PG-TO252-3-1/")
 		(tags "DPAK TO-252 DPAK-3 TO-252-3 SOT-428")
 		(property "Reference" "Q3"
@@ -22179,12 +21885,6 @@
 		(path "/a2332e94-aa8c-4f2f-8845-69c86e434212/7616f7b3-524e-4e87-909a-8bbd0354f753")
 		(sheetname "/PWM/")
 		(sheetfile "PWM.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -3.31 -3.45)
@@ -22477,7 +22177,7 @@
 	(footprint "Package_TO_SOT_SMD:SOT-23-6"
 		(layer "F.Cu")
 		(uuid "ef7ea6c5-7ec4-4b8a-9e06-21023971ef25")
-		(at 114 108.5 180)
+		(at 179 124.5 180)
 		(descr "SOT, 6 Pin (JEDEC MO-178 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=MO-178)")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "D8"
@@ -22595,12 +22295,6 @@
 		(path "/543faab5-6d4b-413c-aa63-b6cd1a816b5e/2233dff8-3683-4d0a-952a-65119b106813")
 		(sheetname "/MCU/")
 		(sheetfile "MCU.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "3" "5" "2" "6" "4")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start 0.91 1.56)
@@ -23816,7 +23510,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "fb9dfb09-d5f3-440c-96c5-b064368756c8")
-		(at 173.5 125)
+		(at 168 102.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R10"
@@ -23921,12 +23615,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/f40456f9-4a8b-4bc6-9d4a-1ece7255c9f8")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.227064 -0.735)
@@ -24987,7 +24675,7 @@
 	(footprint "Resistor_SMD:R_0805_2012Metric"
 		(layer "F.Cu")
 		(uuid "fe6f9a6f-6d89-4670-a930-e82e36e115cc")
-		(at 161.5 125)
+		(at 153 106.5)
 		(descr "Resistor SMD 0805 (2012 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R11"
@@ -25105,12 +24793,6 @@
 		(path "/c7334fab-f3d9-44aa-85cb-ee4f81ac3546/d6ae63c7-b93b-4638-bf96-2e2fa9f3406f")
 		(sheetname "/Addressable/")
 		(sheetfile "Addressable.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -25389,38 +25071,6 @@
 		(uuid "ea6a6bb2-719d-4b4f-9637-a1ef0b258282")
 	)
 	(segment
-		(start 190.637 123.6)
-		(end 190.637 126)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/Addressable/ADDR2_VSEL")
-		(uuid "5b238d92-05b4-4ef3-a55a-ff7ce5d9a6d2")
-	)
-	(segment
-		(start 197.6 123.6)
-		(end 190.637 123.6)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/Addressable/ADDR2_VSEL")
-		(uuid "d098d25d-cd07-4981-bf13-776d0d03b57d")
-	)
-	(segment
-		(start 197.6 112.54)
-		(end 197.6 123.6)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/Addressable/ADDR2_VSEL")
-		(uuid "effec275-f0ef-4e7d-beea-48759c5a106e")
-	)
-	(segment
-		(start 194 112.54)
-		(end 197.6 112.54)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/Addressable/ADDR2_VSEL")
-		(uuid "ffe3dbec-48e9-4605-9e14-a3f50880563c")
-	)
-	(segment
 		(start 180.375 62)
 		(end 180.375 68)
 		(width 0.25)
@@ -25469,6 +25119,14 @@
 		(uuid "4618bb75-1b7d-41d6-8c1c-46dcced63980")
 	)
 	(segment
+		(start 115.62 97.2)
+		(end 115.62 99.15)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "+5V")
+		(uuid "4766712c-a769-438e-a632-09c24a017ddc")
+	)
+	(segment
 		(start 182.05 90.3)
 		(end 183.85 90.3)
 		(width 0.4)
@@ -25509,12 +25167,28 @@
 		(uuid "a1422003-66e4-496c-a166-2caa34117edf")
 	)
 	(segment
+		(start 139.21 90.75)
+		(end 139.21 97.2)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "+5V")
+		(uuid "c5f9d0dd-4a34-41b2-a05b-66dfa4123a64")
+	)
+	(segment
 		(start 137.94 96.6)
 		(end 113.08 96.6)
 		(width 0.25)
 		(layer "F.Cu")
 		(net "+5V")
 		(uuid "dae23759-d4b7-4cbd-9ddc-d76dc5306314")
+	)
+	(segment
+		(start 139.21 97.2)
+		(end 115.62 97.2)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "+5V")
+		(uuid "dbd18481-d17f-4397-bd6d-b9fe36f51312")
 	)
 	(segment
 		(start 191.025 71.5)
@@ -25661,6 +25335,14 @@
 		(uuid "54335efb-b61e-4269-81cd-e1be51ce3008")
 	)
 	(segment
+		(start 190.637 123.6)
+		(end 190.637 126)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "GND")
+		(uuid "5b238d92-05b4-4ef3-a55a-ff7ce5d9a6d2")
+	)
+	(segment
 		(start 127.575 103)
 		(end 128.275 103)
 		(width 0.4)
@@ -25757,14 +25439,6 @@
 		(uuid "a73c3ffb-8070-436c-99e4-3f295f3b6081")
 	)
 	(segment
-		(start 127.8 95)
-		(end 128.449999 95)
-		(width 0.4)
-		(layer "F.Cu")
-		(net "GND")
-		(uuid "a8e13c81-2c11-4256-ade7-72ad8e9c89fb")
-	)
-	(segment
 		(start 100.996 108.6)
 		(end 100.996 107.784)
 		(width 0.4)
@@ -25821,6 +25495,14 @@
 		(uuid "ce83e8a2-2e17-4879-b862-e91dd402a3e5")
 	)
 	(segment
+		(start 197.6 123.6)
+		(end 190.637 123.6)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "GND")
+		(uuid "d098d25d-cd07-4981-bf13-776d0d03b57d")
+	)
+	(segment
 		(start 172.9 76.5)
 		(end 173.475 76.5)
 		(width 0.4)
@@ -25853,6 +25535,14 @@
 		(uuid "ec9b3a88-3af3-4932-bbae-1b7d0186d42c")
 	)
 	(segment
+		(start 197.6 112.54)
+		(end 197.6 123.6)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "GND")
+		(uuid "effec275-f0ef-4e7d-beea-48759c5a106e")
+	)
+	(segment
 		(start 144.275 77.5)
 		(end 144.912 77.5)
 		(width 0.4)
@@ -25867,6 +25557,14 @@
 		(layer "F.Cu")
 		(net "GND")
 		(uuid "f3fb4189-3405-4625-8586-4364d8a656f8")
+	)
+	(segment
+		(start 194 112.54)
+		(end 197.6 112.54)
+		(width 0.25)
+		(layer "F.Cu")
+		(net "GND")
+		(uuid "ffe3dbec-48e9-4605-9e14-a3f50880563c")
 	)
 	(via
 		(at 177.775 105)
@@ -26765,14 +26463,6 @@
 		(uuid "d37fc962-2a76-4ce1-bc9e-02ffc6c3302b")
 	)
 	(via
-		(at 128.449999 95)
-		(size 0.8)
-		(drill 0.4)
-		(layers "F.Cu" "B.Cu")
-		(net "GND")
-		(uuid "d38822dc-6ead-46d9-a144-b21043222f5e")
-	)
-	(via
 		(at 128.388 107.4)
 		(size 0.8)
 		(drill 0.4)
@@ -27285,6 +26975,14 @@
 		(uuid "a3c2a9cc-4a13-410f-bc13-2ad1a5fe2641")
 	)
 	(segment
+		(start 127.8 95)
+		(end 128.449999 95)
+		(width 0.4)
+		(layer "F.Cu")
+		(net "+3V3")
+		(uuid "a8e13c81-2c11-4256-ade7-72ad8e9c89fb")
+	)
+	(segment
 		(start 127.488 107.4)
 		(end 127.488 106.4)
 		(width 0.25)
@@ -27363,6 +27061,14 @@
 		(layers "F.Cu" "B.Cu")
 		(net "+3V3")
 		(uuid "d1519936-d8c3-46ef-a366-9715c0116d4d")
+	)
+	(via
+		(at 128.449999 95)
+		(size 0.8)
+		(drill 0.4)
+		(layers "F.Cu" "B.Cu")
+		(net "+3V3")
+		(uuid "d38822dc-6ead-46d9-a144-b21043222f5e")
 	)
 	(via
 		(at 133 107.2)
@@ -28563,30 +28269,6 @@
 		(layer "B.Cu")
 		(net "/MCU/USB_CC2")
 		(uuid "22a226e8-fb50-418b-bbea-519e4e020e9b")
-	)
-	(segment
-		(start 115.62 97.2)
-		(end 115.62 99.15)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/MCU/UART1_RX")
-		(uuid "4766712c-a769-438e-a632-09c24a017ddc")
-	)
-	(segment
-		(start 139.21 90.75)
-		(end 139.21 97.2)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/MCU/UART1_RX")
-		(uuid "c5f9d0dd-4a34-41b2-a05b-66dfa4123a64")
-	)
-	(segment
-		(start 139.21 97.2)
-		(end 115.62 97.2)
-		(width 0.25)
-		(layer "F.Cu")
-		(net "/MCU/UART1_RX")
-		(uuid "dbd18481-d17f-4397-bd6d-b9fe36f51312")
 	)
 	(segment
 		(start 137.6 114.6)
