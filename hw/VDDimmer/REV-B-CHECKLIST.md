@@ -174,6 +174,42 @@ that read continuous are V+. No power, no datasheet, immune to connector choice.
 horizontal footprint must be authored in the `VANDIMMER` library from the datasheet, for
 both 1x02 and 1x04. Row grows ~0.4 mm; gaps go 4.06 → ~3.99 mm.
 
+#### 4.1.1 ⚠️ OPEN: the connector may force the pin order back to Rev A's
+
+**Ordered 2026-09-14: Molex 22-05-3021 (2-way R/A). Awaiting delivery.**
+
+Stuart's observation: his existing 2510 stock has the keyway **toward the PCB**, while the
+Molex appears to have it **away from the PCB**. If so, the same plug enters rotated 180°
+and what used to reach pin 1 now reaches pin 2.
+
+**The lamps arrive with plugs already fitted, so the wire-to-cavity mapping cannot be
+changed.** The board is the only thing that can adapt. If the lamp's **+** lands on board
+pin 1, then pin 1 must be assigned `VIN_PROT` — **which is Rev A's order, and undoes
+Task 4 (`55af04c`).**
+
+Note the distinction: board pin 1 is a *pad* with a fixed net. The connector does not
+change which pad is pin 1; it changes which *wire* lands on it. So this is a decision to
+reassign the pad, not an observation about the part.
+
+Consequence if it flips — amend spec **decision 9** and **§6** explicitly, do not revert
+quietly. It re-opens the hazard §6 closed ("grounding pin 1 on a Rev A board is a dead
+short across the supply"). That remains acceptable because the real defence was never the
+numbering — it is the `+`/`−` silk and never writing `GND` — but it must be recorded.
+
+**Test when the parts arrive (30 s, no board, no power):** mate a lamp plug to a loose
+header in hand; note which header pin the **+** wire sits on, counting from the pin-1 end.
+Repeat for J7/J8 with a tri-colour strip and a 22-05-3041 — there V+ and GND are at
+opposite ends, so an end-for-end flip destroys a WS2815 rather than merely failing to
+light. That test also answers §4.2.
+
+**Work if it flips** (schematic + silk only; nothing in the layout moves, cheap **only**
+while pre-routing): swap J3–J6 pin nets back (exact reverse of Task 4) · flip the eight
+`+`/`−` marks (needs a GUI delete — Konnect cannot remove board text) · amend spec
+decision 9 and §6 · regenerate netlist and ERC.
+
+**Alternative that preserves the spec:** source a right-angle header with the opposite
+latch face, keeping pin 1 = LED−.
+
 ### 4.2 J7/J8 pin order vs how the strips present — POSSIBLE SCHEMATIC CHANGE
 Board is currently **pin 1 = V+, 2 = DATA, 3 = CLK, 4 = GND**, so V+ and GND sit at
 opposite ends. An end-for-end mismatch puts the supply backwards across a WS2815 and
