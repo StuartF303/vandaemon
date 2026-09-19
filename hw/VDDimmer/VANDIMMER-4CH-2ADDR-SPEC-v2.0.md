@@ -1,4 +1,4 @@
-﻿# VANDIMMER-4CH+2A — Hardware Specification v2.0
+# VANDIMMER-4CH+2A — Hardware Specification v2.0
 
 **Board:** 4-channel PWM LED dimmer + 2 addressable LED outputs
 **MCU:** ESP32-S3-WROOM-1U
@@ -13,10 +13,10 @@
 > D5 is an **SMBJ18A** (was SMBJ33A), F1 is an **8 A** fuse (was 7 A), and the per-channel
 > FET loss is **0.116 W** (was 0.06 W). See also §12's parts list.
 
-> **Rev B change (2026-09-12).** The J3–J6 pin order is **swapped**: pin 1 becomes the
-> LED− return and pin 2 becomes V+, so the lamp's negative lands on pin 1. Topology is
-> unchanged — still low-side N-channel, and pin 1 is still *not* ground. See §5.1, which
-> also states what the as-built Rev A boards do, because they are the opposite way round.
+> **Rev B pin order (2026-09-12, reversed 2026-09-19).** Rev B first swapped J3–J6 so
+> that pin 1 was LED−. That was **reversed** once the Molex 22-05-3021 was test-fitted:
+> its keyway puts a pre-plugged lamp's + on pin 1. Rev B therefore keeps **Rev A's order,
+> pin 1 = V+**, and one harness fits both revisions. See §5.1.
 
 ---
 
@@ -145,35 +145,37 @@ GPIO ──[R_gate 100Ω]──┬── MOSFET gate
                       │
                      GND
 
-VIN_PROT ──┬── terminal pin 2  (V+)
+VIN_PROT ──┬── terminal pin 1  (V+)
            │
         [D_fly]      (cathode to VIN_PROT, anode to drain)
            │
-MOSFET drain ── terminal pin 1  (LED−)
+MOSFET drain ── terminal pin 2  (LED−)
 MOSFET source ── GND
 ```
 
-### 5.1 Output terminal pinout (J3–J6) — CHANGED FOR REV B
+### 5.1 Output terminal pinout (J3–J6) — same on Rev A and Rev B
 
 | pin | net | wire |
 |---|---|---|
-| **1** | `DRAINn` | lamp **negative** |
-| **2** | `VIN_PROT` | lamp **positive**, +12 V |
+| **1** | `VIN_PROT` | lamp **positive**, +12 V |
+| **2** | `DRAINn` | lamp **negative** |
 
-> **This is the reverse of Rev A.** On the boards fabricated 2026-09-03, **pin 1 is
-> VIN_PROT (+12 V)** and pin 2 is the drain. Verified against
-> `VANDIMMER-4CH2A.kicad_pcb` on 2026-09-12. Wiring a Rev A board to this table puts
-> +12 V where you expect the return — and **grounding pin 1 on a Rev A board is a dead
-> short across the supply.** Check which revision is in front of you before wiring.
+> **History.** Rev B briefly reversed this (pin 1 = LED−, 2026-09-12, Task 4 `55af04c`).
+> That was undone on 2026-09-19. The Molex 22-05-3021 header's keyway sits high, away
+> from the PCB, which enters a pre-plugged lamp rotated 180° from the older 2510
+> stock. Test-fitted to a Rev A board, a lamp lit, so its + lands on pin 1. If you
+> meet a document or drawing showing pin 1 = LED−, it predates this.
+> **Grounding pin 1 is a dead short across the supply** on either revision.
 
-**Pin 1 is not ground, on either revision.** It is the switched low side. With the
-channel off the MOSFET is open and pin 1 floats up to roughly +12 V through the load;
+**Pin 2 is not ground, on either revision.** It is the switched low side. With the
+channel off the MOSFET is open and pin 2 floats up to roughly +12 V through the load;
 with nothing connected it sits at whatever the flyback-diode and FET leakage currents
 divide to (measured 7.26 V on an open terminal, which is normal, not a fault). Bonding
 it to chassis or to a shared negative busbar shorts the channel.
 
-Silkscreen accordingly: mark the terminals **−** and **+**, never `GND`. All four
-channels share pin 2, so the outputs are **common-positive**: independent lamps and
+Silkscreen accordingly: mark the terminals **+** (pin 1) and **−** (pin 2), never `GND`.
+Rev B uses 1.5 mm marks with a 0.3 mm stroke, flanking each connector in the band above it.
+All four channels share pin 1, so the outputs are **common-positive**: independent lamps and
 common-anode strips are fine, a common-negative load is not.
 
 | Ref | Part | Spec |
@@ -535,9 +537,10 @@ At 60 °C ambient worst case, hottest junction ≈ 95 °C. Acceptable margin.
 | 1 | J13 | 1×**6** pin header, 2.54 mm, vertical | I²C + EN/BOOT |
 | 1 | J14 | 1×**4** pin header, 2.54 mm, vertical | UART1 |
 
-**J3–J6 stay JST XH on Rev B — only the pin order changes** (§5.1). The footprint is
-unchanged; the connector family is an **open question deferred to inventory and cost**,
-not a closed decision.
+**J3–J6 move to Molex KK 254 (22-05-3021, right-angle) on Rev B, with Rev A's pin order
+(§5.1).** The 2.54 mm horizontal footprint still has to be authored; KiCad ships KK 254
+vertical only. Until then the board still carries the XH land, which the Molex was
+hand-fitted to without difficulty.
 
 Molex was considered on 2026-09-12 and the XH land was kept for now because it is already
 right-angle, already rated 3 A against a 2 A channel, and proven on two built boards.

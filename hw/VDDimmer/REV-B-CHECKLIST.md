@@ -180,8 +180,30 @@ both 1x02 and 1x04. Row grows ~0.4 mm; gaps go 4.06 → ~3.99 mm.
 `VIN_PROT`). The Molex keyway sits **high, away from the PCB**. A pre-plugged lamp mated
 to it lit at 50 % (all channels set to 127 over the serial console). An LED lamp does not
 light reverse-biased, so the lamp's **+** lands on board pin 1. **Rev A's order is correct
-with this header, and Task 4 (`55af04c`) must be reversed.** The work is listed under
-*Work if it flips*, below. It has not been done yet.
+with this header, and Task 4 (`55af04c`) must be reversed.**
+
+**Revert done 2026-09-19** (file side, KiCad closed):
+- `PWM.kicad_sch`: J3–J6 labels swapped back so pin 1 = `VIN_PROT` and pin 2 = `DRAINn`.
+  The Values are back to `CHn V+/LED-`. Checked by netlist diff: 81 → 81 nets, 294 → 294
+  pins, and the **only** changes are the eight J3–J6 pin moves. ERC reports 0 errors.
+- `.kicad_pcb`: eight new polarity marks at **1.5 mm** (the old ones were 0.8 mm), `+`
+  beside pin 1 and `−` beside pin 2, in the same flanking positions. `REV B` added at
+  3 mm, centred (154, 85.5).
+- Spec §5.1, Rev B design §6 + decision 9, and HANDOFF §1 were amended explicitly, not
+  reverted without comment.
+
+**⚠️ Still needs a GUI pass** (Konnect can neither delete nor edit board text, and pad
+nets update only through F8):
+1. Open the PCB editor and press **F8** (Update PCB from Schematic). The J3–J6 pads
+   still carry the old nets until this runs. Leave "Replace footprints" **off**.
+2. Scripting console: `exec(open(r"C:/Projects/vandaemon/hw/VDDimmer/tools/revb_silk_pass.py").read())`.
+   It deletes the eight 0.8 mm marks and "Rev A" by UUID, sets the new marks' stroke to
+   0.3 mm, and moves the title to (112.3, 98.8). Tested first on a copy of the board:
+   silk_overlap 28 → 14, silk_over_copper 9 → 5, and no new silk violations.
+3. Save, close KiCad, and read the J3–J6 pad nets back from disk.
+
+When the KK 254 horizontal footprint replaces the XH land, re-check the marks against its
+silk. They are placed for the XH outline.
 
 The alternative below (a header with the opposite latch face) no longer applies. Stay on
 22-05-3021 and change the pin order instead. J7/J8 (§4.2) were **not** part of this test

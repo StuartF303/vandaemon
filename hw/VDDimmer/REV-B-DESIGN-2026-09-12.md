@@ -217,15 +217,29 @@ enclosure creating a second return path in parallel with J2's negative wire.
 
 ## 6. Output connectors J3–J6
 
-**Pin order swaps: pin 1 becomes LED−, pin 2 becomes V+.** See §5.1 of the base spec.
+**Pin order is Rev A's: pin 1 = V+ (`VIN_PROT`), pin 2 = LED− (`DRAINn`).**
 
-**Pin 1 is not ground**, on either revision. It is the MOSFET drain — open when the channel
+> **Reversed 2026-09-19.** This section originally swapped the order (pin 1 = LED−),
+> decided 2026-09-12 against the JST XH land and implemented as Task 4 (`55af04c`). The
+> connector then changed to Molex 22-05-3021, whose keyway sits high, away from the
+> PCB. That enters a pre-plugged lamp rotated 180° from the older 2510 stock. The
+> Molex was test-fitted to a Rev A board, and a lamp lit at 50 %, so the lamp's **+**
+> lands on pin 1. The board adapts because the lamp harnesses cannot. See
+> `REV-B-CHECKLIST.md` §4.1.1.
+>
+> Side effect, and a welcome one: Rev A and Rev B now share a pin order, so one harness
+> fits both.
+
+**Pin 2 is not ground**, on either revision. It is the MOSFET drain — open when the channel
 is off, floating to roughly +12 V through the load, and to ~7 V on an open terminal from
-flyback-diode and FET leakage alone (measured). Silkscreen **−** and **+**, never `GND`.
-All four channels share pin 2, so the outputs are common-positive.
+flyback-diode and FET leakage alone (measured). All four channels share pin 1, so the
+outputs are common-positive.
 
-**Rev A is the reverse** — pin 1 is `VIN_PROT`. Grounding pin 1 on a Rev A board is a dead
-short across the supply.
+**Grounding pin 1 is a dead short across the supply**, on both revisions. The protection is
+the silkscreen, never the numbering. Each connector carries a 1.5 mm, 0.3 mm-stroke
+**+** beside pin 1 and **−** beside pin 2, placed in the band between the gate
+resistors and the connector outline, the only silk still readable with a plug fitted.
+Never `GND`.
 
 **Footprint: JST XH S2B-XH-A retained.** The connector *family* is an open question
 deferred to inventory and cost, not a closed decision — see §8.
@@ -292,6 +306,6 @@ outline edit, invisible to `git diff` because the save landed 53 seconds before 
 | 6 | Single harness face; J2 relocated to the left edge | 2026-09-12 |
 | 7 | J1 (USB-C) on the harness face, off the left edge | 2026-09-12 |
 | 8 | Mounting holes isolated; bottom-left corner separates J2 from J3 | 2026-09-12 |
-| 9 | J3–J6 pin order swaps, pin 1 = LED− | 2026-09-12 |
+| 9 | ~~J3–J6 pin order swaps, pin 1 = LED−~~ **Reversed 2026-09-19:** Rev A's order kept, pin 1 = V+, forced by the Molex 22-05-3021 keyway (§6) | 2026-09-12 / 2026-09-19 |
 | 10 | Route `J11.1`, `J9.1`, `J10.1` | 2026-09-12 |
 | 11 | Board stays ≤100 × 100 mm; not shrunk below what the layout wants | 2026-09-12 |

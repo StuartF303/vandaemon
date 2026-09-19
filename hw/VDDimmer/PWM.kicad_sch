@@ -2175,44 +2175,44 @@
 		(uuid "f785e017-2adb-40e7-87a0-3f5b9fae7410")
 	)
 	(label "DRAIN1"
-		(at 245.11 58.42 180)
+		(at 245.11 60.96 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right bottom)
 		)
-		(uuid "d120195f-85ee-41d7-9c95-566a3d96e062")
+		(uuid "88440013-6932-4fd0-ba66-80040a41f6a0")
 	)
 	(label "DRAIN2"
-		(at 245.11 107.95 180)
+		(at 245.11 110.49 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right bottom)
 		)
-		(uuid "68270a3f-b694-4caa-a3fb-8f603e2b3964")
+		(uuid "7c66837c-f095-4eaa-ae47-8c5aff04194e")
 	)
 	(label "DRAIN3"
-		(at 245.11 157.48 180)
+		(at 245.11 160.02 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right bottom)
 		)
-		(uuid "23dc81e2-a98c-4b61-8d14-f11d2b764c8c")
+		(uuid "1471cd23-da26-443b-b919-d73f6f585ad5")
 	)
 	(label "DRAIN4"
-		(at 245.11 208.28 180)
+		(at 245.11 210.82 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right bottom)
 		)
-		(uuid "5effb37d-10d7-41b2-9ee5-e4885a1e171f")
+		(uuid "5c105841-51ab-4b28-b01c-90de868f5b1d")
 	)
 	(global_label "VIN_PROT"
 		(shape input)
@@ -2392,47 +2392,47 @@
 	)
 	(global_label "VIN_PROT"
 		(shape input)
-		(at 245.11 60.96 180)
+		(at 245.11 58.42 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "e0921a14-5a5f-47f1-98f5-980566086f46")
+		(uuid "5d30fde2-a62f-4a57-90da-489d2e07fd75")
 	)
 	(global_label "VIN_PROT"
 		(shape input)
-		(at 245.11 110.49 180)
+		(at 245.11 107.95 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "99cfc758-55ea-4e0c-823c-36490d28050a")
+		(uuid "8790fb87-282a-4688-bd30-173affc7d56f")
 	)
 	(global_label "VIN_PROT"
 		(shape input)
-		(at 245.11 160.02 180)
+		(at 245.11 157.48 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "487947f8-c625-4cc2-82c8-249954c63eb4")
+		(uuid "c8608b9f-5f9a-4021-92f9-ef15d6e21188")
 	)
 	(global_label "VIN_PROT"
 		(shape input)
-		(at 245.11 210.82 180)
+		(at 245.11 208.28 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "1d6aad25-9afe-4402-823f-549060fb27f9")
+		(uuid "b9b4a84f-1baa-423f-b1f0-94f67ecbe6a6")
 	)
 	(symbol
 		(lib_id "Device:D_Schottky")
@@ -2687,7 +2687,7 @@
 				)
 			)
 		)
-		(property "Value" "CH2 LED-/V+"
+		(property "Value" "CH2 V+/LED-"
 			(at 250.19 113.03 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3165,7 +3165,7 @@
 				)
 			)
 		)
-		(property "Value" "CH4 LED-/V+"
+		(property "Value" "CH4 V+/LED-"
 			(at 250.19 213.36 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4277,7 +4277,7 @@
 				)
 			)
 		)
-		(property "Value" "CH3 LED-/V+"
+		(property "Value" "CH3 V+/LED-"
 			(at 250.19 162.56 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4835,7 +4835,7 @@
 				)
 			)
 		)
-		(property "Value" "CH1 LED-/V+"
+		(property "Value" "CH1 V+/LED-"
 			(at 250.19 63.5 0)
 			(show_name no)
 			(do_not_autoplace no)

@@ -1,4 +1,4 @@
-﻿# VANDIMMER-4CH+2A — session handoff
+# VANDIMMER-4CH+2A — session handoff
 
 Phase 3 (layout) is **electrically complete**. Schematic ERC 0/0, board DRC 0 errors, and
 every remaining unconnected item is accounted for. What is left is fab preparation, and
@@ -59,20 +59,20 @@ straight through and matches the firmware:
 
 ## REV B — required changes, decided during bring-up
 
-### 1. J3–J6 pin order swaps: pin 1 becomes LED−
+### 1. ~~J3–J6 pin order swaps: pin 1 becomes LED−~~ — REVERSED, Rev A's order stays
 
-Decided 2026-09-12 while wiring lamps. Pin 1 becomes the switched low side (the lamp's
-negative), pin 2 becomes V+. Topology is unchanged — still low-side N-channel — and the
-spec §5.1 now carries it.
+Decided 2026-09-12 while wiring lamps, and **reversed 2026-09-19**. The connector moved
+to Molex 22-05-3021, whose keyway sits high, away from the PCB. That enters a
+pre-plugged lamp rotated 180° from the older 2510 stock. Test-fitted to a Rev A board,
+a lamp lit, so its + lands on pin 1. Rev B therefore keeps **pin 1 = V+ (`VIN_PROT`),
+pin 2 = LED− (`DRAINn`)**, the same as Rev A, and one harness fits both.
+Spec §5.1 and Rev B design §6 carry it.
 
-**Pin 1 is still not ground and must never be silkscreened `GND`.** It is the MOSFET
-drain: open when the channel is off, so it floats to roughly +12 V through the load, and
-to ~7 V on an open terminal from flyback-diode and FET leakage alone. Mark the terminals
-**−** and **+**. All four channels share pin 2, so the outputs are common-positive.
-
-**The Rev A boards already built are the opposite way round** — pin 1 is VIN_PROT.
-Grounding pin 1 on a Rev A board is a dead short across the supply. Anything that
-documents the pinout has to say which revision it means.
+**Pin 2 is not ground and must never be silkscreened `GND`.** It is the MOSFET drain:
+open when the channel is off, so it floats to roughly +12 V through the load, and to
+~7 V on an open terminal from flyback-diode and FET leakage alone. Mark the terminals
+**+** and **−**. All four channels share pin 1, so the outputs are common-positive.
+**Grounding pin 1 is a dead short across the supply** on either revision.
 
 ### 2. Route J11.1, or add a firmware portal fallback, or both
 

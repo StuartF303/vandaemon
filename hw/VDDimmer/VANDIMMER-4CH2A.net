@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "C:\\Projects\\vandaemon\\hw\\VDDimmer\\VANDIMMER-4CH2A.kicad_sch")
-		(date "2026-09-12T18:04:34")
+		(date "2026-09-19T12:19:51")
 		(tool "Eeschema 10.0.5")
 		(sheet
 			(number "1")
@@ -3245,11 +3245,11 @@
 		)
 		(comp
 			(ref "H1")
-			(value "M3")
-			(footprint "MountingHole:MountingHole_3.2mm_M3")
+			(value "M2.5")
+			(footprint "MountingHole:MountingHole_2.7mm_M2.5")
 			(fields
 				(field
-					(name "Footprint") "MountingHole:MountingHole_3.2mm_M3")
+					(name "Footprint") "MountingHole:MountingHole_2.7mm_M2.5")
 				(field
 					(name "Datasheet")
 				)
@@ -3292,11 +3292,11 @@
 		)
 		(comp
 			(ref "H2")
-			(value "M3")
-			(footprint "MountingHole:MountingHole_3.2mm_M3")
+			(value "M2.5")
+			(footprint "MountingHole:MountingHole_2.7mm_M2.5")
 			(fields
 				(field
-					(name "Footprint") "MountingHole:MountingHole_3.2mm_M3")
+					(name "Footprint") "MountingHole:MountingHole_2.7mm_M2.5")
 				(field
 					(name "Datasheet")
 				)
@@ -3339,11 +3339,11 @@
 		)
 		(comp
 			(ref "H3")
-			(value "M3")
-			(footprint "MountingHole:MountingHole_3.2mm_M3")
+			(value "M2.5")
+			(footprint "MountingHole:MountingHole_2.7mm_M2.5")
 			(fields
 				(field
-					(name "Footprint") "MountingHole:MountingHole_3.2mm_M3")
+					(name "Footprint") "MountingHole:MountingHole_2.7mm_M2.5")
 				(field
 					(name "Datasheet")
 				)
@@ -3386,11 +3386,11 @@
 		)
 		(comp
 			(ref "H4")
-			(value "M3")
-			(footprint "MountingHole:MountingHole_3.2mm_M3")
+			(value "M2.5")
+			(footprint "MountingHole:MountingHole_2.7mm_M2.5")
 			(fields
 				(field
-					(name "Footprint") "MountingHole:MountingHole_3.2mm_M3")
+					(name "Footprint") "MountingHole:MountingHole_2.7mm_M2.5")
 				(field
 					(name "Datasheet")
 				)
@@ -4921,7 +4921,7 @@
 		)
 		(comp
 			(ref "J3")
-			(value "CH1 LED-/V+")
+			(value "CH1 V+/LED-")
 			(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal")
 			(fields
 				(field
@@ -4975,7 +4975,7 @@
 		)
 		(comp
 			(ref "J4")
-			(value "CH2 LED-/V+")
+			(value "CH2 V+/LED-")
 			(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal")
 			(fields
 				(field
@@ -5029,7 +5029,7 @@
 		)
 		(comp
 			(ref "J5")
-			(value "CH3 LED-/V+")
+			(value "CH3 V+/LED-")
 			(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal")
 			(fields
 				(field
@@ -5083,7 +5083,7 @@
 		)
 		(comp
 			(ref "J6")
-			(value "CH4 LED-/V+")
+			(value "CH4 V+/LED-")
 			(footprint "Connector_JST:JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal")
 			(fields
 				(field
@@ -9452,8 +9452,8 @@
 			)
 			(node
 				(ref "J3")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
@@ -9475,8 +9475,8 @@
 			)
 			(node
 				(ref "J4")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
@@ -9498,8 +9498,8 @@
 			)
 			(node
 				(ref "J5")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
@@ -9521,8 +9521,8 @@
 			)
 			(node
 				(ref "J6")
-				(pin "1")
-				(pinfunction "Pin_1_1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
@@ -10450,26 +10450,26 @@
 			)
 			(node
 				(ref "J3")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
 				(ref "J4")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
 				(ref "J5")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
 				(ref "J6")
-				(pin "2")
-				(pinfunction "Pin_2_2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node

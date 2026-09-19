@@ -50,11 +50,12 @@ WHERE I AM
 DO THESE FIRST — they were blocked on the Mouser delivery
   1. DECIDED 2026-09-19 (REV-B-CHECKLIST.md 4.1.1): Molex 22-05-3021, keyway
      high off the board, fitted to a Rev A board -> the pre-plugged lamp LIT.
-     J3-J6 pin order REVERTS to Rev A's (pin 1 = VIN_PROT / V+). To do: reverse
-     Task 4 (55af04c), flip the eight +/- silk marks (GUI delete), and amend
-     spec decision 9 and section 6 EXPLICITLY. Do not revert them quietly.
-     The "Rev A" silk defect below is still wrong, but J3-J6 polarity will
-     then match Rev A.
+     J3-J6 pin order REVERTS to Rev A's (pin 1 = VIN_PROT / V+). Schematic,
+     new 1.5 mm silk marks, REV B mark and spec amendments are DONE (see
+     checklist 4.1.1). STILL TO DO: the GUI pass there, which is F8, then
+     tools/revb_silk_pass.py in the scripting console, then save. It deletes
+     the old marks and "Rev A" and moves the title, which also clears both
+     silk defects below.
   2. Same test on a 22-05-3041 with a tri-colour strip -> answers the J7/J8
      wire order (checklist 4.2). There V+ and GND sit at OPPOSITE ENDS of the
      4-way, so an end-for-end flip destroys a WS2815 rather than merely
