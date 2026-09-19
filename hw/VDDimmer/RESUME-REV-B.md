@@ -48,12 +48,13 @@ WHERE I AM
   pre-routing state, NOT a regression. Phase 5 rips it up.
 
 DO THESE FIRST — they were blocked on the Mouser delivery
-  1. Molex 22-05-3021 (2-way R/A) has arrived. Mate a lamp plug to a loose
-     header IN HAND and note which header pin the + wire sits on, counting
-     from the pin-1 end. See REV-B-CHECKLIST.md 4.1.1. This decides whether
-     J3-J6 pin order REVERTS to Rev A's (pin 1 = V+), which would undo Task 4
-     (55af04c) and flip the eight silk marks. Do not change anything until I
-     have confirmed the result.
+  1. DECIDED 2026-09-19 (REV-B-CHECKLIST.md 4.1.1): Molex 22-05-3021, keyway
+     high off the board, fitted to a Rev A board -> the pre-plugged lamp LIT.
+     J3-J6 pin order REVERTS to Rev A's (pin 1 = VIN_PROT / V+). To do: reverse
+     Task 4 (55af04c), flip the eight +/- silk marks (GUI delete), and amend
+     spec decision 9 and section 6 EXPLICITLY. Do not revert them quietly.
+     The "Rev A" silk defect below is still wrong, but J3-J6 polarity will
+     then match Rev A.
   2. Same test on a 22-05-3041 with a tri-colour strip -> answers the J7/J8
      wire order (checklist 4.2). There V+ and GND sit at OPPOSITE ENDS of the
      4-way, so an end-for-end flip destroys a WS2815 rather than merely

@@ -174,9 +174,22 @@ that read continuous are V+. No power, no datasheet, immune to connector choice.
 horizontal footprint must be authored in the `VANDIMMER` library from the datasheet, for
 both 1x02 and 1x04. Row grows ~0.4 mm; gaps go 4.06 → ~3.99 mm.
 
-#### 4.1.1 ⚠️ OPEN: the connector may force the pin order back to Rev A's
+#### 4.1.1 ✅ RESOLVED 2026-09-19: the connector forces the pin order back to Rev A's
 
-**Ordered 2026-09-14: Molex 22-05-3021 (2-way R/A). Awaiting delivery.**
+**Result:** Molex 22-05-3021 arrived and was fitted to a **Rev A** board (pin 1 =
+`VIN_PROT`). The Molex keyway sits **high, away from the PCB**. A pre-plugged lamp mated
+to it lit at 50 % (all channels set to 127 over the serial console). An LED lamp does not
+light reverse-biased, so the lamp's **+** lands on board pin 1. **Rev A's order is correct
+with this header, and Task 4 (`55af04c`) must be reversed.** The work is listed under
+*Work if it flips*, below. It has not been done yet.
+
+The alternative below (a header with the opposite latch face) no longer applies. Stay on
+22-05-3021 and change the pin order instead. J7/J8 (§4.2) were **not** part of this test
+and are still open.
+
+*Original analysis, kept for the reasoning:*
+
+**Ordered 2026-09-14: Molex 22-05-3021 (2-way R/A).**
 
 Stuart's observation: his existing 2510 stock has the keyway **toward the PCB**, while the
 Molex appears to have it **away from the PCB**. If so, the same plug enters rotated 180°
