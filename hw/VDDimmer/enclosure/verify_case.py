@@ -140,8 +140,23 @@ class Mesh:
         return abs(v)
 
     def inside(self, x, y, z):
-        """Ray cast along +Z. Odd crossings above the point means inside."""
+        """Ray cast along +Z, re-cast if the ray grazes a triangle edge.
+
+        A ray that passes exactly through a shared edge or vertex is counted by
+        both neighbouring triangles or by neither, and the parity comes out wrong.
+        That happens systematically, not rarely: any sample on the centre line of a
+        cylinder lands on the spokes of its cap fan, so a solid ear tip reads as
+        hollow. Nudging the ray a few microns off resolves it.
+        """
+        for dx, dy in ((0.0, 0.0), (1.7e-4, 1.1e-4), (-2.3e-4, 1.9e-4), (1.3e-4, -2.7e-4)):
+            hits, grazed = self._cast(x + dx, y + dy, z)
+            if not grazed:
+                return hits % 2 == 1
+        return hits % 2 == 1
+
+    def _cast(self, x, y, z):
         hits = 0
+        grazed = False
         for t in self.grid.get((int(math.floor(x / self.cell)), int(math.floor(y / self.cell))), ()):
             (x1, y1, z1), (x2, y2, z2), (x3, y3, z3) = t
             d1 = (x2 - x1, y2 - y1)
@@ -152,12 +167,14 @@ class Mesh:
             px, py = x - x1, y - y1
             u = (px * d2[1] - py * d2[0]) / den
             v = (d1[0] * py - d1[1] * px) / den
-            if u < 0 or v < 0 or u + v > 1:
+            if u < -1e-9 or v < -1e-9 or u + v > 1 + 1e-9:
                 continue
+            if min(abs(u), abs(v), abs(u + v - 1)) < 1e-7:
+                grazed = True
             zt = z1 + u * (z2 - z1) + v * (z3 - z1)
             if zt > z + 1e-9:
                 hits += 1
-        return hits % 2 == 1
+        return hits, grazed
 
     def material_in_box(self, x0, x1, y0, y1, z0, z1, n=3):
         """Any sample point inside the mesh within this box?"""
@@ -207,6 +224,22 @@ def main():
           and abs(bb[1] - (P["outer_w"] + P["ear_reach"])) < 0.01,
           "mesh x %.2f..%.2f, expected %.2f..%.2f"
           % (bb[0], bb[1], -P["ear_reach"], P["outer_w"] + P["ear_reach"]))
+    # A tangential joint still reads as one solid, so walk the load path from each
+    # ear's tip into the wall and require material the whole way.
+    for side, sign in (("left", -1), ("right", 1)):
+        corner = 0 if sign < 0 else P["outer_w"]
+        # from the screw hole's inboard edge (the path has to go round the hole,
+        # not through it) to the middle of the wall
+        x_tip = corner + sign * (P["ear_hole_off"] - P["ear_hole_d"] / 2 - 0.6)
+        x_wall = (P["wall"] / 2) if sign < 0 else (P["outer_w"] - P["wall"] / 2)
+        for y_name, y in (("front", P["ear_w"] / 2), ("back", P["outer_d"] - P["ear_w"] / 2)):
+            n = 40
+            gaps = [round(x_tip + (x_wall - x_tip) * i / (n - 1.0), 2)
+                    for i in range(n)
+                    if not base.inside(x_tip + (x_wall - x_tip) * i / (n - 1.0), y, P["ear_t"] / 2)]
+            check("%s %s ear is continuous into the wall" % (y_name, side), gaps == [],
+                  "" if not gaps else "no material at x=%s" % gaps[:5])
+
     check("ears stay below the lid joint",
           len(base.material_in_box(-P["ear_reach"] + 1, -P["boss_reach"] - 1,
                                    2, P["outer_d"] - 2,

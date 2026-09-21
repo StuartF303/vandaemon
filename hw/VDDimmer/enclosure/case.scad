@@ -131,6 +131,8 @@ ear_tip      = lid_boss_d / 2 + ear_len;                 // straight part's end
 ear_hole_off = ear_tip - ear_hole_d / 2 - 2.0;           // hole centre from corner
 ear_reach    = max(ear_tip, ear_hole_off + ear_w / 2);   // furthest material in X
 boss_reach   = lid_boss_d / 2;                           // furthest material in Y
+ear_root     = wall;                                     // how far the ear reaches
+                                                         // INTO the shell wall
 
 // Sanity checks on the derived geometry. These are cheap and they fire at render
 // time, before anything is exported or printed.
@@ -190,7 +192,10 @@ module van_ears() {
     // the case closed, and no fastener enters the sealed volume.
     for (c = corners) {
         dir = (c[0] == 0) ? -1 : 1;
-        x_in = c[0] + dir * (lid_boss_d / 2 - 1.0);   // start inside the boss
+        // The root has to reach THROUGH the corner boss and into the flat wall.
+        // Starting it at the boss's own radius welded the ear to the round boss
+        // alone, which is a poor load path for a case bolted to a moving vehicle.
+        x_in = c[0] - dir * ear_root;
         x_out = c[0] + dir * ear_tip;
         hole_x = c[0] + dir * ear_hole_off;
         // Pull the ear inboard in Y so it never reaches past the shell: centred on
@@ -361,7 +366,9 @@ params_json = str("{", join([
     q("slot_z0", slot_z0), q("slot_z1", slot_z1),
     q("harness_h", harness_h), q("power_h", power_h),
     q("post_d", post_d), q("lip_clear", lip_clear), q("lip_h", lip_h),
-    q("ear_reach", ear_reach), q("ear_t", ear_t), q("boss_reach", boss_reach),
+    q("ear_reach", ear_reach), q("ear_t", ear_t), q("ear_w", ear_w),
+    q("ear_hole_off", ear_hole_off), q("ear_hole_d", ear_hole_d),
+    q("boss_reach", boss_reach),
     q("bx0", bx(0)), q("by0", by(pcb_h)),
     q("letterbox_pillars", letterbox_pillars ? "true" : "false"),
     q("parts", str("[", join([for (p = pcb_parts) part_json(p)], ","), "]")),

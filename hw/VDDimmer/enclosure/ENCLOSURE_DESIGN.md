@@ -41,7 +41,10 @@ plug body wider than its header cannot miss its slot. Ribs in the gaps between c
 break the bridge into ~20 mm spans; `letterbox_pillars = false` gives one clear opening.
 
 **Mounting: four external ears** at floor level, M4. The screws stay reachable with the lid
-on and no fastener enters the enclosed volume.
+on and no fastener enters the enclosed volume. Each ear's root reaches *through* the corner
+boss and into the flat wall: welded to the round boss alone it was a poor load path for a
+case bolted inside a moving vehicle, and mesh connectivity alone does not catch that, since
+a tangential joint still reads as one solid.
 
 **Lid: four M3 self-tappers** into bosses at the outer corners. The bosses have to straddle
 the corners: pulled inboard they foul the board, because the cavity is only 0.6 mm larger
@@ -87,18 +90,25 @@ own X centre.
 
 `verify_case.py` renders the parts and measures the **mesh**, not the constants. Expected
 values are echoed by `case.scad` itself, so a parameter that is right while the geometry
-using it is wrong still fails. 76 checks: single connected solid per part, outer envelope,
+using it is wrong still fails. 80 checks: single connected solid per part, outer envelope,
 no case material inside any of the 21 components' volumes, a clear path out through the wall
 for each harness connector, pillars only in the gaps, posts at the board's hole positions
-with empty pilots, lid features over what they serve, and lip-to-wall clearance.
+with empty pilots, an unbroken load path from each ear into the wall, lid features over what
+they serve, and lip-to-wall clearance.
 
-The checks were proved non-vacuous by reintroducing three defects and watching them go red:
+The checks were proved non-vacuous by reintroducing four defects and watching them go red:
 
 | injected defect | caught by |
 |---|---|
 | posts shifted 2 mm in X | 4 post-position checks |
 | pillars 4 mm wider than their gaps | 5 connector-path checks + the pillar check |
 | labels cut inside the wall | single-solid check (9 components) |
+| ear root back on the boss edge | 4 ear-continuity checks |
+
+Sampling a solid by ray casting needs care: a ray through a shared triangle edge is counted
+twice or not at all, and that is systematic rather than rare — every sample along a
+cylinder's centre line lands on the spokes of its cap fan, so a solid ear tip read as hollow.
+`Mesh.inside` re-casts a few microns off when it grazes an edge.
 
 That last one is a real bug this found: the engraving started 0.2 mm inside the wall, leaving
 a skin over every glyph. It renders as perfect engraving and prints as eight sealed voids.
