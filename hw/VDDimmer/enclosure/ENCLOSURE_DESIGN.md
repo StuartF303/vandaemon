@@ -2,8 +2,10 @@
 
 Two-part printed case for the board going into the van. Designed 2026-09-20.
 
-**Status:** geometry complete and verified against the built mesh; **nothing printed yet.**
-Two things are still assumed rather than measured — see *Open items*.
+**Status: PRINTED 2026-09-23 and it fits.** Geometry verified against the built mesh (80
+checks) and now against the real board. The connector heights below were assumed from
+datasheets rather than measured, and the print settles that in practice — but they are still
+assumptions in the source, so a Rev B re-run inherits them.
 
 | file | what it is |
 |---|---|
@@ -126,15 +128,15 @@ dissipates 2.5–3 W, roughly 70 % of it in the buck corner.
 
 ## Open items
 
-1. **The fitted Molex connector height is assumed, not measured.** `harness_conn_h_min = 9.5`
-   covers a Molex 22-05-3021 against the 6.11 mm JST XH in the model. Measure a fitted
-   connector and its mated plug; if it exceeds 9.5 mm the slot needs raising, which eats into
-   the 5.5 mm bridge.
-2. **The Phoenix mating plug is assumed at 12 mm** (`power_conn_h_min`).
-3. **Print `part="gauge"` first.** It is the front strip of the base: both front posts, the
-   whole letterbox, the pillars, one ear. A couple of hours instead of a whole case, and it
-   settles the hole pitch, the slot height and plug clearance.
-4. **Bridge reinforcement** is available if the 5.5 mm band above the letterbox sags:
-   more pillars, or drop `head` and reduce the opening.
-5. The antenna recess is a marked flat area only. Whether the antenna sticks there
+1. **Settled by the print (2026-09-23):** the case fits the board. That covers the hole
+   pitch, the letterbox height and the pillar clearances, which were the things the fit
+   gauge existed to test.
+2. **Still assumptions in the source**, carried into any Rev B re-run:
+   `harness_conn_h_min = 9.5` (Molex 22-05-3021, against the 6.11 mm JST XH in the model) and
+   `power_conn_h_min = 12.0` (Phoenix mating plug). Neither was measured with calipers.
+3. **Bridge reinforcement** is available if the 5.5 mm band above the letterbox proves weak
+   in service: more pillars, or drop `head` and reduce the opening.
+4. The antenna recess is a marked flat area only. Whether the antenna sticks there
    acceptably, and how the U.FL pigtail routes, is untested.
+5. Nothing is recorded about how the case behaves hot. The vents are sized by judgement, not
+   measurement, against 2.5–3 W concentrated in the buck corner.

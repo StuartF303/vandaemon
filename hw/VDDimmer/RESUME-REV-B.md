@@ -1,8 +1,18 @@
 # Resume prompt — VANDIMMER Rev B
 
-**Last session ended:** 2026-09-17 · **Tip:** `219bc50` · **Branch:** `vddimmer-rev-b`
+**Last session ended:** 2026-09-23 · **Tip:** `b967772` · **Branch:** `vddimmer-rev-b`
 **State:** Phases 1–4 complete. Stopped at the Task 13 placement checkpoint, awaiting
-visual approval. **No routing has started.**
+visual approval. **No routing has started.** 22 commits ahead of origin, tree clean.
+
+**Since 2026-09-17, off the Rev B critical path:**
+- Firmware `a9e0823b` flashed to a Rev A board over USB (COM3) and confirmed by boot
+  banner. All four PWM channels were left at 127/255 via the serial console; that state
+  persists in NVS. The board is **not** on WiFi/MQTT — it never joined, so OTA is unreachable
+  and USB is the only way in.
+- J3–J6 reverted to Rev A's pin order (`1a22fd1`) after the Molex test. **The KiCad GUI pass
+  is still outstanding** — see below. The PCB's pads still carry the OLD nets.
+- Rev A enclosure designed, verified and **printed; it fits** (`hw/VDDimmer/enclosure/`,
+  commits `a36ef93`, `b967772`). Independent of the Rev B work.
 
 Paste the block below into a fresh session.
 
@@ -16,7 +26,7 @@ only stop where I say.
 
 REPO / BRANCH
   C:\Projects\vandaemon, branch `vddimmer-rev-b` (exists, do not re-create).
-  Tip 219bc50, 16 commits ahead of origin/vddimmer-rev-b, tree clean.
+  Tip b967772, 22 commits ahead of origin/vddimmer-rev-b, tree clean.
   Commit after every task.
 
 READ THESE FIRST, IN THIS ORDER
