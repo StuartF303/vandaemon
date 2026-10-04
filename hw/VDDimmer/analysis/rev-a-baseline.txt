@@ -1,0 +1,159 @@
+=== connect.py ===
+=== 61 nets checked, 12 split into more than one group ===
+
+--- +3V3: 2 groups
+    g0:  45 items  pads: C40.1, C41.1, C42.1, J13.1, J14.1, R29.1, R40.1, R43.1, R44.1, R45.1, R46.1, U1.2
+    g1:   5 items  pads: C31.1, C32.1, U3.2   trk F.Cu 2.70mm (191.5,89.9), pad C32.1, pad C31.1, pad U3.2, zone F.Cu prio4 31.1mm2
+
+--- +5V: 5 groups
+    g0:  45 items  pads: C25.1, C26.1, C27.1, C30.1, C50.1, C51.1, C60.1, C61.1, C62.1, D7.1, J10.3, J9.3
+    g1:   1 items  pads: D9.1   pad D9.1
+    g2:   1 items  pads: (none)   zone F.Cu prio1 0.0mm2
+    g3:   1 items  pads: (none)   zone F.Cu prio1 0.0mm2
+    g4:   1 items  pads: (none)   zone F.Cu prio1 0.0mm2
+
+--- /MCU/BTN1: 2 groups
+    g0:   5 items  pads: R43.2, U1.33
+    g1:   1 items  pads: J11.1   pad J11.1
+
+--- /MCU/USB_DM: 2 groups
+    g0:  13 items  pads: D8.4, J1.A7, J1.B7
+    g1:   6 items  pads: D8.3, U1.13   trk F.Cu 1.05mm (146.83,109.0), trk F.Cu 30.53mm (146.83,110.05), trk F.Cu 2.50mm (116.3,110.05), trk F.Cu 0.50mm (116.3,107.55), pad D8.3, pad U1.13
+
+--- /MCU/USB_DP: 2 groups
+    g0:   8 items  pads: D8.6, J1.A6, J1.B6
+    g1:   5 items  pads: D8.1, U1.14   trk F.Cu 1.05mm (115.8,110.5), trk F.Cu 1.50mm (148.1,109.0), trk F.Cu 32.30mm (148.1,110.5), pad D8.1, pad U1.14
+
+--- /MCU/VBUS: 4 groups
+    g0:  10 items  pads: D8.5, J1.A9, J1.B4
+    g1:   2 items  pads: J1.A4, J1.B9   pad J1.A4, pad J1.B9
+    g2:   1 items  pads: D9.2   pad D9.2
+    g3:   1 items  pads: C44.1   pad C44.1
+
+--- /PWM/DRAIN1: 2 groups
+    g0:   5 items  pads: D1.2, J3.2, Q1.2
+    g1:   1 items  pads: Q1.2   pad Q1.2
+
+--- /PWM/DRAIN2: 2 groups
+    g0:   5 items  pads: D2.2, J4.2, Q2.2
+    g1:   1 items  pads: Q2.2   pad Q2.2
+
+--- /PWM/DRAIN3: 2 groups
+    g0:   5 items  pads: D3.2, J5.2, Q3.2
+    g1:   1 items  pads: Q3.2   pad Q3.2
+
+--- /PWM/DRAIN4: 2 groups
+    g0:   5 items  pads: D4.2, J6.2, Q4.2
+    g1:   1 items  pads: Q4.2   pad Q4.2
+
+--- /Power/VIN_FUSED: 2 groups
+    g0:   7 items  pads: D5.1, F1.2, Q5.2
+    g1:   1 items  pads: Q5.2   pad Q5.2
+
+--- VIN_PROT: 3 groups
+    g0:  32 items  pads: D1.1, D2.1, D3.1, D4.1, D6.1, J3.1, J4.1, J5.1, J6.1, L3.1, Q5.3, R27.1
+    g1:   1 items  pads: J10.1   pad J10.1
+    g2:   1 items  pads: J9.1   pad J9.1
+
+=== 7 MARGINAL contacts (overlap < 0.05 mm) ===
+    copper this thin is one rounding away from an open circuit
+     23.0 um  trk F.Cu 1.55mm (174.863,74.95)-(174.863,76.5)  <->  pad C23.1
+     23.0 um  trk F.Cu 4.66mm (174.5,81.25)-(174.863,76.6)  <->  pad C23.1
+     25.0 um  trk F.Cu 7.05mm (174.1,73.05)-(174.1,66.0)  <->  pad U2.1
+     25.0 um  trk F.Cu 1.36mm (177.137,74.0)-(178.5,74.0)  <->  pad C24.2
+     25.0 um  trk B.Cu 3.21mm (124.3,100.6)-(121.088,100.6)  <->  via (121.088,100.200)
+     25.0 um  via (172.588,124.025)  <->  pad R10.1
+     50.0 um  via (112.400,107.000)  <->  pad D8.4
+
+=== measure.py ===
+=== 1. Cin hot loop (C23 -> U2 pin3/pin4 -> C23) ===
+   U2.3 VIN     (174.863,74.950)
+   U2.4 GND     (177.137,74.950)
+   C23.1        (175.520,76.500)
+   C23.2        (176.480,76.500)
+   loop area = 2.51 mm^2   (gate: < 15)
+   vias inside/touching loop bbox = 1  (gate: 0)
+     !! via GND at (177.137,75.95)
+
+=== 2. Switch node (SW) clearance to other nets ===
+   SW segments: 3  nets={'/Power/SW'}
+     0.250 mm to /Power/BST               (177.137,73.05)-(179.2,73.05)
+     0.250 mm to /Power/BST               (179.2,73.05)-(179.2,72.75)
+     0.450 mm to /Power/BST               (177.137,73.05)-(179.2,73.05)
+     0.450 mm to /Power/BST               (179.2,73.05)-(179.2,72.75)
+     0.500 mm to /Power/BST               (177.137,73.05)-(179.2,73.05)
+     0.700 mm to GND                      (177.137,76.5)-(177.137,75.2)
+     0.730 mm to /Power/BST               (179.2,73.05)-(179.2,72.75)
+     1.066 mm to GND                      (177.137,76.5)-(177.137,75.2)
+
+=== 3. FB divider (R21/R22/C27) vs L1 and SW ===
+   R21:   6.73 mm to L1 (pad-centre),    4.80 mm to SW copper
+   R22:   8.95 mm to L1 (pad-centre),    4.91 mm to SW copper
+   C27:   8.61 mm to L1 (pad-centre),    7.03 mm to SW copper
+
+=== 4. Bottom-layer copper that is NOT pour or stitching ===
+   34 B.Cu track segments, 268.49 mm total
+   +3V3                   12 seg  168.51 mm   nearest approach to U2:   9.55 mm
+   /MCU/BTN2               4 seg   32.75 mm   nearest approach to U2:  66.76 mm
+   /MCU/USB_CC2            1 seg    9.25 mm   nearest approach to U2:  72.22 mm
+   /PWM/GATE1              2 seg    8.60 mm   nearest approach to U2:  73.00 mm
+   /MCU/VBUS               2 seg    8.30 mm   nearest approach to U2:  71.26 mm
+   /MCU/EN_MCU             2 seg    7.54 mm   nearest approach to U2:  38.75 mm
+   /MCU/BOOT_IO0           2 seg    7.20 mm   nearest approach to U2:  37.22 mm
+   /MCU/USB_DM             2 seg    7.05 mm   nearest approach to U2:  70.21 mm
+   /MCU/I2C_SCL            2 seg    5.67 mm   nearest approach to U2:  31.37 mm
+   /MCU/I2C_SDA            2 seg    5.37 mm   nearest approach to U2:  28.06 mm
+   +5V                     1 seg    4.00 mm   nearest approach to U2:  30.23 mm
+   /Addressable/ADDR2_VOUT  1 seg    3.00 mm   nearest approach to U2:  57.94 mm
+   /Addressable/ADDR2_D5V  1 seg    1.25 mm   nearest approach to U2:  47.88 mm
+
+=== 5. Zones (filled polygons) ===
+   B.Cu   GND            prio 0     1 island(s)     7179.8 mm^2
+   B.Cu   VIN_PROT       prio 3     1 island(s)      145.4 mm^2
+   F.Cu   GND            prio 0    49 island(s)     2663.5 mm^2
+   F.Cu   VIN_PROT       prio 5     1 island(s)     1350.2 mm^2
+   F.Cu   VIN_PROT       prio 6     2 island(s)      717.6 mm^2
+   F.Cu   +5V            prio 2     2 island(s)      558.2 mm^2
+   F.Cu   +3V3           prio 4     1 island(s)       31.1 mm^2
+   F.Cu   +5V            prio 1    13 island(s)        0.0 mm^2
+
+=== emc.py ===
+=== 1. B.Cu GND pour ===
+   1 filled island(s), 7179.8 mm^2 total
+        7179.8 mm^2  bbox x 100.5-199.5 y 60.5-139.5  (6513 vertices)
+
+=== 2. F.Cu nets crossing a gap in the B.Cu GND pour ===
+   43 of 60 routed F.Cu nets cross an unbacked gap
+      6.50 mm  /PWM/DRAIN1                  (115.0,114.6)-(115.0,121.0)
+      5.20 mm  /MCU/USB_CC1                 (108.75,110.75)-(108.75,105.6)
+      4.80 mm  VIN_SENSE                    (132.86,90.75)-(132.86,86.0)
+      4.60 mm  /MCU/UART1_TX                (137.94,96.6)-(113.08,96.6)
+      4.60 mm  /MCU/UART1_RX                (139.21,97.2)-(115.62,97.2)
+      4.60 mm  /MCU/BTN2                    (122.912,104.5)-(115.0,104.5)
+      4.60 mm  /MCU/USB_DP                  (148.1,110.5)-(115.8,110.5)
+      4.60 mm  /MCU/USB_DM                  (146.83,110.05)-(116.3,110.05)
+      4.60 mm  /PWM/GDRV1                   (114.4,111.2)-(153.4,111.2)
+      4.20 mm  /PWM/GATE2                   (119.513,114.6)-(119.513,118.72)
+      3.30 mm  /PWM/GDRV2                   (117.688,111.7)-(152.9,111.7)
+      2.70 mm  GATE_IN2                     (149.35,103.945)-(158.1,103.945)
+
+=== 3. Layer transitions without a GND return via ===
+   46 non-GND vias; 31 have no GND via/PTH within 1.0 mm
+      7.27 mm  /MCU/I2C_SCL                 (160.0875,104.2)
+      6.18 mm  +5V                          (171.6,105.0)
+      5.07 mm  +3V3                         (161.9125,98.8)
+      3.87 mm  +5V                          (167.6,105.0)
+      3.73 mm  /MCU/EN_MCU                  (145.9,109.5)
+      3.33 mm  /MCU/I2C_SDA                 (160.0875,98.8)
+      3.18 mm  /MCU/USB_DM                  (110.35,112.0)
+      2.95 mm  /MCU/VBUS                    (111.2,116.0)
+      2.67 mm  /MCU/EN_MCU                  (150.6,105.16)
+      2.14 mm  /MCU/VBUS                    (112.0,108.5)
+      2.13 mm  VIN_PROT                     (117.95,92.453)
+      2.13 mm  VIN_PROT                     (118.6,91.5)
+
+=== 4. B.Cu GND under the buck (U2 footprint + 5 mm) ===
+   window x 169.20-182.80  y 67.75-80.25
+   GND pour covers 6400/6400 = 100.0% of sample points
+   foreign B.Cu tracks in window: 0   foreign vias: 0
+

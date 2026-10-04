@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "project": "VANDIMMER-4CH2A.kicad_pro",
+  "current": "2026-08-25_1035",
+  "runs": {
+    "2026-08-25_1035": {
+      "source_hashes": {
+        "VANDIMMER-4CH2A.kicad_sch": "sha256:b6012301f35505e7f1945392629e9d329db6796614f800d6a9cbbee6f7124efb",
+        "VANDIMMER-4CH2A.kicad_pcb": "sha256:5507f23f4e6d3a6c6b536455062518ff800b453b888ddc880d41f098f4648896",
+        "schematic.json": "sha256:9ee3ab8b1ee280797857b7b050b480db9f96634a78ea0726d153d76f14e649ce",
+        "pcb.json": "sha256:ee7a684a19d663303e2d1f8c824b0d54ef9c9ae82fe5720e13eb06691549050b"
+      },
+      "outputs": {
+        "schematic": "schematic.json",
+        "pcb": "pcb.json",
+        "cross_analysis": "cross_analysis.json",
+        "emc": "emc.json",
+        "thermal": "thermal.json"
+      },
+      "scripts": {
+        "schematic": "analyze_schematic.py VANDIMMER-4CH2A.kicad_sch"
+      },
+      "generated": "2026-08-25T10:37:06+01:00",
+      "pinned": false
+    }
+  }
+}

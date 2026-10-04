@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Serilog;
 using VanDaemon.Api.Hubs;
 using VanDaemon.Api.Services;
@@ -42,14 +42,18 @@ builder.Services.AddCors(options =>
             // Development: Allow specific origins for local development
             // Frontend runs on 5001, Docker web on 8080
             // Include both localhost and 127.0.0.1 (browsers treat them as different origins)
-            policy.WithOrigins(
-                      "http://localhost:5001",      // Local development frontend (localhost)
-                      "http://127.0.0.1:5001",      // Local development frontend (127.0.0.1)
-                      "https://localhost:5001",     // HTTPS local development (localhost)
-                      "https://127.0.0.1:5001",     // HTTPS local development (127.0.0.1)
-                      "http://localhost:8080",      // Docker web container
-                      "http://127.0.0.1:8080"       // Docker web container (127.0.0.1)
-                  )
+            // Any origin, but reflected rather than "*" so AllowCredentials
+            // stays legal -- SignalR needs credentials, and the spec forbids
+            // pairing them with a wildcard.
+            //
+            // This is not a loosening: the production branch below already
+            // allows any origin, so the development list was the stricter of
+            // the two. It also has to be, because the dashboard is opened from
+            // other devices on the LAN (a tablet), whose origin is the dev
+            // machine's DHCP address and cannot be known ahead of time. CORS
+            // is no protection for this API in any case -- it has no auth, and
+            // a non-browser client ignores CORS entirely.
+            policy.SetIsOriginAllowed(_ => true)
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials();

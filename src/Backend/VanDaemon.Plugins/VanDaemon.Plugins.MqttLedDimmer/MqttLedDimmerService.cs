@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using VanDaemon.Application.Interfaces;
 using VanDaemon.Core.Entities;
@@ -77,6 +77,26 @@ public class MqttLedDimmerService : BackgroundService
     private async Task DiscoverAndRegisterDevicesAsync(CancellationToken cancellationToken)
     {
         var devices = _plugin.GetDiscoveredDevices();
+
+        // Seed the guard from what is already persisted.
+        //
+        // _registeredControls is per-process but controls.json is not, so on its
+        // own the guard only prevents duplicates within a single run. Every
+        // restart re-registered the whole device and appended another full set
+        // of controls -- two restarts gave two "Channel 1".."Channel 6" entries
+        // each, and it compounds on every boot.
+        // ToList() because the service hands back a lazy view over its live
+        // list, which the state-refresh loop mutates concurrently.
+        var existing = (await _controlService.GetAllControlsAsync(cancellationToken)).ToList();
+        foreach (var c in existing)
+        {
+            if (c.ControlPlugin != "MqttLedDimmer") continue;
+            if (c.ControlConfiguration.TryGetValue("ControlId", out var existingId) &&
+                existingId?.ToString() is { Length: > 0 } id)
+            {
+                _registeredControls.Add(id);
+            }
+        }
 
         foreach (var (deviceId, deviceInfo) in devices)
         {
