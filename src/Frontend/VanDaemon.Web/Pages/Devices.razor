@@ -1,4 +1,5 @@
 @page "/devices"
+@using VanDaemon.Plugins.Ui.Hosting
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -264,6 +265,16 @@
                     <li>Gas detectors</li>
                 </ul>
             </MudAlert>
+        </div>
+    </MudTabPanel>
+
+    <!-- EXTENSIONS TAB: Tier-2 UI-plugin seam host (004). Rendering it here exercises INativeBridge,
+         so the transport-selection log fires on-device for 005 SC-007 verification (008). -->
+    <MudTabPanel Text="Extensions" Icon="@Icons.Material.Filled.Extension">
+        <div style="overflow-y: auto; height: 100%; padding: 16px;">
+            <MudText Typo="Typo.h4" GutterBottom="true">Extensions</MudText>
+            <MudText Class="mb-4">UI plugins contributed through the Tier-2 plugin seam.</MudText>
+            <UiPluginHost />
         </div>
     </MudTabPanel>
 

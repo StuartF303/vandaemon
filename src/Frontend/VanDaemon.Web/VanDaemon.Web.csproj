@@ -15,6 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Backend\VanDaemon.Core\VanDaemon.Core.csproj" />
+    <ProjectReference Include="..\VanDaemon.Plugins.Ui\VanDaemon.Plugins.Ui.csproj" />
+    <ProjectReference Include="..\..\Backend\VanDaemon.Plugins\VanDaemon.Plugins.Ui.Abstractions\VanDaemon.Plugins.Ui.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

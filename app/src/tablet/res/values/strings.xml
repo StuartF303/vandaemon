@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connecting">Connecting to VanDaemon…</string>
+    <string name="connecting_to">Connecting to %1$s …</string>
+    <string name="waiting_for">Waiting for VanDaemon at %1$s …</string>
+    <string name="address_hint">vandaemon.local:8080</string>
+    <string name="retry">Retry</string>
+</resources>

@@ -50,10 +50,18 @@ public abstract class PlaywrightTestBase : IAsyncLifetime
         // Create page
         Page = await Context.NewPageAsync();
 
+        // Capture browser console + uncaught page errors so a Blazor-load failure is diagnosable
+        // (otherwise a WASM boot error is invisible — the test just times out waiting for the layout).
+        Page.Console += (_, msg) => _browserLog.Add($"[console:{msg.Type}] {msg.Text}");
+        Page.PageError += (_, err) => _browserLog.Add($"[pageerror] {err}");
+
         // Set default timeouts
         Page.SetDefaultNavigationTimeout(TestConfiguration.NavigationTimeout);
         Page.SetDefaultTimeout(TestConfiguration.ElementTimeout);
     }
+
+    /// <summary>Browser console + page-error messages captured for failure diagnostics.</summary>
+    private readonly List<string> _browserLog = new();
 
     /// <summary>
     /// Clean up Playwright resources after each test
@@ -90,17 +98,43 @@ public abstract class PlaywrightTestBase : IAsyncLifetime
     {
         try
         {
-            // Wait for MudBlazor components to be loaded (indicates Blazor is ready)
-            await Page!.WaitForSelectorAsync(".mud-layout", new()
+            // Wait for the app's root layout to render (indicates Blazor WASM has booted). This app
+            // uses a custom grid layout (MainLayout's ".layout-container"), NOT MudBlazor's <MudLayout>,
+            // so ".mud-layout" never appears — waiting for it was the cause of every E2E timeout.
+            await Page!.WaitForSelectorAsync(".layout-container", new()
             {
                 Timeout = TestConfiguration.BlazorInitTimeout
             });
         }
         catch (TimeoutException)
         {
+            // Dump what the browser actually saw so the failure is diagnosable, not just a timeout.
+            var appHtml = await SafeInnerHtmlAsync("#app");
+            var errorUi = await SafeInnerHtmlAsync("#blazor-error-ui");
+            Console.WriteLine("===== Blazor load diagnostics =====");
+            Console.WriteLine($"URL: {Page!.Url}");
+            Console.WriteLine($"#app innerHTML: {appHtml}");
+            Console.WriteLine($"#blazor-error-ui innerHTML: {errorUi}");
+            Console.WriteLine("Browser log:");
+            foreach (var line in _browserLog)
+                Console.WriteLine("  " + line);
+            Console.WriteLine("===================================");
+
             throw new TimeoutException(
                 $"Blazor application did not load within {TestConfiguration.BlazorInitTimeout}ms. " +
                 "Make sure the VanDaemon web application is running at " + TestConfiguration.WebBaseUrl);
+        }
+    }
+
+    private async Task<string> SafeInnerHtmlAsync(string selector)
+    {
+        try
+        {
+            return await Page!.InnerHTMLAsync(selector);
+        }
+        catch (Exception ex)
+        {
+            return $"<unavailable: {ex.GetType().Name}>";
         }
     }
 

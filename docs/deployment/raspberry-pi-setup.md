@@ -24,6 +24,11 @@ This guide will walk you through setting up VanDaemon on a Raspberry Pi for use 
 
 ## Initial Setup
 
+> **Recommended:** For the containerised pull-based install (Pi pulls prebuilt
+> images from Docker Hub instead of building from source), follow
+> [pi-provisioning.md](pi-provisioning.md). The steps below are the fuller
+> manual reference.
+
 ### 1. Install Raspberry Pi OS
 
 1. Download [Raspberry Pi Imager](https://www.raspberrypi.com/software/)

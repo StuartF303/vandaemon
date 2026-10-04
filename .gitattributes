@@ -1,0 +1,17 @@
+# Normalize line endings: store LF in the repo, check out LF on all platforms.
+# Prevents CRLF/LF churn from editors on Windows/WSL.
+* text=auto eol=lf
+
+# Binary files Git should never touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.gif binary
+*.svg text
+*.zip binary
+*.mkc binary
+*.lz binary
+*.gbr binary
+*.drl binary
+*.nc binary
