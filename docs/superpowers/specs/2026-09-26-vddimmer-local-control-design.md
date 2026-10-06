@@ -328,6 +328,9 @@ sees the app's changes.
 ## 6. Out of scope
 
 - Addressable strip colour and effects in the app, scenes, all-off.
+- Tunable white (warm/cool CCT strip on paired PWM channels). Captured in
+  `hw/VDDimmer/FUTURE-FEATURES.md`. If it is likely to follow, reserve the
+  `cct` op in the protocol before the app ships.
 - Any VanDaemon backend or UI change (adopting `names` is a later step).
 - A wall-switch input: a Rev B hardware consideration, the fallback that needs
   no phone at all.
