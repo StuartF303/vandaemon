@@ -413,3 +413,6 @@ artifacts/wasm-publish/
 app/keystore.properties
 *.jks
 *.keystore
+
+# brainstorming visual-companion sessions (local only)
+.superpowers/brainstorm/

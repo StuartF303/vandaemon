@@ -242,7 +242,7 @@ the owning task.
 - [ ] **Step 1: Final `-NoFlash` build on a clean tree; `git status` clean; push branch; open PR to `main`** with the Phase 1 acceptance list below in the body, unchecked, and the note that items are ticked only after running on hardware.
 - [ ] **Step 2: Tell Stuart it is ready to test**, with: the mock command for a desktop look now (`python tools/web_mock.py`), and the OTA command for when the van is powered (`.\tools\Build-Flash.ps1 -Ota 192.168.1.115`).
 - [ ] **Step 3: Hardware acceptance (needs 12 V on the van board):**
-  - `Build-Flash.ps1 -Ota 192.168.1.115` ends `proven running build id matches`
+  - `Build-Flash.ps1 -Ota 192.168.1.115` ends `proven running build id matches` (on the first push: confirm runs after the reboot into 1.1.0)
   - `python tools\web_check.py --host 192.168.1.115` passes every check
   - Phone opens `http://192.168.1.115/`; four rows; rename to Front, Kitchen, Bedroom; reboot via Board tab; names persist
   - Dim Front from the page; the lamp follows; `mosquitto_sub -t 'vandaemon/leddimmer/vandimmer-6f9914/#' -v` shows `channel/0/state` (if a broker is configured and reachable)

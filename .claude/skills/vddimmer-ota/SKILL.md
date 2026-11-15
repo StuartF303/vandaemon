@@ -103,8 +103,9 @@ Weaker than the serial path, and it says so in its own output.
 
 Before 1.1.0 that gap was validated once by hand, on the van board 2026-11-15: an OTA
 push was followed by `verify_boot.py` over USB, which matched the delivered build id
-exactly. The first OTA *to* 1.1.0 is still the weaker receipt (the old image has no
-status endpoint when confirm runs); every one after it is proven.
+exactly. Confirm runs after the board has rebooted into the image just pushed, so the
+very first OTA onto 1.1.0 already yields the proven receipt; only a push of pre-1.1.0
+firmware falls back to the weaker one.
 
 ## Diagnosing a board that will not take an OTA
 
