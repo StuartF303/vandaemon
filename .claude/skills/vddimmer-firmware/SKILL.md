@@ -89,7 +89,8 @@ A red **FAIL** is real. Do not work around it — diagnose it.
 - **A wrong SSID strands a Rev A board.** `BTN_BOTH_LONG` needs the dead BTN1, `forget-wifi`
   needs MQTT, and `net_tick()` has no portal fallback — it sits red forever. Recover without
   a reflash by erasing only NVS:
-  `python -m esptool --chip esp32s3 --port COM4 erase-region 0x9000 0x5000`
+  `& "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" "$env:USERPROFILE\.platformio\packages\tool-esptoolpy\esptool.py" --chip esp32s3 --port COM4 erase-region 0x9000 0x5000`
+  (`python -m esptool` fails: esptool is the platform's `tool-esptoolpy` package, not a venv module)
 - **The 12 V position of J9/J10 is dead on Rev A** (`J9.1`/`J10.1` unrouted). Addressable
   strips must be 5 V parts; a WS2815 will not be powered at all.
 

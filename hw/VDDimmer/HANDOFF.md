@@ -11,6 +11,9 @@ the working tree was clean when this was written.
 
 Board, firmware and enclosure sources are all in git. The tooling around them is not:
 
+To set up a machine only for building and flashing the firmware, paste the prompt in
+`NEW-MACHINE-SETUP.md` into Claude Code there; it covers everything below that firmware needs.
+
 - **Branch.** This work is on `vddimmer-rev-b`. Tag `ordered-revA` marks the exact board
   JLCPCB received.
 - **KiCad 10.0.x.** Libraries are project-local (`${KIPRJMOD}`) and 3D models resolve
