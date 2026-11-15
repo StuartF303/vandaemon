@@ -1,0 +1,534 @@
+[
+{
+"ref": "R30",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F0000T5E",
+"lcsc": "C17477",
+"lib": "basic"
+},
+{
+"ref": "R5",
+"sheet": "PWM.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R6",
+"sheet": "PWM.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R7",
+"sheet": "PWM.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R8",
+"sheet": "PWM.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R40",
+"sheet": "MCU.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R43",
+"sheet": "MCU.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R44",
+"sheet": "MCU.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R22",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R28",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R29",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F1002T5E",
+"lcsc": "C17414",
+"lib": "basic"
+},
+{
+"ref": "R1",
+"sheet": "PWM.kicad_sch",
+"mpn": "0805W8F2200T5E",
+"lcsc": "C17557",
+"lib": "basic"
+},
+{
+"ref": "R2",
+"sheet": "PWM.kicad_sch",
+"mpn": "0805W8F2200T5E",
+"lcsc": "C17557",
+"lib": "basic"
+},
+{
+"ref": "R3",
+"sheet": "PWM.kicad_sch",
+"mpn": "0805W8F2200T5E",
+"lcsc": "C17557",
+"lib": "basic"
+},
+{
+"ref": "R4",
+"sheet": "PWM.kicad_sch",
+"mpn": "0805W8F2200T5E",
+"lcsc": "C17557",
+"lib": "basic"
+},
+{
+"ref": "R9",
+"sheet": "Addressable.kicad_sch",
+"mpn": "0805W8F470JT5E",
+"lcsc": "C17714",
+"lib": "basic"
+},
+{
+"ref": "R10",
+"sheet": "Addressable.kicad_sch",
+"mpn": "0805W8F470JT5E",
+"lcsc": "C17714",
+"lib": "basic"
+},
+{
+"ref": "R13",
+"sheet": "Addressable.kicad_sch",
+"mpn": "0805W8F470JT5E",
+"lcsc": "C17714",
+"lib": "basic"
+},
+{
+"ref": "R11",
+"sheet": "Addressable.kicad_sch",
+"mpn": "0805W8F470JT5E",
+"lcsc": "C17714",
+"lib": "basic"
+},
+{
+"ref": "R12",
+"sheet": "Addressable.kicad_sch",
+"mpn": "0805W8F470JT5E",
+"lcsc": "C17714",
+"lib": "basic"
+},
+{
+"ref": "R20",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F1003T5E",
+"lcsc": "C149504",
+"lib": "basic"
+},
+{
+"ref": "R23",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F1003T5E",
+"lcsc": "C149504",
+"lib": "basic"
+},
+{
+"ref": "R27",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F1003T5E",
+"lcsc": "C149504",
+"lib": "basic"
+},
+{
+"ref": "R41",
+"sheet": "MCU.kicad_sch",
+"mpn": "0805W8F5101T5E",
+"lcsc": "C27834",
+"lib": "basic"
+},
+{
+"ref": "R42",
+"sheet": "MCU.kicad_sch",
+"mpn": "0805W8F5101T5E",
+"lcsc": "C27834",
+"lib": "basic"
+},
+{
+"ref": "R24",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F1802T5E",
+"lcsc": "C17506",
+"lib": "preferred"
+},
+{
+"ref": "R21",
+"sheet": "Power.kicad_sch",
+"mpn": "FRC0805F5232TS",
+"lcsc": "C2933465",
+"lib": "extended"
+},
+{
+"ref": "R31",
+"sheet": "Power.kicad_sch",
+"mpn": "0805W8F100KT5E",
+"lcsc": "C25271",
+"lib": "basic"
+},
+{
+"ref": "C24",
+"sheet": "Power.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C32",
+"sheet": "Power.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C33",
+"sheet": "Power.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C34",
+"sheet": "Power.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C41",
+"sheet": "MCU.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C42",
+"sheet": "MCU.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C43",
+"sheet": "MCU.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C51",
+"sheet": "PWM.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C60",
+"sheet": "Addressable.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C62",
+"sheet": "Addressable.kicad_sch",
+"mpn": "CC0603KRX7R9BB104",
+"lcsc": "C14663",
+"lib": "basic"
+},
+{
+"ref": "C23",
+"sheet": "Power.kicad_sch",
+"mpn": "CL05B104KB54PNC",
+"lcsc": "C307331",
+"lib": "basic"
+},
+{
+"ref": "C30",
+"sheet": "Power.kicad_sch",
+"mpn": "CL21A106KAYNNNE",
+"lcsc": "C15850",
+"lib": "basic"
+},
+{
+"ref": "C40",
+"sheet": "MCU.kicad_sch",
+"mpn": "CL21A106KAYNNNE",
+"lcsc": "C15850",
+"lib": "basic"
+},
+{
+"ref": "C44",
+"sheet": "MCU.kicad_sch",
+"mpn": "CL21A106KAYNNNE",
+"lcsc": "C15850",
+"lib": "basic"
+},
+{
+"ref": "C50",
+"sheet": "PWM.kicad_sch",
+"mpn": "CL21A106KAYNNNE",
+"lcsc": "C15850",
+"lib": "basic"
+},
+{
+"ref": "C61",
+"sheet": "Addressable.kicad_sch",
+"mpn": "CL21A106KAYNNNE",
+"lcsc": "C15850",
+"lib": "basic"
+},
+{
+"ref": "C25",
+"sheet": "Power.kicad_sch",
+"mpn": "CL31A226KAHNNNE",
+"lcsc": "C12891",
+"lib": "basic"
+},
+{
+"ref": "C26",
+"sheet": "Power.kicad_sch",
+"mpn": "CL31A226KAHNNNE",
+"lcsc": "C12891",
+"lib": "basic"
+},
+{
+"ref": "C31",
+"sheet": "Power.kicad_sch",
+"mpn": "CL31A226KAHNNNE",
+"lcsc": "C12891",
+"lib": "basic"
+},
+{
+"ref": "C20",
+"sheet": "Power.kicad_sch",
+"mpn": "FS32X106K101EGG",
+"lcsc": "C5156756",
+"lib": "extended"
+},
+{
+"ref": "C63",
+"sheet": "Addressable.kicad_sch",
+"mpn": "FS32X106K101EGG",
+"lcsc": "C5156756",
+"lib": "extended"
+},
+{
+"ref": "C64",
+"sheet": "Addressable.kicad_sch",
+"mpn": "FS32X106K101EGG",
+"lcsc": "C5156756",
+"lib": "extended"
+},
+{
+"ref": "C21",
+"sheet": "Power.kicad_sch",
+"mpn": "FS32X106K101EGG",
+"lcsc": "C5156756",
+"lib": "extended"
+},
+{
+"ref": "C22",
+"sheet": "Power.kicad_sch",
+"mpn": "FS32X106K101EGG",
+"lcsc": "C5156756",
+"lib": "extended"
+},
+{
+"ref": "C27",
+"sheet": "Power.kicad_sch",
+"mpn": "CL10C220JB8NNNC",
+"lcsc": "C1653",
+"lib": "basic"
+},
+{
+"ref": "U4",
+"sheet": "PWM.kicad_sch",
+"mpn": "74HCT125D,653",
+"lcsc": "C5962",
+"lib": "extended"
+},
+{
+"ref": "U5",
+"sheet": "Addressable.kicad_sch",
+"mpn": "74HCT125D,653",
+"lcsc": "C5962",
+"lib": "extended"
+},
+{
+"ref": "U1",
+"sheet": "MCU.kicad_sch",
+"mpn": "ESP32-S3-WROOM-1U-N16",
+"lcsc": "C2980298",
+"lib": "extended"
+},
+{
+"ref": "U2",
+"sheet": "Power.kicad_sch",
+"mpn": "AP63301WU-7",
+"lcsc": "C2158003",
+"lib": "extended"
+},
+{
+"ref": "D8",
+"sheet": "MCU.kicad_sch",
+"mpn": "USBLC6-2SC6",
+"lcsc": "C2687116",
+"lib": "extended"
+},
+{
+"ref": "D1",
+"sheet": "PWM.kicad_sch",
+"mpn": "SS34",
+"lcsc": "C8678",
+"lib": "basic"
+},
+{
+"ref": "D2",
+"sheet": "PWM.kicad_sch",
+"mpn": "SS34",
+"lcsc": "C8678",
+"lib": "basic"
+},
+{
+"ref": "D3",
+"sheet": "PWM.kicad_sch",
+"mpn": "SS34",
+"lcsc": "C8678",
+"lib": "basic"
+},
+{
+"ref": "D4",
+"sheet": "PWM.kicad_sch",
+"mpn": "SS34",
+"lcsc": "C8678",
+"lib": "basic"
+},
+{
+"ref": "D9",
+"sheet": "MCU.kicad_sch",
+"mpn": "SS34",
+"lcsc": "C8678",
+"lib": "basic"
+},
+{
+"ref": "D5",
+"sheet": "Power.kicad_sch",
+"mpn": "SMBJ18A",
+"lcsc": "C19077573",
+"lib": "preferred"
+},
+{
+"ref": "D6",
+"sheet": "Power.kicad_sch",
+"mpn": "BZT52C12",
+"lcsc": "C19077410",
+"lib": "preferred"
+},
+{
+"ref": "D7",
+"sheet": "Addressable.kicad_sch",
+"mpn": "WS2812B-V5/W",
+"lcsc": "C2874885",
+"lib": "extended"
+},
+{
+"ref": "Q1",
+"sheet": "PWM.kicad_sch",
+"mpn": "20N06",
+"lcsc": "C2890395",
+"lib": "extended"
+},
+{
+"ref": "Q2",
+"sheet": "PWM.kicad_sch",
+"mpn": "20N06",
+"lcsc": "C2890395",
+"lib": "extended"
+},
+{
+"ref": "Q3",
+"sheet": "PWM.kicad_sch",
+"mpn": "20N06",
+"lcsc": "C2890395",
+"lib": "extended"
+},
+{
+"ref": "Q4",
+"sheet": "PWM.kicad_sch",
+"mpn": "20N06",
+"lcsc": "C2890395",
+"lib": "extended"
+},
+{
+"ref": "Q5",
+"sheet": "Power.kicad_sch",
+"mpn": "SUD50P06-15(UMW)",
+"lcsc": "C7503186",
+"lib": "extended"
+},
+{
+"ref": "RT1",
+"sheet": "Power.kicad_sch",
+"mpn": "HNTC0805-103F3950FB",
+"lcsc": "C49247662",
+"lib": "extended"
+},
+{
+"ref": "PF1",
+"sheet": "Addressable.kicad_sch",
+"mpn": "1812L200/30GR",
+"lcsc": "C18198342",
+"lib": "extended"
+},
+{
+"ref": "PF2",
+"sheet": "Addressable.kicad_sch",
+"mpn": "1812L200/30GR",
+"lcsc": "C18198342",
+"lib": "extended"
+},
+{
+"ref": "L1",
+"sheet": "Power.kicad_sch",
+"mpn": "PNLS6045-100M",
+"lcsc": "C2849537",
+"lib": "extended"
+},
+{
+"ref": "L3",
+"sheet": "Power.kicad_sch",
+"mpn": "PNLS6045-100M",
+"lcsc": "C2849537",
+"lib": "extended"
+}
+]

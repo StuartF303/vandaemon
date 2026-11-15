@@ -1,4 +1,4 @@
-# VanDaemon - Camper Van Control System
+﻿# VanDaemon - Camper Van Control System
 
 A comprehensive IoT control system for camper vans built with .NET 10 and Blazor WebAssembly. Monitor and control your van's systems including water tanks, LPG, lighting, heating, and more - all from your phone, tablet, or computer.
 
@@ -107,9 +107,16 @@ VanDaemon supports multiple hardware integration methods through its plugin syst
 ### Supported Plugins
 
 1. **Simulated Plugin** (Default) - For testing and development
-2. **Modbus Plugin** - For Modbus TCP/RTU devices
-3. **I2C Plugin** - For direct I2C sensor integration
-4. **Victron Plugin** - For Victron Cerbo GX integration via MQTT
+2. **MqttLedDimmer Plugin** - VANDIMMER-4CH+2A LED dimmer boards over MQTT. Auto-discovers
+   devices from their retained `config` message and registers each channel as a Dimmer
+   control. Working against real hardware as of 2026-09-10; see
+   [hw/VDDimmer/firmware/README.md](hw/VDDimmer/firmware/README.md) for the topic contract.
+3. **Modbus Plugin** - For Modbus TCP/RTU devices
+4. **I2C Plugin** - For direct I2C sensor integration
+5. **Victron Plugin** - For Victron Cerbo GX integration via MQTT
+
+Driving real hardware needs an MQTT broker the API can reach; `MqttLedDimmer:MqttBroker` in
+`appsettings.json` defaults to `localhost:1883`.
 
 ### Adding a New Plugin
 

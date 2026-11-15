@@ -1,3 +1,4 @@
+﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using VanDaemon.Application.Interfaces;
 using VanDaemon.Application.Persistence;
@@ -24,6 +25,64 @@ public class ControlService : IControlService
         _controls = new List<Control>();
         _controlPlugins = controlPlugins.ToDictionary(p => p.Name, p => p);
         _ = LoadControlsAsync(); // Fire and forget to load controls on startup
+    }
+
+    /// <summary>
+    /// Find the plugin a control refers to, tolerating a name that does not
+    /// match the plugin's own Name exactly.
+    /// </summary>
+    /// <remarks>
+    /// The registry is keyed on IControlPlugin.Name, but plugins write their
+    /// own identifier into Control.ControlPlugin and the two have drifted:
+    /// MqttLedDimmerService writes "MqttLedDimmer" while the plugin reports
+    /// "MQTT LED Dimmer". The exact lookup therefore found nothing, and every
+    /// attempt to drive the hardware from the dashboard returned 400 "Failed
+    /// to set control state" -- with no log line naming the real cause.
+    /// Comparing on letters and digits alone bridges that without a data
+    /// migration, and keeps already-persisted controls working.
+    /// </remarks>
+    /// <summary>
+    /// Convert a state that arrived as JSON into a plain CLR value.
+    /// </summary>
+    /// <remarks>
+    /// SetStateRequest.State is declared as object, so System.Text.Json hands
+    /// us a JsonElement. Plugins pattern-match on int/double/bool, none of
+    /// which a JsonElement matches, so every value silently collapsed to the
+    /// switch default -- 0 for a dimmer, off for a toggle. Normalising here
+    /// fixes it for every plugin rather than one at a time.
+    /// </remarks>
+    private static object NormaliseState(object state) => state switch
+    {
+        JsonElement e => e.ValueKind switch
+        {
+            JsonValueKind.Number => e.TryGetInt32(out var i) ? i : e.GetDouble(),
+            JsonValueKind.True   => true,
+            JsonValueKind.False  => false,
+            JsonValueKind.String => e.GetString() ?? string.Empty,
+            _ => state
+        },
+        _ => state
+    };
+
+    private IControlPlugin? ResolvePlugin(string pluginName)
+    {
+        if (string.IsNullOrWhiteSpace(pluginName)) return null;
+        if (_controlPlugins.TryGetValue(pluginName, out var exact)) return exact;
+
+        static string Normalise(string value) =>
+            new string(value.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+
+        var target = Normalise(pluginName);
+        var match = _controlPlugins.FirstOrDefault(kv => Normalise(kv.Key) == target).Value;
+
+        if (match != null)
+        {
+            _logger.LogDebug(
+                "Control references plugin {Referenced}, matched to registered plugin {Actual}",
+                pluginName, match.Name);
+        }
+
+        return match;
     }
 
     private async Task LoadControlsAsync()
@@ -142,7 +201,8 @@ public class ControlService : IControlService
         }
 
         // Get the control plugin and read the current state
-        if (_controlPlugins.TryGetValue(control.ControlPlugin, out var plugin))
+        var plugin = ResolvePlugin(control.ControlPlugin);
+        if (plugin != null)
         {
             try
             {
@@ -179,7 +239,16 @@ public class ControlService : IControlService
                 else
                 {
                     // Standard plugin behavior
-                    var controlId = control.ControlConfiguration.GetValueOrDefault("controlId")?.ToString() ?? string.Empty;
+                    // Case-insensitive on purpose. Plugins populate this
+                    // dictionary themselves and do not agree on casing:
+                    // MqttLedDimmer writes "ControlId", the simulated plugins
+                    // write "controlId". A case-sensitive lookup silently
+                    // yielded an empty id, so every attempt to drive real
+                    // hardware from the dashboard failed with "Failed to set
+                    // control state" while the simulated controls worked.
+                    var controlId = control.ControlConfiguration
+                        .FirstOrDefault(kv => string.Equals(kv.Key, "controlId", StringComparison.OrdinalIgnoreCase))
+                        .Value?.ToString() ?? string.Empty;
                     state = await plugin.GetStateAsync(controlId, cancellationToken);
                 }
 
@@ -199,6 +268,8 @@ public class ControlService : IControlService
 
     public async Task<bool> SetControlStateAsync(Guid id, object state, CancellationToken cancellationToken = default)
     {
+        state = NormaliseState(state);
+
         var control = await GetControlByIdAsync(id, cancellationToken);
         if (control == null)
         {
@@ -207,7 +278,8 @@ public class ControlService : IControlService
         }
 
         // Get the control plugin and set the state
-        if (_controlPlugins.TryGetValue(control.ControlPlugin, out var plugin))
+        var plugin = ResolvePlugin(control.ControlPlugin);
+        if (plugin != null)
         {
             try
             {
@@ -245,7 +317,9 @@ public class ControlService : IControlService
                 else
                 {
                     // Standard plugin behavior
-                    var controlId = control.ControlConfiguration.GetValueOrDefault("controlId")?.ToString() ?? string.Empty;
+                    var controlId = control.ControlConfiguration
+                        .FirstOrDefault(kv => string.Equals(kv.Key, "controlId", StringComparison.OrdinalIgnoreCase))
+                        .Value?.ToString() ?? string.Empty;
                     success = await plugin.SetStateAsync(controlId, state, cancellationToken);
                 }
 
