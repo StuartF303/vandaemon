@@ -132,6 +132,50 @@ is a 1.6 kB descriptor, and `idf_tools.py` fetches the real GCC. A
 An earlier note here blamed KiCad's `pythonw.exe` for the console storm. That
 was wrong, and it cost a session chasing the venv instead of the OS.
 
+   **The defect is intermittent, and it is not confined to build 26200.** A
+   second machine (Windows 11, build 26300) reported `spawnve is BROKEN
+   (exit -1073741819)` on one preflight and `spawnve works` on the next, minutes
+   apart, same venv, nothing changed between them. That is consistent with the
+   heap-corruption reading above. **One green preflight is not evidence the
+   workaround can be retired** -- it needs to stay green across many runs on a
+   machine, and `Build-Flash.ps1`'s "safe to retire once this stays green" note
+   should be read with that emphasis.
+
+5. **TLS-intercepting antivirus breaks the platform download, and `pip` does not
+   warn you.** On a machine running AVG Antivirus ("Web/Mail Shield" SSL
+   scanning), `pio run` dies during `Platform Manager: Installing ...` with
+   `SSLError: ... CERTIFICATE_VERIFY_FAILED: unable to get local issuer
+   certificate` for `github.com`. AVG re-signs the connection with its own root,
+   which Windows trusts but `certifi` does not.
+
+   What makes this one expensive is that everything *before* it looks fine:
+   `pip install platformio` succeeds, because pip 24.2+ validates against the
+   Windows trust store, while PlatformIO's `requests` uses the bundled `certifi`
+   CA list. So the venv tests healthy and fails at the first download.
+
+   Confirm the diagnosis rather than guessing -- this prints the interceptor's
+   name if there is one:
+
+   ```powershell
+   $c=[Net.Sockets.TcpClient]::new('github.com',443)
+   $s=[Net.Security.SslStream]::new($c.GetStream(),$false,{$true})
+   $s.AuthenticateAsClient('github.com')
+   ([Security.Cryptography.X509Certificates.X509Certificate2]$s.RemoteCertificate).Issuer
+   ```
+
+   A real chain shows a public CA; an intercepted one names the scanner. Fix,
+   scoped to the venv and applied via a `.pth` hook so PlatformIO's own
+   `idf_tools.py` runs inherit it too:
+
+   ```powershell
+   & "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" -m pip install pip-system-certs
+   ```
+
+   Preferred over appending the root to `cacert.pem` (lost on the next `certifi`
+   upgrade) or setting `SSL_CERT_FILE` (`Build-Flash.ps1` does not export it, so
+   it would have to be set in every shell). Following the Windows store also
+   means a regenerated AVG root keeps working.
+
 ## First boot
 
 With no stored WiFi credentials the board opens an unsecured AP named
