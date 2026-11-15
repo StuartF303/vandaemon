@@ -1,6 +1,6 @@
 # VDDimmer web control: named channels from any browser on the van LAN
 
-**Date:** 2026-11-15 · **Status:** design agreed in conversation, awaiting builder check
+**Date:** 2026-11-15 · **Status:** agreed; builder check done 2026-11-15, its findings folded in below (sections 3, 9); Phase 1 built on branch `vddimmer-web-control`
 **Branch:** cut from `main` at `744d32a` or later (PR #30 merged; the OTA path is in)
 **Hardware:** VANDIMMER-4CH+2A Rev A. Nothing here needs a board change.
 **Supersedes in part:** the firmware half of
@@ -56,7 +56,7 @@ looked at later.
 | Authentication | **None.** No PIN on anything, "on the local LAN at least for now". Anyone on the van WiFi can dim, rename, and change WiFi or broker settings. | Stuart |
 | Where names live | On the board, in NVS. Also sent in the MQTT config message. | agreed |
 | Strips (J7/J8) on the page | Not in v1. Their MQTT control is unchanged. | agreed |
-| Advanced settings on the page (PWM frequency, gamma, LED brightness, 5 V cap, strip lengths) | Not in v1. They stay in the first-boot portal form and over MQTT `cmd`. | agreed |
+| Advanced settings on the page (PWM frequency, gamma, LED brightness, 5 V cap, strip lengths) | Not in v1. They stay in the first-boot portal form, which is reachable only via `forget-wifi` / serial `portal`. (Only `status-bright` is settable over MQTT `cmd`; the builder check caught the earlier claim that all of them were.) A Board-tab form for them is a natural v1.1 item. | agreed |
 | Which settings tab opens first | Names while any channel is unnamed, otherwise Status. | Claude's call |
 | Live update mechanism | The page polls the board every 2 s. No WebSocket, no server-sent events. | Claude's call, section 3 |
 | Page delivery | One self-contained HTML document compiled into the firmware, no filesystem, no external assets. | Claude's call, section 3 |
@@ -117,8 +117,8 @@ always at the IP.
 ### The page
 
 A single HTML document with inline CSS and JavaScript, stored as a `PROGMEM`
-string, served at `/` with `Cache-Control: no-cache`. Target size under 16 kB
-uncompressed; no framework, no web fonts, no external requests. Dark theme,
+string, served at `/` with `Cache-Control: no-cache`. Budget 24 kB uncompressed
+(the built page is 22.6 kB); no framework, no web fonts, no external requests. Dark theme,
 large touch targets, `viewport` meta for phones. Hash routing: `#lights`
 (default) and `#settings/<tab>`.
 
@@ -187,6 +187,15 @@ September design's shape, extended:
 
 The 240-byte limit from the September design was a Bluetooth MTU constraint
 and does not apply here. `FW_VERSION` is bumped to `1.1.0` in this work.
+
+### MQTT retries must not stall the page (from the builder check)
+
+Each `mqttConnect()` blocks `loop()` for the TCP connect, up to 3 s by default,
+and was retried every 5 s. With the Pi off, which is the headline case for
+this page, that would have stalled every poll. Phase 1 therefore sets the TCP
+connect timeout to 1.5 s and backs the retry off to 30 s after three straight
+failures. Cost: up to 30 s before the board notices a returning broker.
+Accepted as Claude's call; lights do not need faster.
 
 ### Polling and consistency
 
@@ -349,7 +358,22 @@ Lights view and Names, Status and Board tabs, the status object,
 **Phase 3: OTA confirm.** `Build-Flash.ps1 -Ota` against the van board on
 phase-1 firmware ends with `proven: running build id matches`. Docs updated.
 
-## 9. Out of scope
+## 9. Open for Phase 2 (raised by the builder check, need Stuart)
+
+1. **Who owns `/` when the fallback AP is up.** The portal form and the control
+   page both want it. Proposed: on the AP interface `/` is the portal form
+   (save and reboot, as today); the control page is station-side only. The
+   live-WiFi path (`TRYING_NEW`) is then a station feature and does not need
+   to override the "pause retries while a phone is on the AP" rule.
+2. **The fallback AP is open and serves controls to anyone in radio range,**
+   and it comes up whenever the router is merely off for a while, not only on
+   wrong credentials. "No PIN on the local LAN" was ruled for the LAN; the AP
+   case was not discussed. Options: a per-board WPA2 passphrase printed on the
+   label (a lost passphrase means opening the case), an AP that closes after
+   N minutes, or an AP that serves only the WiFi form. Different builds; not
+   the builder's call.
+
+## 10. Out of scope
 
 - Bluetooth, the native app, and the protocol library: sections 3–5 of the
   September design. Not cancelled; the control refactor, status object and
@@ -361,7 +385,7 @@ phase-1 firmware ends with `proven: running build id matches`. Docs updated.
 - Any VanDaemon backend or frontend change, including adopting `names`.
 - Rev B hardware (BTN1, wall switch input).
 
-## 10. Left to the builder
+## 11. Left to the builder
 
 - Exact HTML/CSS/JS of the page within the layout agreed; the mockups are in
   `.superpowers/brainstorm/381-1794758216/content/` (gitignored, on this

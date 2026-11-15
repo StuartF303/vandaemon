@@ -339,6 +339,7 @@ JLCPCB 2026-09-03.
   `vddimmer-firmware` skill.
 - **PCB Design:** KiCad (see `HANDOFF.md`, `VANDIMMER-4CH-2ADDR-SPEC-v2.0.md`)
 - **New machine (firmware only):** paste `hw/VDDimmer/NEW-MACHINE-SETUP.md` into Claude Code there
+- **Web control (fw 1.1.0+):** the board serves its own lights page and JSON API on port 80; see "Web control" in `hw/VDDimmer/firmware/README.md`. `src/web_page.gen.h` is generated from `src/web/index.html`.
 
 **Note:** KiCad doesn't support semicolon comments
 

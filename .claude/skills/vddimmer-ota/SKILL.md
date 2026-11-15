@@ -99,14 +99,12 @@ Weaker than the serial path, and it says so in its own output.
 | A corrupt transfer cannot boot | `Update` aborts rather than switching; board keeps its previous firmware |
 | The board rebooted and is reachable | OTA re-probe answers after the reboot — this is what makes the *next* update possible |
 
-| Not proven | Why |
-|---|---|
-| Which build id is running | The board has no status endpoint to ask. Nothing echoes it back. |
+| Which build id is running | **From firmware 1.1.0:** the confirm stage reads `build` from the board's `/status.json` and fails on a mismatch. On older firmware the endpoint is absent and the receipt says `unproven  the running build id`. |
 
-That gap was validated once by hand, on the van board 2026-11-15: an OTA push was
-followed by `verify_boot.py` over USB, which matched the delivered build id exactly. The
-mechanism is sound; what is missing is a *remote* way to re-check it. The HTTP status page
-in `docs/superpowers/specs/2026-09-26-vddimmer-local-control-design.md` would close it.
+Before 1.1.0 that gap was validated once by hand, on the van board 2026-11-15: an OTA
+push was followed by `verify_boot.py` over USB, which matched the delivered build id
+exactly. The first OTA *to* 1.1.0 is still the weaker receipt (the old image has no
+status endpoint when confirm runs); every one after it is proven.
 
 ## Diagnosing a board that will not take an OTA
 
@@ -117,6 +115,8 @@ Work down this ladder; each step is cheap and rules out a class.
 | On the network? | `ping <ip>` | No reply → unpowered, or a blade fuse. The board has no USB power path. |
 | Right device? | `Get-NetNeighbor` → MAC | `deviceId` is `vandimmer-<last 6 hex of WiFi MAC>` |
 | OTA listening? | `python tools\ota_probe.py --host <ip>` | Silence + cyan LED + ping OK → the stranding defect; use USB |
+| Web API healthy? | `python tools\web_check.py --host <ip>` | 15/15 on 1.1.0+; a 404 on `/api/state` means pre-1.1.0 firmware |
+| What is it running? | `http://<ip>/status.json` in any browser | `build` is the BUILD_ID; `mqtt.lastResult` says why the broker is not connected |
 | On the bus? | subscribe `vandaemon/leddimmer/#` | Needs the board's **configured** broker, which may not be the only one on the LAN |
 
 Status LED (D7): dim white boot, **purple** portal, blue WiFi, **cyan** MQTT-waiting,

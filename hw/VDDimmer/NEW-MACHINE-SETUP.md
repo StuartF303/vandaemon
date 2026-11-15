@@ -97,6 +97,11 @@ STEP 5  Verify the board came back
     mosquitto_sub -h <broker> -t 'vandaemon/leddimmer/#' -v -W 10
   should show a retained `status online`, a `config` message and six
   `channel/N/state` values. Report the LED colour and what MQTT showed.
+  From firmware 1.1.0 the board also serves its own page: open http://<board ip>/
+  from a phone or this machine on the van WiFi. You should see four channel rows
+  with switches and sliders, and the gear opens settings. Run
+    & "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" tools\web_check.py --host <board ip>
+  from hw\VDDimmer\firmware and expect 15/15 passed.
 
 DO NOT
   - Change the board's WiFi settings without reading "Getting back into the portal"

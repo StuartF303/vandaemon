@@ -96,6 +96,13 @@ A red **FAIL** is real. Do not work around it — diagnose it.
   same venv — the intermittency the heap-corruption reading predicts. The defect is **not**
   specific to build 26200. Keep `scons_spawn_fix.py` wired in until it stays green over many
   runs, not one.
+- **`src/web_page.gen.h` is generated.** `tools/embed_web.py` writes it from
+  `src/web/index.html` on every build and it is gitignored. Edit the HTML. If the page on
+  the board looks stale, check the `[embed-web]` line in the build output.
+- **Compiler errors used to be invisible.** Until 2026-11-15 the spawnve workaround launched
+  the compiler with no console and no std handles, so a failed compile showed only
+  `*** [x.cpp.o] Error 1`. Fixed in `scons_spawn_fix.py` (output is captured and re-emitted).
+  If you ever see a bare `Error 1` with no diagnostic again, that fix has been lost.
 - **Read the MAC from the eFuse, not `WiFi.macAddress()`**, anywhere that runs before
   `net_begin()` — it returns zeros until the WiFi driver starts, which once made every board
   call itself `vandimmer-000000`.
