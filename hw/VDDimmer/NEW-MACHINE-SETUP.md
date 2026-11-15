@@ -109,9 +109,13 @@ DO NOT
     That keeps the deviceId (it is derived from the MAC), so VanDaemon's saved
     controls survive, but WiFi, MQTT and strip settings must be re-entered through
     the portal at 192.168.4.1 on the VANDIMMER-xxxx AP.
-  - Use the 4ch2a-ota environment unless the board is already on the network. It
-    exists in platformio.ini but has not been exercised through Build-Flash.ps1, and
-    the script's confirm stage is serial-only. USB is the proven route.
+  - Use the 4ch2a-ota environment, ever. It is a separate PlatformIO env with its
+    own build directory, so `pio run -e 4ch2a-ota -t upload` rebuilds and pushes a
+    binary the script never verified. OTA is now supported properly, as
+    `Build-Flash.ps1 -Ota <ip>`, which pushes the artifact the verify stage hashed.
+    For a first flash on a new machine stick to USB anyway: it is the bootstrap
+    route, and it is the only transport whose confirm stage can prove the build id.
+    See the `vddimmer-ota` skill.
   - Remove tools/scons_spawn_fix.py or the extra_scripts lines in platformio.ini.
 
 WHEN DONE

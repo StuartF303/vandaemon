@@ -26,6 +26,11 @@ This is not a convenience wrapper. On this machine a raw `pio run` **fails while
 success**, and a following upload then flashes whatever stale image is lying around, with
 nothing in the output saying so. Every gate in the script exists because that happened.
 
+**For a board installed in the van, prefer OTA — see the `vddimmer-ota` skill.**
+`.\tools\Build-Flash.ps1 -Ota <ip>` shares stages 1-3 with the USB path and needs no
+physical access. USB is the fallback that costs a disassembly, and the bootstrap route for
+firmware older than `b9e6812`.
+
 Use the **PowerShell tool**, not Bash — Git Bash is MSYS and `idf_tools.py` hard-refuses it,
 failing later with a misleading `'xtensa-esp32s3-elf-g++' is not recognized`.
 
