@@ -1,5 +1,6 @@
+import os
 import re, math, sys
-path = r"C:/Projects/vandaemon/hw/VDDimmer/VANDIMMER-4CH2A.kicad_pcb"
+path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "VANDIMMER-4CH2A.kicad_pcb")
 src = open(path, encoding="utf-8").read()
 def blocks(text, opener):
     i = 0

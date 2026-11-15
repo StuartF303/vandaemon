@@ -17,9 +17,10 @@
 # same line as its fitted siblings and the whole line reads "DNP" -- R11/R12 grouped with
 # R9/R10/R13 and told the assembler not to fit any of the five.
 set -u
-SCH="${1:-C:/Projects/vandaemon/hw/VDDimmer/VANDIMMER-4CH2A.kicad_sch}"
+KICAD_BIN="${KICAD_BIN:-C:/Program Files/KiCad/10.0/bin}"
+SCH="${1:-$(dirname "$0")/../VANDIMMER-4CH2A.kicad_sch}"
 OUT="${2:-$(dirname "$0")/../VANDIMMER-4CH2A-bom.csv}"
-"/c/Program Files/KiCad/10.0/bin/kicad-cli.exe" sch export bom \
+"$KICAD_BIN/kicad-cli.exe" sch export bom \
     --fields 'Reference,Value,Footprint,MPN,LCSC,Manufacturer,${QUANTITY},${DNP}' \
     --group-by 'Value,Footprint,${DNP}' \
     --output "$OUT" "$SCH"

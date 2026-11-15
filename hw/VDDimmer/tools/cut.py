@@ -1,6 +1,6 @@
-import sys, importlib.util
-spec = importlib.util.spec_from_file_location("geom", r"C:/Users/stuart/AppData/Local/Temp/claude/C--Projects-vandaemon/d2672728-61f3-45dc-9027-42ef7f22c948/scratchpad/geom.py")
-g = importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import geom as g
 pads, tracks, vias = g.load()
 
 X = float(sys.argv[1]); Y0=float(sys.argv[2]); Y1=float(sys.argv[3])

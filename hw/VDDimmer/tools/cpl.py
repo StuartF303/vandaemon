@@ -51,7 +51,7 @@ BOM_LCSC = os.path.join(ROOT, "bom-lcsc.csv")
 SCH = os.path.join(ROOT, "VANDIMMER-4CH2A.kicad_sch")
 OUT_CPL = os.path.join(ROOT, "VANDIMMER-4CH2A-cpl.csv")
 OUT_BOM = os.path.join(ROOT, "VANDIMMER-4CH2A-jlc-bom.csv")
-KICAD_CLI = "C:/Program Files/KiCad/10.0/bin/kicad-cli.exe"
+KICAD_CLI = os.path.join(os.environ.get("KICAD_BIN", "C:/Program Files/KiCad/10.0/bin"), "kicad-cli.exe")
 
 
 def expand_refs(field):

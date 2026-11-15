@@ -2,7 +2,7 @@ import importlib.util, math, os, re
 SP = os.path.dirname(os.path.abspath(__file__))
 s=importlib.util.spec_from_file_location("geom",SP+"/geom.py"); g=importlib.util.module_from_spec(s); s.loader.exec_module(g)
 pads,tracks,vias=g.load()
-B=r"C:/Projects/vandaemon/hw/VDDimmer/VANDIMMER-4CH2A.kicad_pcb"
+B= os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "VANDIMMER-4CH2A.kicad_pcb")
 def P(ref,num):
     for p in pads:
         if p["ref"]==ref and str(p["num"])==str(num): return p

@@ -3,6 +3,10 @@
 Run everything with **KiCad's Python 3.11**:
 `"C:/Program Files/KiCad/10.0/bin/python.exe"` — the system Python is 3.6 and will fail.
 
+The scripts default to `C:/Program Files/KiCad/10.0/bin`; set `KICAD_BIN` to point
+elsewhere. Board and schematic paths are resolved relative to this directory, so the
+repo can live anywhere.
+
 | Script | Use |
 |---|---|
 | `drc.sh` | kicad-cli DRC, refills zones and saves. **Only run with KiCad closed** — it writes the board. |

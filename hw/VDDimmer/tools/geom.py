@@ -1,7 +1,7 @@
 """Board geometry model: pad rectangles + track segments, with clearance queries."""
 import os, re, math
 
-BOARD = r"C:/Projects/vandaemon/hw/VDDimmer/VANDIMMER-4CH2A.kicad_pcb"
+BOARD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "VANDIMMER-4CH2A.kicad_pcb")
 
 def blocks(text, opener):
     i = 0

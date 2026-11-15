@@ -13,8 +13,9 @@
 # from bom-lcsc.csv so the two files cannot disagree. This script re-checks that
 # they still agree, and exits non-zero if they do not.
 set -euo pipefail
-CLI="C:/Program Files/KiCad/10.0/bin/kicad-cli.exe"
-PY="C:/Program Files/KiCad/10.0/bin/python.exe"
+KICAD_BIN="${KICAD_BIN:-C:/Program Files/KiCad/10.0/bin}"
+CLI="$KICAD_BIN/kicad-cli.exe"
+PY="$KICAD_BIN/python.exe"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(dirname "$HERE")"
 PCB="$ROOT/VANDIMMER-4CH2A.kicad_pcb"

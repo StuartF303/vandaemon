@@ -14,8 +14,9 @@
 # `smd` mechanical/shield pads — so the count must be narrowed to thru_hole.
 set -u
 
-BOARD="${1:-C:/Projects/vandaemon/hw/VDDimmer/VANDIMMER-4CH2A.kicad_pcb}"
-CLI="/c/Program Files/KiCad/10.0/bin/kicad-cli.exe"
+KICAD_BIN="${KICAD_BIN:-C:/Program Files/KiCad/10.0/bin}"
+BOARD="${1:-$(dirname "$0")/../VANDIMMER-4CH2A.kicad_pcb}"
+CLI="$KICAD_BIN/kicad-cli.exe"
 OUT="$(dirname "$0")/drc-report.json"
 
 # --- phantom pads: structural check on the board file -----------------------

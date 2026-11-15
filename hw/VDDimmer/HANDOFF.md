@@ -7,6 +7,32 @@ the critical path there is **assembly data, not copper**.
 State as of 2026-08-29. `git log --oneline -6 -- hw/VDDimmer` shows how it got here;
 the working tree was clean when this was written.
 
+## Working from another machine
+
+Board, firmware and enclosure sources are all in git. The tooling around them is not:
+
+- **Branch.** This work is on `vddimmer-rev-b`. Tag `ordered-revA` marks the exact board
+  JLCPCB received.
+- **KiCad 10.0.x.** Libraries are project-local (`${KIPRJMOD}`) and 3D models resolve
+  through `${KICAD10_3DMODEL_DIR}`, so the project opens from any path. The scripts in
+  `tools/` default to `C:/Program Files/KiCad/10.0/bin`; set `KICAD_BIN` to override, and
+  run the Python ones with KiCad's bundled Python (see `tools/README.md`).
+- **Konnect MCP** (Claude-driven KiCad editing) is a separate install, not in this repo.
+  `konnect init` registers it and puts its `konnect` and `kicad-*` skills under
+  `~/.claude`. It needs Preferences -> Plugins -> "Enable KiCad API" ticked and the board
+  open in KiCad. `pcbparts` is a hosted MCP server and needs no install.
+- **Firmware.** PlatformIO in a venv at `%USERPROFILE%\.platformio-venv`.
+  `firmware/tools/Build-Flash.ps1` prints the exact bootstrap commands when the venv is
+  missing and carries the SCons spawn patch, so it works on a clean Windows machine.
+  Details and traps in `firmware/README.md`.
+- **Enclosure.** OpenSCAD; commands in `enclosure/ENCLOSURE_DESIGN.md`. STLs regenerate
+  into `enclosure/build/`, which is gitignored.
+- **Not in git, regenerate:** `fab/` (`bash tools/export-fab.sh` at `ordered-revA`),
+  `enclosure/build/`, `renders/`, `analysis/` outputs other than the files its
+  `.gitignore` whitelists, `tools/drc-report.json`.
+- **Rev B ledger.** `.superpowers/sdd/REV-B-PLAN-2026-09-12/` is force-added past that
+  directory's `*` ignore because `RESUME-REV-B.md` tells the next session to trust it.
+
 ## AS ORDERED — Rev A, 3 September 2026
 
 Ordered from JLCPCB, in production, 4-5 day delivery quoted. The board that was sent is
