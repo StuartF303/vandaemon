@@ -338,6 +338,7 @@ JLCPCB 2026-09-03.
   success and the upload then flashes a stale image silently. Invoke the
   `vddimmer-firmware` skill.
 - **PCB Design:** KiCad (see `HANDOFF.md`, `VANDIMMER-4CH-2ADDR-SPEC-v2.0.md`)
+- **New machine (firmware only):** paste `hw/VDDimmer/NEW-MACHINE-SETUP.md` into Claude Code there
 
 **Note:** KiCad doesn't support semicolon comments
 
