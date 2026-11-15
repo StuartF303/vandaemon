@@ -7,6 +7,14 @@ void net_tick();
 bool net_wifiUp();
 bool net_mqttUp();
 
+// Outcome of the most recent MQTT connect attempt, for the status object:
+// "connected" | "refused" | "unreachable" | "timeout" | "lost" | "failed" |
+// "idle" (not tried yet) | "unset" (no broker configured).
+const char *net_mqttResult();
+
+// Broker settings in g_settings changed: drop the session and reconnect.
+void net_mqttReconfigure();
+
 // Number of channels declared in the config message: 4, or 6 when the strips
 // are exposed as channels 5 and 6.
 uint8_t net_declaredChannels();

@@ -9,6 +9,8 @@
 
 #include <WiFi.h>
 #include <ArduinoOTA.h>
+#include <ESPmDNS.h>
+#include "web.h"
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <math.h>
@@ -42,6 +44,13 @@
 
 static constexpr uint32_t WIFI_TIMEOUT_MS     = 20000;
 static constexpr uint32_t MQTT_RETRY_MS       = 5000;
+// After a few straight failures the broker is probably off (the Pi is down,
+// which is exactly when the web page matters), so back off. Each attempt
+// blocks loop() for up to MQTT_CONNECT_TIMEOUT_MS; at 5 s intervals that was
+// a stall in every poll of the page.
+static constexpr uint32_t MQTT_RETRY_SLOW_MS  = 30000;
+static constexpr uint8_t  MQTT_FAST_RETRIES   = 3;
+static constexpr uint32_t MQTT_CONNECT_TIMEOUT_MS = 1500;
 static constexpr uint32_t HEARTBEAT_MS        = 60000;
 static constexpr uint16_t MQTT_BUFFER_BYTES   = 512;
 
@@ -52,6 +61,9 @@ static char s_prefix[128] = {0};     // "{base}/{deviceId}"
 static bool s_wifiUp = false;
 static bool s_servicesUp = false;    // OTA + MQTT initialised; see startNetServices()
 static uint32_t s_lastMqttTry = 0;
+static int      s_mqttLastState = 0;
+static bool     s_mqttTried     = false;
+static uint8_t  s_mqttFailures  = 0;
 static uint32_t s_lastHeartbeat = 0;
 static uint32_t s_wifiRetryAt = 0;
 
@@ -333,10 +345,15 @@ static bool mqttConnect() {
     // Last will: a board that drops off the network marks itself offline.
     bool ok = s_mqtt.connect(g_settings.deviceId, user, pass,
                              willTopic, 1, true, "offline", true);
+    s_mqttTried     = true;
+    s_mqttLastState = s_mqtt.state();
     if (!ok) {
-        Serial.printf("[mqtt] connect failed, state %d\n", s_mqtt.state());
+        if (s_mqttFailures < 255) s_mqttFailures++;
+        Serial.printf("[mqtt] connect failed, state %d (attempt %u)\n",
+                      s_mqttLastState, (unsigned)s_mqttFailures);
         return false;
     }
+    s_mqttFailures = 0;
 
     Serial.printf("[mqtt] connected to %s:%u as %s\n",
                   g_settings.mqttHost, g_settings.mqttPort, g_settings.deviceId);
@@ -407,10 +424,15 @@ static void startNetServices() {
     ArduinoOTA.setHostname(g_settings.deviceId);
     ArduinoOTA.begin();
 
+    s_wifiClient.setConnectionTimeout(MQTT_CONNECT_TIMEOUT_MS);
+    s_mqtt.setSocketTimeout(5);
     s_mqtt.setServer(g_settings.mqttHost, g_settings.mqttPort);
     s_mqtt.setBufferSize(MQTT_BUFFER_BYTES);
     s_mqtt.setCallback(onMessage);
     s_mqtt.setKeepAlive(30);
+
+    MDNS.addService("http", "tcp", 80);
+    web_begin();
 
     s_servicesUp = true;
     Serial.printf("[net] services up, ota %s:3232, mqtt %s:%u\n",
@@ -472,9 +494,12 @@ void net_tick() {
     startNetServices();
 
     ArduinoOTA.handle();
+    web_tick();
 
     if (!s_mqtt.connected()) {
-        if (millis() - s_lastMqttTry > MQTT_RETRY_MS) {
+        uint32_t retry = s_mqttFailures >= MQTT_FAST_RETRIES ? MQTT_RETRY_SLOW_MS
+                                                              : MQTT_RETRY_MS;
+        if (millis() - s_lastMqttTry > retry) {
             s_lastMqttTry = millis();
             status_set(STATUS_MQTT_WAIT);
             mqttConnect();
@@ -502,6 +527,30 @@ void net_tick() {
 
 bool net_wifiUp() { return s_wifiUp; }
 bool net_mqttUp() { return s_mqtt.connected(); }
+
+const char *net_mqttResult() {
+    if (g_settings.mqttHost[0] == '\0') return "unset";
+    if (!s_mqttTried) return "idle";
+    switch (s_mqttLastState) {
+        case MQTT_CONNECTED:                return "connected";
+        case MQTT_CONNECT_BAD_CREDENTIALS:
+        case MQTT_CONNECT_UNAUTHORIZED:     return "refused";
+        case MQTT_CONNECT_FAILED:           return "unreachable";
+        case MQTT_CONNECTION_TIMEOUT:       return "timeout";
+        case MQTT_CONNECTION_LOST:          return "lost";
+        default:                            return "failed";
+    }
+}
+
+void net_mqttReconfigure() {
+    if (!s_servicesUp) return;   // startNetServices() will pick the new values up
+    if (s_mqtt.connected()) s_mqtt.disconnect();
+    s_mqtt.setServer(g_settings.mqttHost, g_settings.mqttPort);
+    s_mqttFailures = 0;
+    s_mqttTried    = false;
+    s_lastMqttTry  = 0;          // retry on the next tick
+    status_set(STATUS_MQTT_WAIT);
+}
 
 void net_forgetWifiAndReboot() {
     store_clearWifi();
