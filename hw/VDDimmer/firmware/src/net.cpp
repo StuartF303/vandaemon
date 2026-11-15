@@ -5,9 +5,12 @@
 #include "strips.h"
 #include "telemetry.h"
 #include "portal.h"
+#include "control.h"
 
 #include <WiFi.h>
 #include <ArduinoOTA.h>
+#include <ESPmDNS.h>
+#include "web.h"
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <math.h>
@@ -41,6 +44,13 @@
 
 static constexpr uint32_t WIFI_TIMEOUT_MS     = 20000;
 static constexpr uint32_t MQTT_RETRY_MS       = 5000;
+// After a few straight failures the broker is probably off (the Pi is down,
+// which is exactly when the web page matters), so back off. Each attempt
+// blocks loop() for up to MQTT_CONNECT_TIMEOUT_MS; at 5 s intervals that was
+// a stall in every poll of the page.
+static constexpr uint32_t MQTT_RETRY_SLOW_MS  = 30000;
+static constexpr uint8_t  MQTT_FAST_RETRIES   = 3;
+static constexpr uint32_t MQTT_CONNECT_TIMEOUT_MS = 1500;
 static constexpr uint32_t HEARTBEAT_MS        = 60000;
 static constexpr uint16_t MQTT_BUFFER_BYTES   = 512;
 
@@ -51,6 +61,9 @@ static char s_prefix[128] = {0};     // "{base}/{deviceId}"
 static bool s_wifiUp = false;
 static bool s_servicesUp = false;    // OTA + MQTT initialised; see startNetServices()
 static uint32_t s_lastMqttTry = 0;
+static int      s_mqttLastState = 0;
+static bool     s_mqttTried     = false;
+static uint8_t  s_mqttFailures  = 0;
 static uint32_t s_lastHeartbeat = 0;
 static uint32_t s_wifiRetryAt = 0;
 
@@ -75,12 +88,35 @@ static void publishConfig() {
     doc["version"]    = FW_VERSION;
     doc["variant"]    = FW_VARIANT;
 
-    char payload[256];
+    // One name per declared channel. Today's backend ignores unknown fields,
+    // so this is safe to add before VanDaemon learns to read it.
+    JsonArray names = doc["names"].to<JsonArray>();
+    for (uint8_t i = 0; i < net_declaredChannels(); i++) {
+        if (i < PWM_CHANNELS) {
+            names.add(g_settings.chName[i]);
+        } else {
+            char sn[12];
+            snprintf(sn, sizeof(sn), "Strip %u", (unsigned)(i - PWM_CHANNELS + 1));
+            names.add(sn);
+        }
+    }
+
+    // Worst case (40-char name, four 20-char channel names, two strip names,
+    // the fixed fields) is about 290 bytes.
+    static constexpr size_t CONFIG_BYTES = 384;
+    static_assert(CONFIG_BYTES <= MQTT_BUFFER_BYTES, "config must fit the MQTT buffer");
+    char payload[CONFIG_BYTES];
     size_t n = serializeJson(doc, payload, sizeof(payload));
+    Serial.printf("[mqtt] config %u bytes\n", (unsigned)n);
 
     char t[160];
     topic(t, sizeof(t), "config");
     s_mqtt.publish(t, (const uint8_t *)payload, n, true);
+}
+
+void net_republishConfig() {
+    if (!s_mqtt.connected()) return;
+    publishConfig();
 }
 
 void net_publishChannelState(uint8_t channel) {
@@ -194,9 +230,8 @@ static void handleChannelSet(uint8_t channel, const char *body) {
     }
 
     if (channel < PWM_CHANNELS) {
-        pwm_set(channel, value);
-        store_stageLevels(pwm_levels(), PWM_CHANNELS);
-        store_markLevelsDirty();
+        ctl_setLevel(channel, value);   // publishes the state itself
+        return;
     } else if (g_settings.exposeStripsAsChannels &&
                channel < PWM_CHANNELS + STRIP_COUNT) {
         uint8_t index = channel - PWM_CHANNELS;
@@ -310,10 +345,15 @@ static bool mqttConnect() {
     // Last will: a board that drops off the network marks itself offline.
     bool ok = s_mqtt.connect(g_settings.deviceId, user, pass,
                              willTopic, 1, true, "offline", true);
+    s_mqttTried     = true;
+    s_mqttLastState = s_mqtt.state();
     if (!ok) {
-        Serial.printf("[mqtt] connect failed, state %d\n", s_mqtt.state());
+        if (s_mqttFailures < 255) s_mqttFailures++;
+        Serial.printf("[mqtt] connect failed, state %d (attempt %u)\n",
+                      s_mqttLastState, (unsigned)s_mqttFailures);
         return false;
     }
+    s_mqttFailures = 0;
 
     Serial.printf("[mqtt] connected to %s:%u as %s\n",
                   g_settings.mqttHost, g_settings.mqttPort, g_settings.deviceId);
@@ -384,10 +424,15 @@ static void startNetServices() {
     ArduinoOTA.setHostname(g_settings.deviceId);
     ArduinoOTA.begin();
 
+    s_wifiClient.setConnectionTimeout(MQTT_CONNECT_TIMEOUT_MS);
+    s_mqtt.setSocketTimeout(5);
     s_mqtt.setServer(g_settings.mqttHost, g_settings.mqttPort);
     s_mqtt.setBufferSize(MQTT_BUFFER_BYTES);
     s_mqtt.setCallback(onMessage);
     s_mqtt.setKeepAlive(30);
+
+    MDNS.addService("http", "tcp", 80);
+    web_begin();
 
     s_servicesUp = true;
     Serial.printf("[net] services up, ota %s:3232, mqtt %s:%u\n",
@@ -449,9 +494,12 @@ void net_tick() {
     startNetServices();
 
     ArduinoOTA.handle();
+    web_tick();
 
     if (!s_mqtt.connected()) {
-        if (millis() - s_lastMqttTry > MQTT_RETRY_MS) {
+        uint32_t retry = s_mqttFailures >= MQTT_FAST_RETRIES ? MQTT_RETRY_SLOW_MS
+                                                              : MQTT_RETRY_MS;
+        if (millis() - s_lastMqttTry > retry) {
             s_lastMqttTry = millis();
             status_set(STATUS_MQTT_WAIT);
             mqttConnect();
@@ -479,6 +527,30 @@ void net_tick() {
 
 bool net_wifiUp() { return s_wifiUp; }
 bool net_mqttUp() { return s_mqtt.connected(); }
+
+const char *net_mqttResult() {
+    if (g_settings.mqttHost[0] == '\0') return "unset";
+    if (!s_mqttTried) return "idle";
+    switch (s_mqttLastState) {
+        case MQTT_CONNECTED:                return "connected";
+        case MQTT_CONNECT_BAD_CREDENTIALS:
+        case MQTT_CONNECT_UNAUTHORIZED:     return "refused";
+        case MQTT_CONNECT_FAILED:           return "unreachable";
+        case MQTT_CONNECTION_TIMEOUT:       return "timeout";
+        case MQTT_CONNECTION_LOST:          return "lost";
+        default:                            return "failed";
+    }
+}
+
+void net_mqttReconfigure() {
+    if (!s_servicesUp) return;   // startNetServices() will pick the new values up
+    if (s_mqtt.connected()) s_mqtt.disconnect();
+    s_mqtt.setServer(g_settings.mqttHost, g_settings.mqttPort);
+    s_mqttFailures = 0;
+    s_mqttTried    = false;
+    s_lastMqttTry  = 0;          // retry on the next tick
+    status_set(STATUS_MQTT_WAIT);
+}
 
 void net_forgetWifiAndReboot() {
     store_clearWifi();

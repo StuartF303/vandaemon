@@ -19,6 +19,7 @@
 #include "telemetry.h"
 #include "portal.h"
 #include "net.h"
+#include "control.h"
 
 // Levels to come back to when BTN1 toggles everything back on.
 static uint8_t s_lastOnLevels[PWM_CHANNELS] = {0};
@@ -38,33 +39,25 @@ static void captureLevels() {
     }
 }
 
-static void persistAndPublish() {
-    store_stageLevels(pwm_levels(), PWM_CHANNELS);
-    store_markLevelsDirty();
-    for (uint8_t i = 0; i < PWM_CHANNELS; i++) net_publishChannelState(i);
-}
-
 static void handleButton(ButtonEvent ev) {
     switch (ev) {
         case BTN1_SHORT:
             status_blink(STATUS_BUTTON, 400);
             if (s_allOff) {
-                for (uint8_t i = 0; i < PWM_CHANNELS; i++) pwm_set(i, s_lastOnLevels[i]);
+                for (uint8_t i = 0; i < PWM_CHANNELS; i++) ctl_setLevel(i, s_lastOnLevels[i]);
                 s_allOff = false;
             } else {
                 captureLevels();
-                pwm_allOff();
+                ctl_allOff();
                 s_allOff = true;
             }
-            persistAndPublish();
             break;
 
         case BTN2_SHORT:
             status_blink(STATUS_BUTTON, 400);
-            pwm_setAll(PRESETS[s_presetIndex]);
+            ctl_setAll(PRESETS[s_presetIndex]);
             s_presetIndex = (s_presetIndex + 1) % (sizeof(PRESETS) / sizeof(PRESETS[0]));
             s_allOff = false;
-            persistAndPublish();
             break;
 
         case BTN_BOTH_LONG:
@@ -170,19 +163,16 @@ static void serialConsole() {
             Serial.println("[con] all <0-255> | ch <0-3> <0-255> | off | "
                            "bright <0-255> | portal");
         } else if (sscanf(buf, "all %u", &a) == 1) {
-            pwm_setAll((uint8_t)(a > 255 ? 255 : a));
+            ctl_setAll((uint8_t)(a > 255 ? 255 : a));
             s_allOff = false;
-            persistAndPublish();
             Serial.printf("[con] all channels = %u\n", a > 255 ? 255 : a);
         } else if (sscanf(buf, "ch %u %u", &a, &b) == 2 && a < PWM_CHANNELS) {
-            pwm_set((uint8_t)a, (uint8_t)(b > 255 ? 255 : b));
+            ctl_setLevel((uint8_t)a, (uint8_t)(b > 255 ? 255 : b));
             s_allOff = false;
-            persistAndPublish();
             Serial.printf("[con] channel %u = %u\n", a, b > 255 ? 255 : b);
         } else if (!strcmp(buf, "off")) {
-            pwm_allOff();
+            ctl_allOff();
             s_allOff = true;
-            persistAndPublish();
             Serial.println("[con] all channels off");
         } else if (sscanf(buf, "bright %u", &a) == 1) {
             g_settings.statusBrightness = (uint8_t)(a > 255 ? 255 : a);

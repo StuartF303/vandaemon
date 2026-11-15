@@ -404,13 +404,46 @@ if ($Ota) {
     }
     Ok 'board is back with an OTA listener'
 
+    # From firmware 1.1.0 the board serves /status.json, whose "build" field is
+    # the BUILD_ID baked into the running image -- the same proof the serial
+    # path reads off the boot banner. Older firmware has no such endpoint, so
+    # the receipt falls back to the weaker form and says so.
+    Step 'Confirm the board is running this build'
+    $running = $null
+    for ($i = 0; $i -lt 5 -and -not $running; $i++) {
+        try {
+            $running = Invoke-RestMethod -Uri "http://$Ota/status.json" -TimeoutSec 5
+        } catch {
+            Start-Sleep -Seconds 2
+        }
+    }
+    if ($running -and $running.build) {
+        Note "board reports build $($running.build)"
+        if ($running.build -ne $buildId) {
+            Fail 'the board is running a different build from the one just pushed.' @(
+                "expected : $buildId",
+                "running  : $($running.build)",
+                'The transfer was accepted and MD5-validated, yet the board reports another',
+                'image. Power-cycle it and re-run; if it persists, check which OTA partition',
+                'booted (esptool read of otadata) before trusting any remote update.'
+            )
+        }
+        Ok 'running build id matches'
+        $proven   = 'running build id matches (/status.json); transfer MD5-validated on device'
+        $unproven = $null
+    } else {
+        Warn '/status.json not served -- firmware before 1.1.0; running build id unproven'
+        $proven   = 'transfer MD5-validated on device; board rebooted and serves OTA'
+        $unproven = 'the running build id -- /status.json not served (firmware before 1.1.0)'
+    }
+
     Write-Host ''
     Write-Host 'DELIVERED (over OTA)' -ForegroundColor Green
     Write-Host ("  build id  " + $buildId) -ForegroundColor Green
     Write-Host ("  sha256    " + $sha) -ForegroundColor Green
     Write-Host ("  target    " + $Ota) -ForegroundColor Green
-    Write-Host '  proven    transfer MD5-validated on device; board rebooted and serves OTA' -ForegroundColor DarkGray
-    Write-Host '  unproven  the running build id -- no status endpoint to read it back' -ForegroundColor DarkGray
+    Write-Host ("  proven    " + $proven) -ForegroundColor DarkGray
+    if ($unproven) { Write-Host ("  unproven  " + $unproven) -ForegroundColor DarkGray }
     Write-Host ''
     exit 0
 }

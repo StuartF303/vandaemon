@@ -53,6 +53,12 @@ void store_begin() {
 
     g_settings.mqttPort = s_prefs.getUShort("mqport", 1883);
 
+    for (uint8_t i = 0; i < PWM_CHANNEL_COUNT; i++) {
+        char k[8];
+        snprintf(k, sizeof(k), "chn%u", (unsigned)i);
+        getStr(k, g_settings.chName[i], sizeof(g_settings.chName[i]), "");
+    }
+
     for (uint8_t i = 0; i < STRIP_COUNT; i++) {
         char k[12];
         snprintf(k, sizeof(k), "s%ulen", (unsigned)i);
@@ -86,6 +92,12 @@ void store_saveSettings() {
     s_prefs.putString("mqpass",  g_settings.mqttPass);
     s_prefs.putString("base",    g_settings.baseTopic);
     s_prefs.putUShort("mqport",  g_settings.mqttPort);
+
+    for (uint8_t i = 0; i < PWM_CHANNEL_COUNT; i++) {
+        char k[8];
+        snprintf(k, sizeof(k), "chn%u", (unsigned)i);
+        s_prefs.putString(k, g_settings.chName[i]);
+    }
 
     for (uint8_t i = 0; i < STRIP_COUNT; i++) {
         char k[12];

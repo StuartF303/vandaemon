@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<title>Van lights</title>
+<style>
+:root{--bg:#0f1115;--card:#1a1d23;--card2:#232833;--line:#2a2e36;--fg:#e8e8e8;--dim:#8a9099;--amber:#f0b429;--amber2:#8a5a12;--green:#2ecc71;--cyan:#2ec4d6;--red:#ff6b6b}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 -apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 16px 10px}
+h1{margin:0;font-size:20px;font-weight:600}
+.sub{font-size:12px;color:var(--dim)}
+a.gear,a.back{color:var(--dim);text-decoration:none;font-size:22px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
+a.back{font-size:15px}
+main{padding:0 12px 24px}
+.row{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;min-height:32px}
+.name{font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.name.unnamed{color:var(--dim);font-weight:500}
+.pct{font-size:12px;color:var(--dim);margin-left:auto;margin-right:12px;min-width:3em;text-align:right}
+.sw{position:relative;width:52px;height:30px;border-radius:15px;background:#3a3f48;border:0;padding:0;cursor:pointer;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:12px;background:#fff;transition:left .15s}
+.sw[aria-checked="true"]{background:var(--amber)}
+.sw[aria-checked="true"]::after{left:25px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:36px;background:transparent;margin:0;display:block}
+input[type=range]::-webkit-slider-runnable-track{height:30px;border-radius:15px;background:linear-gradient(90deg,var(--amber2),var(--amber)) 0/var(--fill,0%) 100% no-repeat,var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:15px;background:#fff;border:0;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+input[type=range]::-moz-range-track{height:30px;border-radius:15px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:30px;border-radius:15px;background:linear-gradient(90deg,var(--amber2),var(--amber))}
+input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:15px;background:#fff;border:0}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--dim);padding:8px 4px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:4px;margin-right:5px;vertical-align:middle;background:#555}
+.dot.green{background:var(--green)}.dot.cyan{background:var(--cyan)}.dot.red{background:var(--red)}
+#banner{position:fixed;left:12px;right:12px;top:10px;background:#4a2a2a;color:#ffd0d0;padding:10px 14px;border-radius:10px;font-size:14px;z-index:5}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#2f3542;color:var(--fg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:5;max-width:90vw}
+nav.tabs{display:flex;border-bottom:1px solid var(--line);margin:0 4px 12px}
+nav.tabs a{flex:1;text-align:center;padding:12px 0;color:var(--dim);text-decoration:none;font-size:13px;border-bottom:2px solid transparent;min-height:44px}
+nav.tabs a.on{color:var(--amber);border-bottom-color:var(--amber)}
+.field{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #23272f;font-size:14px}
+.field:last-child{border-bottom:0}
+.k{color:#b9bfc8;flex:none}
+.v{text-align:right;word-break:break-all}
+.v.bad{color:#ff9c9c}.v.good{color:var(--green)}
+input[type=text],input[type=password],input[type=number]{background:var(--bg);border:1px solid #343a46;border-radius:8px;padding:9px 10px;font-size:15px;color:var(--fg);width:60%;min-height:44px}
+button.btn{display:block;width:100%;padding:12px;border-radius:10px;border:0;background:#2f3542;color:var(--fg);font-size:15px;margin-top:12px;min-height:44px;cursor:pointer}
+button.btn.primary{background:var(--amber);color:#1a1300;font-weight:600}
+button.btn.warn{background:#4a2a2a;color:#ffb4b4}
+button.btn:disabled{opacity:.5}
+.note{font-size:12px;color:var(--dim);margin-top:10px;line-height:1.45}
+.msg{font-size:13px;margin-top:8px;min-height:1.2em}
+.msg.bad{color:#ff9c9c}.msg.good{color:var(--green)}
+</style>
+</head>
+<body>
+
+<header id="hdr-lights">
+  <div><h1 id="devname">Van lights</h1><div class="sub" id="devid"></div></div>
+  <a class="gear" href="#settings" aria-label="Settings">&#9881;</a>
+</header>
+<header id="hdr-settings" hidden>
+  <a class="back" href="#lights">&#8249; Lights</a>
+  <h1 style="font-size:17px">Settings</h1>
+  <span style="min-width:44px"></span>
+</header>
+
+<main id="view-lights">
+  <div id="rows"></div>
+  <footer>
+    <span><span class="dot" id="d-wifi"></span><span id="f-wifi">WiFi</span></span>
+    <span><span class="dot" id="d-mqtt"></span><span id="f-mqtt">broker</span></span>
+    <span id="f-vin"></span>
+    <span id="f-temp"></span>
+  </footer>
+</main>
+
+<main id="view-settings" hidden>
+  <nav class="tabs">
+    <a href="#settings/names" data-tab="names">Names</a>
+    <a href="#settings/status" data-tab="status">Status</a>
+    <a href="#settings/wifi" data-tab="wifi">WiFi</a>
+    <a href="#settings/broker" data-tab="broker">Broker</a>
+    <a href="#settings/board" data-tab="board">Board</a>
+  </nav>
+
+  <section id="tab-names" class="row" hidden>
+    <div class="field"><span class="k">This board</span><input type="text" id="n-dev" maxlength="39" autocomplete="off"></div>
+    <div class="field"><span class="k">Channel 1</span><input type="text" id="n-0" maxlength="20" placeholder="Channel 1" autocomplete="off"></div>
+    <div class="field"><span class="k">Channel 2</span><input type="text" id="n-1" maxlength="20" placeholder="Channel 2" autocomplete="off"></div>
+    <div class="field"><span class="k">Channel 3</span><input type="text" id="n-2" maxlength="20" placeholder="Channel 3" autocomplete="off"></div>
+    <div class="field"><span class="k">Channel 4</span><input type="text" id="n-3" maxlength="20" placeholder="Channel 4" autocomplete="off"></div>
+    <button class="btn primary" id="n-save">Save names</button>
+    <div class="msg" id="n-msg"></div>
+    <div class="note">Saved on the board itself. Shows on the lights page straight away and in the board's MQTT config message, so VanDaemon can pick the names up later. Up to 20 characters each.</div>
+  </section>
+
+  <section id="tab-status" class="row" hidden>
+    <div id="status-rows"></div>
+    <div class="note">Read-only. The same data is at <code>/status.json</code>; refreshed every 5 s.</div>
+  </section>
+
+  <section id="tab-wifi" class="row" hidden>
+    <div class="field"><span class="k">Connected to</span><span class="v" id="w-ssid"></span></div>
+    <div class="field"><span class="k">Signal</span><span class="v" id="w-rssi"></span></div>
+    <div class="note">Changing WiFi from this page arrives in firmware 1.1 phase 2, together with the setup-network fallback. Until then the WiFi is set on first boot, or after <code>forget-wifi</code> over MQTT or <code>portal</code> on the serial console.</div>
+  </section>
+
+  <section id="tab-broker" class="row" hidden>
+    <div class="field"><span class="k">State</span><span class="v" id="b-state"></span></div>
+    <div class="field"><span class="k">Host</span><input type="text" id="b-host" maxlength="63" autocomplete="off"></div>
+    <div class="field"><span class="k">Port</span><input type="number" id="b-port" min="1" max="65535"></div>
+    <div class="field"><span class="k">User</span><input type="text" id="b-user" maxlength="32" placeholder="optional" autocomplete="off"></div>
+    <div class="field"><span class="k">Password</span><input type="password" id="b-pass" maxlength="64" placeholder="blank = unchanged"></div>
+    <button class="btn" id="b-save">Save and reconnect</button>
+    <div class="msg" id="b-msg"></div>
+    <div class="note">The board drops its session and reconnects to the new broker. The result appears in State above within a few seconds.</div>
+  </section>
+
+  <section id="tab-board" class="row" hidden>
+    <div class="field"><span class="k">Firmware</span><span class="v" id="bd-fw"></span></div>
+    <div class="field"><span class="k">Build</span><span class="v" id="bd-build"></span></div>
+    <button class="btn" id="bd-identify">Identify (blink the status LED)</button>
+    <button class="btn warn" id="bd-reboot">Reboot</button>
+    <div class="msg" id="bd-msg"></div>
+    <div class="note">Later, not in this version: strip colours, PWM frequency and gamma, the 5 V strip cap, status LED brightness. Those are set in the first-boot portal and over MQTT today.</div>
+  </section>
+</main>
+
+<div id="banner" hidden>Board not reachable. Retrying...</div>
+<div id="toast" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+  var CH = 4;
+  var POLL_STATE_MS = 2000, POLL_STATUS_MS = 5000, SEND_MIN_MS = 100;
+
+  var state = { deviceId: '', deviceName: '', levels: [0, 0, 0, 0], names: ['', '', '', ''] };
+  var status = null;
+  var lastOn = [255, 255, 255, 255];
+  var dragging = 0;            // sliders currently held
+  var pending = [null, null, null, null];   // level waiting to be sent per channel
+  var lastSent = [0, 0, 0, 0];
+  var failures = 0;
+  var namesDirty = false;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var rows = [];
+
+  // ---------------------------------------------------------------- http
+  function api(method, path, body) {
+    var opt = { method: method, cache: 'no-store' };
+    if (body !== undefined) {
+      opt.headers = { 'Content-Type': 'application/json' };
+      opt.body = JSON.stringify(body);
+    }
+    return fetch(path, opt).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        return { ok: r.ok, status: r.status, body: j };
+      });
+    });
+  }
+  function reachable(yes) {
+    if (yes) { failures = 0; $('banner').hidden = true; }
+    else if (++failures >= 2) { $('banner').hidden = false; }
+  }
+  var toastTimer;
+  function toast(text, ms) {
+    var t = $('toast');
+    t.textContent = text; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, ms || 2000);
+  }
+
+  // ---------------------------------------------------------------- lights
+  function displayName(i) {
+    return state.names[i] || ('Channel ' + (i + 1));
+  }
+  function buildRows() {
+    var host = $('rows');
+    for (var i = 0; i < CH; i++) {
+      var row = document.createElement('div'); row.className = 'row';
+      var hdr = document.createElement('div'); hdr.className = 'hdr';
+      var name = document.createElement('span'); name.className = 'name';
+      var pct = document.createElement('span'); pct.className = 'pct';
+      var sw = document.createElement('button'); sw.className = 'sw'; sw.setAttribute('role', 'switch');
+      sw.setAttribute('aria-label', 'On or off');
+      hdr.appendChild(name); hdr.appendChild(pct); hdr.appendChild(sw);
+      var slider = document.createElement('input');
+      slider.type = 'range'; slider.min = 0; slider.max = 255; slider.step = 1;
+      slider.setAttribute('aria-label', 'Brightness');
+      row.appendChild(hdr); row.appendChild(slider);
+      host.appendChild(row);
+      rows.push({ name: name, pct: pct, sw: sw, slider: slider });
+      bindRow(i);
+    }
+  }
+  function bindRow(i) {
+    var r = rows[i];
+    r.sw.addEventListener('click', function () {
+      var cur = state.levels[i];
+      var next = cur > 0 ? 0 : lastOn[i];
+      if (cur > 0) lastOn[i] = cur;
+      setLocal(i, next);
+      send(i, next, true);
+    });
+    var down = function () { dragging++; };
+    var up = function () { dragging = Math.max(0, dragging - 1); };
+    r.slider.addEventListener('pointerdown', down);
+    r.slider.addEventListener('pointerup', up);
+    r.slider.addEventListener('pointercancel', up);
+    r.slider.addEventListener('touchstart', down, { passive: true });
+    r.slider.addEventListener('touchend', up);
+    r.slider.addEventListener('input', function () {
+      var v = parseInt(r.slider.value, 10);
+      setLocal(i, v);
+      send(i, v, false);
+    });
+    r.slider.addEventListener('change', function () {
+      var v = parseInt(r.slider.value, 10);
+      setLocal(i, v);
+      send(i, v, true);
+    });
+  }
+  function setLocal(i, level) {
+    state.levels[i] = level;
+    if (level > 0) lastOn[i] = level;
+    paintRow(i);
+  }
+  function paintRow(i) {
+    var r = rows[i], level = state.levels[i];
+    r.name.textContent = displayName(i);
+    r.name.className = 'name' + (state.names[i] ? '' : ' unnamed');
+    r.pct.textContent = level > 0 ? Math.round(level / 2.55) + '%' : 'Off';
+    r.sw.setAttribute('aria-checked', level > 0 ? 'true' : 'false');
+    if (document.activeElement !== r.slider || !dragging) r.slider.value = level;
+    r.slider.style.setProperty('--fill', (level / 2.55) + '%');
+  }
+  function paintAll() {
+    $('devname').textContent = state.deviceName || 'Van lights';
+    $('devid').textContent = state.deviceId;
+    for (var i = 0; i < CH; i++) paintRow(i);
+  }
+
+  // Throttle to one request per channel per SEND_MIN_MS while dragging; the
+  // final value (force) always goes.
+  function send(i, level, force) {
+    var now = Date.now();
+    if (!force && now - lastSent[i] < SEND_MIN_MS) {
+      pending[i] = level;
+      return;
+    }
+    lastSent[i] = now; pending[i] = null;
+    api('POST', '/api/channel/' + i, { level: level }).then(function (r) {
+      reachable(true);
+      if (!r.ok) toast('Board refused: ' + (r.body.error || r.status));
+      if (pending[i] !== null) { var p = pending[i]; pending[i] = null; send(i, p, true); }
+    }).catch(function () { reachable(false); });
+  }
+
+  function pollState() {
+    if (dragging) return;
+    api('GET', '/api/state').then(function (r) {
+      reachable(true);
+      if (!r.ok) return;
+      var b = r.body;
+      state.deviceId = b.deviceId || ''; state.deviceName = b.deviceName || '';
+      for (var i = 0; i < CH; i++) {
+        if (pending[i] === null) state.levels[i] = b.levels[i] | 0;
+        state.names[i] = (b.names && b.names[i]) || '';
+        if (state.levels[i] > 0) lastOn[i] = state.levels[i];
+      }
+      paintAll();
+      if (!namesDirty) fillNames();
+    }).catch(function () { reachable(false); });
+  }
+  function pollStatus() {
+    api('GET', '/api/status').then(function (r) {
+      if (!r.ok) return;
+      status = r.body;
+      paintStatus();
+    }).catch(function () {});
+  }
+
+  // ---------------------------------------------------------------- status
+  function dot(id, cls) { $(id).className = 'dot' + (cls ? ' ' + cls : ''); }
+  function paintStatus() {
+    var s = status; if (!s) return;
+    var w = s.wifi || {}, m = s.mqtt || {};
+    dot('d-wifi', w.up ? 'green' : 'red');
+    $('f-wifi').textContent = w.up ? ('WiFi ' + w.rssi + ' dBm') : 'WiFi down';
+    dot('d-mqtt', m.up ? 'green' : 'cyan');
+    $('f-mqtt').textContent = m.up ? 'broker' : (m.lastResult === 'unset' ? 'no broker set' : 'no broker');
+    $('f-vin').textContent = (s.vin != null ? s.vin.toFixed(1) : '?') + ' V';
+    $('f-temp').textContent = (s.tempC != null ? s.tempC.toFixed(0) : '?') + ' °C' +
+      (s.overTemp ? ' OVER TEMP' : (s.derate < 1 ? ' derated' : ''));
+
+    var up = s.uptime | 0, d = Math.floor(up / 86400), h = Math.floor(up % 86400 / 3600), mi = Math.floor(up % 3600 / 60);
+    var list = [
+      ['Board', s.deviceId], ['Firmware', s.fw], ['Build', s.build],
+      ['Up for', (d ? d + ' d ' : '') + h + ' h ' + mi + ' min'],
+      ['WiFi', w.up ? (w.ssid + ' · ' + w.rssi + ' dBm') : 'down'],
+      ['IP', w.ip || ''],
+      ['Broker', (m.host ? m.host + ':' + m.port : 'not set') + ' · ' + (m.up ? 'connected' : (m.lastResult || 'not connected'))],
+      ['Input', s.vin + ' V'],
+      ['Board temp', s.tempC + ' °C · ' + (s.overTemp ? 'OVER TEMPERATURE' : (s.derate < 1 ? 'derated to ' + Math.round(s.derate * 100) + '%' : 'full power'))],
+      ['Free memory', Math.round((s.freeHeap | 0) / 1024) + ' kB']
+    ];
+    var host = $('status-rows');
+    while (host.firstChild) host.removeChild(host.firstChild);
+    list.forEach(function (kv) {
+      var f = document.createElement('div'); f.className = 'field';
+      var k = document.createElement('span'); k.className = 'k'; k.textContent = kv[0];
+      var v = document.createElement('span'); v.className = 'v'; v.textContent = kv[1];
+      f.appendChild(k); f.appendChild(v); host.appendChild(f);
+    });
+    $('w-ssid').textContent = w.ssid || '';
+    $('w-rssi').textContent = w.up ? (w.rssi + ' dBm') : 'down';
+    var bs = $('b-state');
+    bs.textContent = m.up ? 'connected' : (m.lastResult || 'not connected');
+    bs.className = 'v ' + (m.up ? 'good' : 'bad');
+    if (document.activeElement !== $('b-host') && !$('b-host').value) $('b-host').value = m.host || '';
+    if (document.activeElement !== $('b-port') && !$('b-port').value) $('b-port').value = m.port || 1883;
+    $('bd-fw').textContent = s.fw || '';
+    $('bd-build').textContent = s.build || '';
+  }
+
+  // ---------------------------------------------------------------- names tab
+  function fillNames() {
+    $('n-dev').value = state.deviceName;
+    for (var i = 0; i < CH; i++) $('n-' + i).value = state.names[i];
+  }
+  function bytes(s) { return new Blob([s]).size; }
+  function bindNames() {
+    var inputs = ['n-dev', 'n-0', 'n-1', 'n-2', 'n-3'];
+    inputs.forEach(function (id) { $(id).addEventListener('input', function () { namesDirty = true; }); });
+    $('n-save').addEventListener('click', function () {
+      var names = [], msg = $('n-msg');
+      for (var i = 0; i < CH; i++) {
+        var v = $('n-' + i).value.trim();
+        if (bytes(v) > 20) { msg.textContent = 'Channel ' + (i + 1) + ' name is too long (20 bytes max).'; msg.className = 'msg bad'; return; }
+        names.push(v);
+      }
+      var dev = $('n-dev').value.trim();
+      if (bytes(dev) > 39) { msg.textContent = 'Board name is too long.'; msg.className = 'msg bad'; return; }
+      $('n-save').disabled = true;
+      api('POST', '/api/names', { deviceName: dev, names: names }).then(function (r) {
+        $('n-save').disabled = false;
+        if (r.ok) {
+          namesDirty = false;
+          state.deviceName = dev; state.names = names; paintAll();
+          msg.textContent = 'Saved.'; msg.className = 'msg good'; toast('Names saved');
+        } else {
+          msg.textContent = 'Board refused: ' + (r.body.error || r.status); msg.className = 'msg bad';
+        }
+      }).catch(function () { $('n-save').disabled = false; msg.textContent = 'Board not reachable.'; msg.className = 'msg bad'; });
+    });
+  }
+
+  // ---------------------------------------------------------------- broker tab
+  function bindBroker() {
+    $('b-save').addEventListener('click', function () {
+      var msg = $('b-msg');
+      var body = {
+        host: $('b-host').value.trim(),
+        port: parseInt($('b-port').value, 10) || 1883,
+        user: $('b-user').value.trim(),
+        pass: $('b-pass').value
+      };
+      if (!body.host) { msg.textContent = 'Host is required.'; msg.className = 'msg bad'; return; }
+      $('b-save').disabled = true;
+      api('POST', '/api/mqtt', body).then(function (r) {
+        $('b-save').disabled = false;
+        if (r.ok) { msg.textContent = 'Saved, reconnecting...'; msg.className = 'msg good'; $('b-pass').value = ''; setTimeout(pollStatus, 3000); }
+        else { msg.textContent = 'Board refused: ' + (r.body.error || r.status); msg.className = 'msg bad'; }
+      }).catch(function () { $('b-save').disabled = false; msg.textContent = 'Board not reachable.'; msg.className = 'msg bad'; });
+    });
+  }
+
+  // ---------------------------------------------------------------- board tab
+  function bindBoard() {
+    $('bd-identify').addEventListener('click', function () {
+      api('POST', '/api/identify', {}).then(function (r) { toast(r.ok ? 'Status LED blinking' : 'Board refused'); }).catch(function () { toast('Board not reachable'); });
+    });
+    var armed = false, disarm;
+    var btn = $('bd-reboot');
+    btn.addEventListener('click', function () {
+      if (!armed) {
+        armed = true; btn.textContent = 'Tap again to confirm reboot';
+        disarm = setTimeout(function () { armed = false; btn.textContent = 'Reboot'; }, 4000);
+        return;
+      }
+      clearTimeout(disarm); armed = false; btn.textContent = 'Reboot'; btn.disabled = true;
+      api('POST', '/api/reboot', {}).then(function () {
+        $('bd-msg').textContent = 'Rebooting. The page will reconnect when the board is back.'; $('bd-msg').className = 'msg good';
+        setTimeout(function () { btn.disabled = false; }, 8000);
+      }).catch(function () { btn.disabled = false; $('bd-msg').textContent = 'Board not reachable.'; $('bd-msg').className = 'msg bad'; });
+    });
+  }
+
+  // ---------------------------------------------------------------- routing
+  var TABS = ['names', 'status', 'wifi', 'broker', 'board'];
+  function route() {
+    var h = location.hash || '#lights';
+    var settings = h.indexOf('#settings') === 0;
+    $('view-lights').hidden = settings; $('hdr-lights').hidden = settings;
+    $('view-settings').hidden = !settings; $('hdr-settings').hidden = !settings;
+    if (!settings) return;
+    var tab = h.split('/')[1];
+    if (TABS.indexOf(tab) < 0) {
+      var anyUnnamed = state.names.some(function (n) { return !n; });
+      tab = anyUnnamed ? 'names' : 'status';
+    }
+    TABS.forEach(function (t) { $('tab-' + t).hidden = t !== tab; });
+    var links = document.querySelectorAll('nav.tabs a');
+    for (var i = 0; i < links.length; i++) links[i].className = links[i].getAttribute('data-tab') === tab ? 'on' : '';
+    if (tab === 'names' && !namesDirty) fillNames();
+    if (tab === 'status' || tab === 'broker' || tab === 'board' || tab === 'wifi') pollStatus();
+  }
+
+  // ---------------------------------------------------------------- boot
+  buildRows(); bindNames(); bindBroker(); bindBoard();
+  window.addEventListener('hashchange', route);
+  pollState(); pollStatus(); route();
+  setInterval(pollState, POLL_STATE_MS);
+  setInterval(pollStatus, POLL_STATUS_MS);
+})();
+</script>
+</body>
+</html>

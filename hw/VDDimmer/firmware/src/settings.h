@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-static constexpr char FW_VERSION[] = "1.0.0";
+static constexpr char FW_VERSION[] = "1.1.0";
 
 // Injected by tools/build_id.py as "<short-sha>[-dirty] <UTC timestamp>".
 // FW_VERSION is static across rebuilds and so cannot tell you which binary is
@@ -15,6 +15,8 @@ static constexpr char FW_VERSION[] = "1.0.0";
 static constexpr char FW_VARIANT[] = "4CH2A";
 
 static constexpr uint8_t STRIP_COUNT = 2;
+static constexpr uint8_t PWM_CHANNEL_COUNT = 4;   // mirrors board_pins.h PWM_CHANNELS
+static constexpr uint8_t CH_NAME_MAX = 20;        // bytes, excluding the NUL
 static constexpr uint16_t STRIP_MAX_PIXELS = 300;
 
 struct StripSettings {
@@ -25,6 +27,11 @@ struct StripSettings {
 struct Settings {
     char deviceId[32]   = {0};  // MQTT topic level + control-ID prefix; unique
     char deviceName[40] = {0};  // human label the backend renders in control names
+
+    // Per-channel names ("Front", "Kitchen"), set from the board's own web
+    // page and published in the MQTT config message as "names". Empty means
+    // the UI shows "Channel N". UTF-8, at most CH_NAME_MAX bytes.
+    char chName[PWM_CHANNEL_COUNT][CH_NAME_MAX + 1] = {{0}};
 
     char wifiSsid[33] = {0};
     char wifiPass[65] = {0};

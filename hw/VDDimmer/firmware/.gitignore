@@ -1,2 +1,4 @@
 .pio/
 .vscode/
+# generated from src/web/index.html by tools/embed_web.py
+src/web_page.gen.h

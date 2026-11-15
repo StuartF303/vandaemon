@@ -50,7 +50,9 @@ cd hw/VDDimmer/firmware
 that costs a disassembly. It needs the board powered, on the WiFi, and running `b9e6812`
 or later — older images can be associated and pingable with no OTA listener at all (see
 *Getting back into the portal*). Preflight probes for the listener before building and
-says so if it is missing. See the `vddimmer-ota` skill for the full picture.
+says so if it is missing. From firmware 1.1.0 the confirm stage also reads the running
+build id from the board's `/status.json`, so an OTA receipt proves what is running, not
+just that something was transferred. See the `vddimmer-ota` skill for the full picture.
 
 This is not a convenience wrapper. `os.spawnve` is broken OS-wide on the
 development machine (see the traps below) and SCons routes every build action
@@ -274,7 +276,7 @@ Base topic `vandaemon/leddimmer`, so every topic below is prefixed
 | Topic | Dir | Payload |
 |---|---|---|
 | `status` | pub, retained | `online` / `offline` (last will) |
-| `config` | pub, retained | `{"deviceId","deviceName","channels","version","variant"}` |
+| `config` | pub, retained | `{"deviceId","deviceName","channels","version","variant","names":[...]}` -- `names` has one entry per declared channel, set from the board's web page |
 | `channel/{N}/state` | pub, retained | **bare integer 0-255** |
 | `channel/{N}/set` | sub, QoS 1 | integer 0-255, or `{"brightness":N}` |
 | `heartbeat` | pub, 60 s | `{"uptime","freeHeap","rssi"}` |
@@ -319,6 +321,66 @@ appear as ordinary dimmers in VanDaemon with no backend change.
 hardware ends up with two sets of controls — and delete the two orphaned
 "Channel 5"/"Channel 6" entries from `controls.json` once when you do. The
 colour and effect capability is on the `addr/` topics either way.
+
+## Web control
+
+From firmware 1.1.0 the board serves its own control page on the van LAN at
+`http://<ip>/` (also `http://<deviceId>.local/` where mDNS resolves; Windows is
+unreliable, phones are fine). No Pi, no broker, no app install, **no PIN** --
+anyone on the van WiFi can dim, rename and change the broker. That is a
+deliberate ruling for a private network; revisit it if the WiFi is ever shared.
+
+**Lights page:** one row per PWM channel with its name, an on/off switch and a
+slider. Unnamed channels show as "Channel N". The page polls the board every
+2 s, so a change from VanDaemon, BTN2, the serial console or another phone
+shows up within that. The footer shows WiFi signal, broker state (green
+connected, cyan not), input voltage and board temperature.
+
+**Settings (the gear):** tabs for Names (board name and four channel names, 20
+bytes each, stored in NVS and published in the MQTT `config` message), Status
+(read-only, including the running build id), WiFi (read-only until phase 2),
+Broker (host, port, user, password; applied live) and Board (identify, reboot).
+
+### HTTP API
+
+All JSON. Bodies over 512 bytes get `413`; bad JSON or out-of-range values get
+`400 {"error":"..."}` and change nothing.
+
+| Route | Method | Body / reply |
+|---|---|---|
+| `/` | GET | the page |
+| `/api/state` | GET | `{"deviceId","deviceName","levels":[4],"names":[4]}` |
+| `/api/status`, `/status.json` | GET | the status object: `t, deviceId, deviceName, fw, build, uptime, wifi{ssid,up,rssi,ip}, mqtt{host,port,up,lastResult}, vin, tempC, derate, overTemp, freeHeap` |
+| `/api/channel/<0-3>` | POST | `{"level":0-255}` -> `{"ok":true,"level":N}` |
+| `/api/names` | POST | `{"deviceName":"<=39 bytes","names":["<=20 bytes" x4]}` -> `{"ok":true}`; republishes `config` |
+| `/api/mqtt` | POST | `{"host","port","user","pass"}`, blank `pass` keeps the stored one; reconnects live |
+| `/api/identify` | POST | status LED blinks for 5 s |
+| `/api/reboot` | POST | saves levels, reboots after 500 ms |
+| `/api/wifi`, `/api/wifi/scan` | any | `501` until phase 2 |
+
+`mqtt.lastResult` is one of `connected`, `refused` (bad credentials),
+`unreachable` (TCP failed), `timeout`, `lost`, `idle` (not tried yet), `unset`
+(no broker configured).
+
+### Tooling
+
+- `tools/web_check.py --host <ip>` exercises every route and restores what it
+  touched. Run it after a flash; it is the quickest "is the API healthy" test.
+- `tools/web_mock.py` serves `src/web/index.html` and the same API with
+  in-memory state at `http://localhost:8765/`, for working on the page or the
+  check script without a board. If the firmware and the mock disagree, one of
+  them is wrong.
+- `src/web_page.gen.h` is **generated** from `src/web/index.html` by
+  `tools/embed_web.py` on every build and is gitignored. Edit the HTML, not
+  the header.
+
+### Broker retries and the page
+
+Each MQTT connect attempt blocks `loop()` while TCP connects, which is exactly
+when the web page matters (the Pi is off). The TCP connect timeout is 1.5 s
+and after three straight failures the retry interval backs off from 5 s to
+30 s, so a page poll stalls for at most 1.5 s in every 30. The cost is up to
+30 s before the board notices the broker has come back.
 
 ## Behaviour
 
