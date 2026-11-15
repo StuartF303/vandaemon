@@ -104,13 +104,25 @@ def _install():
         cmdline = _cmdline(argv)
 
         if mode == os.P_WAIT:
-            rc = subprocess.call(
+            # Capture and re-emit the child's output rather than letting it
+            # inherit handles. With CREATE_NO_WINDOW the child has no console,
+            # and without explicit std handles Windows gives it none at all --
+            # which silently discarded every compiler diagnostic: a failed
+            # compile showed only "*** [net.cpp.o] Error 1". Found 2026-11-15.
+            done = subprocess.run(
                 cmdline,
                 executable=file,
                 env=envd,
                 creationflags=CREATE_NO_WINDOW,
                 close_fds=False,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
             )
+            if done.stdout:
+                sys.stdout.write(done.stdout.decode("utf-8", "replace"))
+                sys.stdout.flush()
+            rc = done.returncode
             _log(argv, rc)
             return rc
 
