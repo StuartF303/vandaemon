@@ -5,6 +5,7 @@
 #include "strips.h"
 #include "telemetry.h"
 #include "portal.h"
+#include "control.h"
 
 #include <WiFi.h>
 #include <ArduinoOTA.h>
@@ -194,9 +195,8 @@ static void handleChannelSet(uint8_t channel, const char *body) {
     }
 
     if (channel < PWM_CHANNELS) {
-        pwm_set(channel, value);
-        store_stageLevels(pwm_levels(), PWM_CHANNELS);
-        store_markLevelsDirty();
+        ctl_setLevel(channel, value);   // publishes the state itself
+        return;
     } else if (g_settings.exposeStripsAsChannels &&
                channel < PWM_CHANNELS + STRIP_COUNT) {
         uint8_t index = channel - PWM_CHANNELS;
