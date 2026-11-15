@@ -23,8 +23,36 @@
       FLASH       only reached if VERIFY passed
       CONFIRM     board's boot banner must report the build id just produced
 
+    With -Ota the board is flashed over WiFi instead of USB. Stages 1-3 are
+    identical and shared; only the two transport-specific stages differ:
+
+      FLASH       espota.py, run against the artifact VERIFY hashed
+      CONFIRM     the board must drop off and come back with OTA listening
+
+    The OTA path deliberately does NOT use `pio run -e 4ch2a-ota -t upload`.
+    That is a separate PlatformIO environment with its own build directory, so
+    it rebuilds the image: this script would verify .pio/build/4ch2a/firmware.bin
+    and then upload a different binary from .pio/build/4ch2a-ota/, which is the
+    verified-one-thing-flashed-another failure every gate here exists to stop.
+
+    OTA confirmation is weaker than serial, and says so. espota validates the
+    image MD5 on the device before switching partitions, so a corrupt transfer
+    cannot be booted -- but nothing echoes the build id back, because the board
+    has no status endpoint yet. CONFIRM proves it rebooted and is reachable, not
+    which image it is running.
+
 .PARAMETER Port
-    Serial port (e.g. COM4). Auto-detected when omitted.
+    Serial port (e.g. COM4). Auto-detected when omitted. Ignored with -Ota.
+
+.PARAMETER Ota
+    Flash over WiFi to this board. Takes an IP or a resolvable name; there is no
+    discovery. mDNS names such as vandimmer-6f9914.local are often unresolvable
+    from Windows, so prefer the IP from the router's DHCP table -- the board
+    registers itself via WiFi.setHostname(deviceId).
+
+    Requires the board to be on the network with its OTA listener up. Firmware
+    before the startNetServices() fix can be associated and pingable with no
+    listener at all; preflight detects that and tells you to use USB.
 
 .PARAMETER Environment
     PlatformIO environment. Default: 4ch2a
@@ -48,11 +76,14 @@
     .\tools\Build-Flash.ps1 -Clean -Port COM4
 .EXAMPLE
     .\tools\Build-Flash.ps1 -NoFlash
+.EXAMPLE
+    .\tools\Build-Flash.ps1 -Ota 192.168.1.115
 #>
 
 [CmdletBinding()]
 param(
     [string] $Port,
+    [string] $Ota,
     [string] $Environment = '4ch2a',
     [switch] $Clean,
     [switch] $NoFlash,
@@ -87,6 +118,11 @@ Write-Host ''
 Write-Host 'VANDIMMER-4CH+2A  build / flash' -ForegroundColor White
 Write-Host ("project  " + $ProjectDir) -ForegroundColor DarkGray
 Write-Host ("env      " + $Environment) -ForegroundColor DarkGray
+Write-Host ("transport" + "  " + $(if ($Ota) { "OTA -> $Ota" } else { 'USB' })) -ForegroundColor DarkGray
+
+if ($Ota -and $Port) {
+    Fail '-Port and -Ota are different transports; pass only one.'
+}
 
 # ================================================================== PREFLIGHT
 Step 'Preflight'
@@ -164,6 +200,31 @@ foreach ($d in $dblite) {
 
 $conhostBefore = @(Get-Process conhost -ErrorAction SilentlyContinue).Count
 Note "conhost processes before build: $conhostBefore"
+
+# Reaching the board is checked BEFORE building, not after. A missing OTA
+# listener is the likeliest reason an OTA push fails, and espota's own failure
+# for that case is slow and says nothing useful -- so spend two seconds here
+# rather than two and a half minutes building for a board we cannot reach.
+if ($Ota -and -not $NoFlash) {
+    $probe = Join-Path $PSScriptRoot 'ota_probe.py'
+    if (-not (Test-Path $probe)) { Fail "tools/ota_probe.py is missing -- the OTA path needs it." }
+
+    & $Python $probe --host $Ota --timeout 5 2>&1 | ForEach-Object { Write-Host "   $_" -ForegroundColor DarkGray }
+    if ($LASTEXITCODE -ne 0) {
+        Fail "no OTA listener at ${Ota}:3232 -- nothing to flash over WiFi." @(
+            'If the board answers ping but not this, it is almost certainly the',
+            'stranding defect: wifiConnect() timed out, net_begin() returned before',
+            'ArduinoOTA.begin(), and the IDF driver associated afterwards. The board',
+            'is then on the network with no OTA listener and no MQTT server set.',
+            'Status LED is cyan and it stays that way.',
+            '',
+            'Firmware from ef18200f onwards fixes this (startNetServices is latched',
+            'and also called from net_tick). Older images need one USB flash first:',
+            '    .\tools\Build-Flash.ps1 -Port COMx'
+        )
+    }
+    Ok "OTA listener reachable at ${Ota}:3232"
+}
 
 # ====================================================================== BUILD
 if ($Clean) {
@@ -248,7 +309,21 @@ if ($NoFlash) {
 # ====================================================================== FLASH
 Step 'Locate board'
 
-if (-not $Port) {
+if ($Ota) {
+    # espota.py ships with the framework package, not the venv, and its path
+    # carries the framework version -- so resolve it rather than hardcoding.
+    $espota = Get-ChildItem (Join-Path $env:USERPROFILE '.platformio\packages\framework-arduinoespressif32\tools\espota.py') -ErrorAction SilentlyContinue |
+              Select-Object -First 1
+    if (-not $espota) {
+        Fail 'espota.py not found in the installed framework package.' @(
+            'Expected under:',
+            '  $env:USERPROFILE\.platformio\packages\framework-arduinoespressif32\tools\',
+            'Run a USB build first so the platform installs its packages.'
+        )
+    }
+    Ok "target $Ota (OTA)"
+    Note "espota $($espota.FullName)"
+} elseif (-not $Port) {
     $listPorts = 'import serial.tools.list_ports as lp;print(";".join(p.device for p in lp.comports()))'
     $found = (& $Python -c $listPorts 2>&1 | Select-Object -Last 1).Trim()
     $ports = @($found -split ';' | Where-Object { $_ })
@@ -263,12 +338,28 @@ if (-not $Port) {
     }
     $Port = $ports[0]
 }
-Ok "port $Port"
+if (-not $Ota) { Ok "port $Port" }
 
 Step 'Flash'
-& $Python -m platformio run -e $Environment -t upload --upload-port $Port 2>&1 | ForEach-Object { Write-Host "   $_" }
-if ($LASTEXITCODE -ne 0) { Fail "upload exited $LASTEXITCODE" }
-Ok 'esptool reported success'
+if ($Ota) {
+    # espota.py directly, against $FirmwareBin -- the exact artifact VERIFY
+    # hashed. NOT `pio run -e 4ch2a-ota -t upload`: that env has its own build
+    # directory, so it would rebuild and upload an image this script never saw.
+    & $Python $espota.FullName -i $Ota -p 3232 -f $FirmwareBin -r 2>&1 |
+        ForEach-Object { Write-Host "   $_" }
+    if ($LASTEXITCODE -ne 0) {
+        Fail "espota exited $LASTEXITCODE" @(
+            'The board validates the image MD5 before switching partitions, so a',
+            'failed transfer leaves it running the previous firmware. It should',
+            'still be reachable; re-run, or fall back to USB.'
+        )
+    }
+    Ok 'espota reported success (device-side MD5 validated)'
+} else {
+    & $Python -m platformio run -e $Environment -t upload --upload-port $Port 2>&1 | ForEach-Object { Write-Host "   $_" }
+    if ($LASTEXITCODE -ne 0) { Fail "upload exited $LASTEXITCODE" }
+    Ok 'esptool reported success'
+}
 
 # The upload re-runs the build. Prove it flashed the artifact we verified, and
 # not a silently regenerated one.
@@ -287,6 +378,40 @@ Ok 'flashed image is byte-identical to the verified one'
 if ($NoConfirm) {
     Write-Host ''
     Warn 'post-flash confirmation skipped -- "flashed" is unproven'
+    exit 0
+}
+
+if ($Ota) {
+    # Weaker than the serial path, and it says so. espota already proved the
+    # image arrived intact -- the device validates MD5 before switching boot
+    # partitions, so a corrupt transfer cannot be booted. What is NOT proven is
+    # which build is running, because the board has no status endpoint to ask.
+    # What this stage adds is that it rebooted and came back serving OTA, which
+    # is what makes the NEXT remote update possible.
+    Step 'Confirm the board rebooted and is reachable'
+    Start-Sleep -Seconds 3
+    & $Python (Join-Path $PSScriptRoot 'ota_probe.py') `
+        --host $Ota --timeout 4 --retries 10 --interval 3 2>&1 |
+        ForEach-Object { Write-Host "   $_" }
+
+    if ($LASTEXITCODE -ne 0) {
+        Fail 'the board did not come back with OTA listening.' @(
+            'The image was accepted and MD5-validated, so it is probably running,',
+            'but this cannot confirm it and the next OTA has nothing to talk to.',
+            'Check the status LED: cyan means WiFi up but no broker, red means a',
+            'fault. If it is unreachable, USB is the only route left.'
+        )
+    }
+    Ok 'board is back with an OTA listener'
+
+    Write-Host ''
+    Write-Host 'DELIVERED (over OTA)' -ForegroundColor Green
+    Write-Host ("  build id  " + $buildId) -ForegroundColor Green
+    Write-Host ("  sha256    " + $sha) -ForegroundColor Green
+    Write-Host ("  target    " + $Ota) -ForegroundColor Green
+    Write-Host '  proven    transfer MD5-validated on device; board rebooted and serves OTA' -ForegroundColor DarkGray
+    Write-Host '  unproven  the running build id -- no status endpoint to read it back' -ForegroundColor DarkGray
+    Write-Host ''
     exit 0
 }
 
