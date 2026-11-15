@@ -76,12 +76,35 @@ static void publishConfig() {
     doc["version"]    = FW_VERSION;
     doc["variant"]    = FW_VARIANT;
 
-    char payload[256];
+    // One name per declared channel. Today's backend ignores unknown fields,
+    // so this is safe to add before VanDaemon learns to read it.
+    JsonArray names = doc["names"].to<JsonArray>();
+    for (uint8_t i = 0; i < net_declaredChannels(); i++) {
+        if (i < PWM_CHANNELS) {
+            names.add(g_settings.chName[i]);
+        } else {
+            char sn[12];
+            snprintf(sn, sizeof(sn), "Strip %u", (unsigned)(i - PWM_CHANNELS + 1));
+            names.add(sn);
+        }
+    }
+
+    // Worst case (40-char name, four 20-char channel names, two strip names,
+    // the fixed fields) is about 290 bytes.
+    static constexpr size_t CONFIG_BYTES = 384;
+    static_assert(CONFIG_BYTES <= MQTT_BUFFER_BYTES, "config must fit the MQTT buffer");
+    char payload[CONFIG_BYTES];
     size_t n = serializeJson(doc, payload, sizeof(payload));
+    Serial.printf("[mqtt] config %u bytes\n", (unsigned)n);
 
     char t[160];
     topic(t, sizeof(t), "config");
     s_mqtt.publish(t, (const uint8_t *)payload, n, true);
+}
+
+void net_republishConfig() {
+    if (!s_mqtt.connected()) return;
+    publishConfig();
 }
 
 void net_publishChannelState(uint8_t channel) {

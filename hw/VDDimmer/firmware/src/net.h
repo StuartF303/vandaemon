@@ -15,4 +15,7 @@ void net_publishChannelState(uint8_t channel);
 void net_publishStripState(uint8_t index);
 void net_publishAllStates();
 
+// Re-send the retained config message (names changed). No-op when MQTT is down.
+void net_republishConfig();
+
 void net_forgetWifiAndReboot();
