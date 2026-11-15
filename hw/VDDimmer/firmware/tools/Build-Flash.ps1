@@ -218,7 +218,7 @@ if ($Ota -and -not $NoFlash) {
             'is then on the network with no OTA listener and no MQTT server set.',
             'Status LED is cyan and it stays that way.',
             '',
-            'Firmware from ef18200f onwards fixes this (startNetServices is latched',
+            'Firmware from b9e6812 onwards fixes this (startNetServices is latched',
             'and also called from net_tick). Older images need one USB flash first:',
             '    .\tools\Build-Flash.ps1 -Port COMx'
         )
