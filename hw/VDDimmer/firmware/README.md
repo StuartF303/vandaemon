@@ -70,7 +70,7 @@ To clear stored settings without a reflash -- the only way back into the portal
 on Rev A, see *First boot* -- erase just the NVS partition:
 
 ```powershell
-& "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" "$env:USERPROFILE\.platformio\packages	ool-esptoolpy\esptool.py" --chip esp32s3 --port COM4 erase-region 0x9000 0x5000
+& "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" "$env:USERPROFILE\.platformio\packages\tool-esptoolpy\esptool.py" --chip esp32s3 --port COM4 erase-region 0x9000 0x5000
 ```
 
 esptool is not in the venv (`python -m esptool` reports "No module named esptool");

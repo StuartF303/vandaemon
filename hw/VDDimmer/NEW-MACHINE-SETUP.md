@@ -2,7 +2,7 @@
 
 Paste the block below into a fresh Claude Code session on the new machine, opened at
 the root of a clone of `https://github.com/StuartF303/vandaemon.git` on `main`. Clone it
-to `C:\Projectsandaemon`: several older notes in this folder hardcode that path, and it
+to `C:\Projects\vandaemon`: several older notes in this folder hardcode that path, and it
 keeps the toolchain paths short. The prompt
 walks Claude through installing the firmware toolchain, proving it with a hardware-free
 build, then flashing the Rev A board fitted in the van over USB-C.
@@ -102,7 +102,7 @@ DO NOT
   - Change the board's WiFi settings without reading "Getting back into the portal"
     in firmware/README.md. On Rev A a wrong SSID strands the board: no button
     recovery, no portal fallback. The only way back is erasing NVS over USB:
-      & "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" "$env:USERPROFILE\.platformio\packages	ool-esptoolpy\esptool.py" --chip esp32s3 --port COMx erase-region 0x9000 0x5000
+      & "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" "$env:USERPROFILE\.platformio\packages\tool-esptoolpy\esptool.py" --chip esp32s3 --port COMx erase-region 0x9000 0x5000
     esptool is not pip-installed in the venv; the pioarduino platform fetches it as
     the tool-esptoolpy package, so `python -m esptool` fails with "No module named
     esptool".
