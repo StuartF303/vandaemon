@@ -26,6 +26,11 @@ This is not a convenience wrapper. On this machine a raw `pio run` **fails while
 success**, and a following upload then flashes whatever stale image is lying around, with
 nothing in the output saying so. Every gate in the script exists because that happened.
 
+**For a board installed in the van, prefer OTA — see the `vddimmer-ota` skill.**
+`.\tools\Build-Flash.ps1 -Ota <ip>` shares stages 1-3 with the USB path and needs no
+physical access. USB is the fallback that costs a disassembly, and the bootstrap route for
+firmware older than `b9e6812`.
+
 Use the **PowerShell tool**, not Bash — Git Bash is MSYS and `idf_tools.py` hard-refuses it,
 failing later with a misleading `'xtensa-esp32s3-elf-g++' is not recognized`.
 
@@ -75,6 +80,22 @@ A red **FAIL** is real. Do not work around it — diagnose it.
   longer exists; **removed 2026-09-10**. `Build-Flash.ps1` clears it per build regardless, so
   if the preflight warning reappears something has put it back.
 - **`esptool` 5.0 requires `click` < 8.2.** Pin it if the venv is ever rebuilt.
+- **`CERTIFICATE_VERIFY_FAILED` on the platform download means TLS-intercepting antivirus.**
+  Symptom: a fresh venv installs cleanly, then `pio run` dies at `Platform Manager:
+  Installing ...` with `SSLError: ... unable to get local issuer certificate` for
+  `github.com`. Seen with AVG "Web/Mail Shield" SSL scanning, which re-signs with its own
+  root — trusted by Windows, absent from `certifi`. `pip` succeeding first is a red herring:
+  pip 24.2+ uses the Windows trust store, PlatformIO's `requests` uses `certifi`. Confirm by
+  reading the issuer off the live connection (if it names a scanner, that is your answer),
+  then fix inside the venv — a `.pth` hook, so PlatformIO's `idf_tools.py` runs inherit it:
+  `& "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" -m pip install pip-system-certs`
+  Beats patching `cacert.pem` (lost on `certifi` upgrade) or `SSL_CERT_FILE` (`Build-Flash.ps1`
+  never exports it).
+- **One green `spawnve` preflight proves nothing.** A second machine (Win11 build 26300)
+  reported `BROKEN (exit -1073741819)` then `works` on consecutive preflights minutes apart,
+  same venv — the intermittency the heap-corruption reading predicts. The defect is **not**
+  specific to build 26200. Keep `scons_spawn_fix.py` wired in until it stays green over many
+  runs, not one.
 - **Read the MAC from the eFuse, not `WiFi.macAddress()`**, anywhere that runs before
   `net_begin()` — it returns zeros until the WiFi driver starts, which once made every board
   call itself `vandimmer-000000`.

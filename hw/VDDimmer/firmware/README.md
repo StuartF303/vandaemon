@@ -43,7 +43,14 @@ cd hw/VDDimmer/firmware
 .\tools\Build-Flash.ps1                  # build, verify, flash, confirm on hardware
 .\tools\Build-Flash.ps1 -NoFlash         # build and verify only
 .\tools\Build-Flash.ps1 -Clean -Port COM4
+.\tools\Build-Flash.ps1 -Ota 192.168.1.115   # over WiFi; no USB, no opening the case
 ```
+
+**For a board installed in the van, `-Ota` is the normal path** and USB is the fallback
+that costs a disassembly. It needs the board powered, on the WiFi, and running `b9e6812`
+or later — older images can be associated and pingable with no OTA listener at all (see
+*Getting back into the portal*). Preflight probes for the listener before building and
+says so if it is missing. See the `vddimmer-ota` skill for the full picture.
 
 This is not a convenience wrapper. `os.spawnve` is broken OS-wide on the
 development machine (see the traps below) and SCons routes every build action
@@ -62,9 +69,21 @@ Underneath it runs, roughly:
 pio run -e 4ch2a                 # build
 pio run -e 4ch2a -t upload       # flash over USB  (12 V MUST be applied)
 pio device monitor -e 4ch2a      # 115200 baud
-
-pio run -e 4ch2a-ota -t upload --upload-port vandimmer-a1b2c3.local
 ```
+
+**`-Ota` does not run `pio run -e 4ch2a-ota -t upload`, and neither should you.**
+`4ch2a-ota` is a separate environment with its own build directory, so that command
+*rebuilds*: the script verifies and hashes `.pio/build/4ch2a/firmware.bin` and the upload
+would then push a different binary from `.pio/build/4ch2a-ota/` — the
+verified-one-thing-flashed-another failure every gate here exists to stop. Stage 4 calls
+`espota.py` directly on the artifact the verify stage hashed. The env remains in
+`platformio.ini` for manual use only.
+
+ArduinoOTA listens on **UDP** 3232. A TCP scan of that port reports `closed` on a
+perfectly healthy board; it once "proved" OTA was dead on a board that was fine. Test with
+`python tools\ota_probe.py --host <ip>` instead — and note that tool is a *write*, not a
+ping: the board erases its inactive OTA partition on receiving the invitation, so never
+use it to sweep a subnet.
 
 To clear stored settings without a reflash -- the only way back into the portal
 on Rev A, see *First boot* -- erase just the NVS partition:
@@ -132,6 +151,50 @@ is a 1.6 kB descriptor, and `idf_tools.py` fetches the real GCC. A
 An earlier note here blamed KiCad's `pythonw.exe` for the console storm. That
 was wrong, and it cost a session chasing the venv instead of the OS.
 
+   **The defect is intermittent, and it is not confined to build 26200.** A
+   second machine (Windows 11, build 26300) reported `spawnve is BROKEN
+   (exit -1073741819)` on one preflight and `spawnve works` on the next, minutes
+   apart, same venv, nothing changed between them. That is consistent with the
+   heap-corruption reading above. **One green preflight is not evidence the
+   workaround can be retired** -- it needs to stay green across many runs on a
+   machine, and `Build-Flash.ps1`'s "safe to retire once this stays green" note
+   should be read with that emphasis.
+
+5. **TLS-intercepting antivirus breaks the platform download, and `pip` does not
+   warn you.** On a machine running AVG Antivirus ("Web/Mail Shield" SSL
+   scanning), `pio run` dies during `Platform Manager: Installing ...` with
+   `SSLError: ... CERTIFICATE_VERIFY_FAILED: unable to get local issuer
+   certificate` for `github.com`. AVG re-signs the connection with its own root,
+   which Windows trusts but `certifi` does not.
+
+   What makes this one expensive is that everything *before* it looks fine:
+   `pip install platformio` succeeds, because pip 24.2+ validates against the
+   Windows trust store, while PlatformIO's `requests` uses the bundled `certifi`
+   CA list. So the venv tests healthy and fails at the first download.
+
+   Confirm the diagnosis rather than guessing -- this prints the interceptor's
+   name if there is one:
+
+   ```powershell
+   $c=[Net.Sockets.TcpClient]::new('github.com',443)
+   $s=[Net.Security.SslStream]::new($c.GetStream(),$false,{$true})
+   $s.AuthenticateAsClient('github.com')
+   ([Security.Cryptography.X509Certificates.X509Certificate2]$s.RemoteCertificate).Issuer
+   ```
+
+   A real chain shows a public CA; an intercepted one names the scanner. Fix,
+   scoped to the venv and applied via a `.pth` hook so PlatformIO's own
+   `idf_tools.py` runs inherit it too:
+
+   ```powershell
+   & "$env:USERPROFILE\.platformio-venv\Scripts\python.exe" -m pip install pip-system-certs
+   ```
+
+   Preferred over appending the root to `cacert.pem` (lost on the next `certifi`
+   upgrade) or setting `SSL_CERT_FILE` (`Build-Flash.ps1` does not export it, so
+   it would have to be set in every shell). Following the Windows store also
+   means a regenerated AVG root keeps working.
+
 ## First boot
 
 With no stored WiFi credentials the board opens an unsecured AP named
@@ -168,6 +231,23 @@ So a wrong SSID strands the board until NVS is erased over USB (see *Building*).
 A nuisance on the bench; a dead board in the van, where there is no USB.
 **Rev B needs the BTN1 pad routed, a portal fallback after N failed attempts,
 or both.**
+
+Two things have improved since that was written, neither of which removes the
+need for Rev B to fix it properly:
+
+- **The serial console has a `portal` command** (`1fc4c8d`) that clears WiFi
+  credentials and reboots into the portal. That is the first recovery route
+  needing no `esptool erase-region`. Still USB-only, so still useless in the van.
+- **A board with *correct* credentials no longer strands itself** (`b9e6812`).
+  There used to be a second, worse failure than a wrong SSID: a *right* SSID
+  that simply associated too slowly. `wifiConnect()` busy-waits 20 s, and
+  `net_begin()` returned early if that expired — skipping `ArduinoOTA.begin()`
+  and `setServer()` — while the IDF driver associated moments later and
+  `net_tick()`'s recovery, guarded on *not* connected, never re-entered. The
+  board sat powered, associated, pingable and silent on every channel at once.
+  `startNetServices()` is now latched and called from the connected path too.
+  **Symptom to search for: status LED cyan, answers ping, nothing on MQTT,
+  nothing on UDP 3232.**
 
 ## Identity
 

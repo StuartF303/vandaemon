@@ -49,6 +49,7 @@ static PubSubClient s_mqtt(s_wifiClient);
 
 static char s_prefix[128] = {0};     // "{base}/{deviceId}"
 static bool s_wifiUp = false;
+static bool s_servicesUp = false;    // OTA + MQTT initialised; see startNetServices()
 static uint32_t s_lastMqttTry = 0;
 static uint32_t s_lastHeartbeat = 0;
 static uint32_t s_wifiRetryAt = 0;
@@ -361,6 +362,41 @@ static void wifiConnect() {
     }
 }
 
+// The services that can only start once WiFi is up: the OTA listener and the
+// MQTT client. Latched, and called from net_tick() as well as net_begin(),
+// because net_begin() is not the only way the board reaches "connected".
+// wifiConnect() busy-waits WIFI_TIMEOUT_MS and gives up, but ESP-IDF's driver
+// keeps retrying on its own and often associates seconds later. While this ran
+// only from net_begin(), such a board sat powered, associated and pingable with
+// no OTA listener and no MQTT server ever set -- unreachable by every remote
+// route Rev A has, since BTN1 is the unrouted J11.1 pad and forget-wifi needs
+// the broker it cannot reach. Symptom to search for: status LED cyan, answers
+// ping, silent on MQTT and on UDP 3232.
+//
+// The latch never resets, including on WiFi loss. That is deliberate:
+// ArduinoOTA::begin() is itself guarded by _initialized and returns early, so
+// re-calling it after a reconnect would not rebind its socket, and a resetting
+// latch would imply a recovery it cannot deliver. MQTT needs no re-init either;
+// net_tick() already retries mqttConnect() every MQTT_RETRY_MS.
+static void startNetServices() {
+    if (s_servicesUp) return;
+
+    ArduinoOTA.setHostname(g_settings.deviceId);
+    ArduinoOTA.begin();
+
+    s_mqtt.setServer(g_settings.mqttHost, g_settings.mqttPort);
+    s_mqtt.setBufferSize(MQTT_BUFFER_BYTES);
+    s_mqtt.setCallback(onMessage);
+    s_mqtt.setKeepAlive(30);
+
+    s_servicesUp = true;
+    Serial.printf("[net] services up, ota %s:3232, mqtt %s:%u\n",
+                  g_settings.deviceId, g_settings.mqttHost,
+                  (unsigned)g_settings.mqttPort);
+
+    mqttConnect();
+}
+
 void net_begin() {
     snprintf(s_prefix, sizeof(s_prefix), "%s/%s",
              g_settings.baseTopic, g_settings.deviceId);
@@ -380,14 +416,7 @@ void net_begin() {
         return;
     }
 
-    ArduinoOTA.setHostname(g_settings.deviceId);
-    ArduinoOTA.begin();
-
-    s_mqtt.setServer(g_settings.mqttHost, g_settings.mqttPort);
-    s_mqtt.setBufferSize(MQTT_BUFFER_BYTES);
-    s_mqtt.setCallback(onMessage);
-    s_mqtt.setKeepAlive(30);
-    mqttConnect();
+    startNetServices();
 }
 
 void net_tick() {
@@ -406,6 +435,18 @@ void net_tick() {
         }
         return;
     }
+
+    // Connected. This is reached whether net_begin() saw the association or the
+    // IDF driver completed it later, after wifiConnect() had already given up --
+    // so catch up on the state net_begin() would have set, then make sure the
+    // services it would have started are running. Both are no-ops once latched.
+    if (!s_wifiUp) {
+        s_wifiUp = true;
+        s_wifiRetryAt = 0;
+        Serial.printf("[wifi] up late, %s rssi %d\n",
+                      WiFi.localIP().toString().c_str(), (int)WiFi.RSSI());
+    }
+    startNetServices();
 
     ArduinoOTA.handle();
 
